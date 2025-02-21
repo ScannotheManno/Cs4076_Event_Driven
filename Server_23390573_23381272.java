@@ -11,7 +11,6 @@ public class Server_23390573_23381272 {
     private static int clientConnections = 0;
 
     public static void main(String[] args) {
-        System.out.println("Hello world");
         System.out.println("Opening port...\n");
 
         try{
