@@ -31,6 +31,7 @@ public class Server_23390573_23381272 {
             clientConnections++;
             BufferedReader in = new BufferedReader(new InputStreamReader(link.getInputStream()));
             PrintWriter out = new PrintWriter(link.getOutputStream(), true);
+            String message = in.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
