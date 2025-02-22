@@ -1,5 +1,5 @@
 public class IncorrectActionException extends Exception {
-    protected String msg;
+    private String msg;
 
     public IncorrectActionException() {
         this.msg = "Not a valid action";
@@ -7,6 +7,9 @@ public class IncorrectActionException extends Exception {
 
     public IncorrectActionException(String msg) {
         super(msg);
-        this.msg = msg;
+    }
+
+    public String getIncorrectActionMsg() {
+        return this.msg;
     }
 }

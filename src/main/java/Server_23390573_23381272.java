@@ -32,6 +32,15 @@ public class Server_23390573_23381272 {
             BufferedReader in = new BufferedReader(new InputStreamReader(link.getInputStream()));
             PrintWriter out = new PrintWriter(link.getOutputStream(), true);
             String message = in.readLine();
+            try {
+                if (message.equals("Hello")) {
+                    throw new IncorrectActionException();
+                } else {
+                    System.out.println(message);
+                }
+            } catch (IncorrectActionException e) {
+                System.out.println(e.getIncorrectActionMsg());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

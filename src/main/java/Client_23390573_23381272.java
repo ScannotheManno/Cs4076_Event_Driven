@@ -28,7 +28,6 @@ public class Client_23390573_23381272 {
 
             out.println(message);
             response = in.readLine(); // Read response from server
-
         } catch (IOException e) {
             e.printStackTrace();
         }
