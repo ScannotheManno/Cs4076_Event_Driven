@@ -5,15 +5,16 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+<VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="ClientGUIController_23390573_23381272">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="10.0"/>
     </padding>
 
     <Label fx:id="LectureSchedulerApplication"/>
-    <Button text="Add Lecture" onAction="#onHelloButtonClick"/>
-    <Button text="Remove Lecture" onAction="#onHelloButtonClick"/>
-    <Button text="Display Schedule" onAction="#onHelloButtonClick"/>
-    <Button text="Other" onAction="#onHelloButtonClick"/>
+    <Label text="Timetable Scheduling" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Button text="Add Lecture >" onAction="#onHelloButtonClick"/>
+    <Button text="Remove Lecture >" onAction="#onHelloButtonClick"/>
+    <Button text="Display Schedule> " onAction="#onHelloButtonClick"/>
+    <Button text="Other >" onAction="#onHelloButtonClick"/>
 </VBox>
