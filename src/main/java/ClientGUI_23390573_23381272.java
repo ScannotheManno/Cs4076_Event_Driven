@@ -1,5 +1,3 @@
-package example.eventdrivenproject;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,7 +13,7 @@ public class ClientGUI_23390573_23381272 extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ClientGUI_23390573_23381272.class.getResource("MainGUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ClientGUI_23390573_23381272.class.getResource("/org/example/eventdrivenproject/MainGUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         primaryStage.setTitle("Application!");
         primaryStage.setScene(scene);

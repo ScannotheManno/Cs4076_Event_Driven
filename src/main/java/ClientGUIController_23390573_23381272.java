@@ -18,7 +18,7 @@ public class ClientGUIController_23390573_23381272 {
     private Client_23390573_23381272 client;
 
     public void initialize() {
-        client = new Client_23390573_23381272();
+
     }
 
     @FXML
