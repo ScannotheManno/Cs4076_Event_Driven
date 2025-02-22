@@ -58,7 +58,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>org.example.demo/org.example.demo.HelloApplication</mainClass>
+              <mainClass>org.example.Cs4076_Event_Driven/org.example.Cs4076_Event_Driven.ClientGUI_23390573_23318272</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

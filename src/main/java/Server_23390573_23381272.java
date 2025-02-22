@@ -39,7 +39,7 @@ public class Server_23390573_23381272 {
                     System.out.println(message);
                 }
             } catch (IncorrectActionException e) {
-                System.out.println(e.getIncorrectActionMsg());
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
