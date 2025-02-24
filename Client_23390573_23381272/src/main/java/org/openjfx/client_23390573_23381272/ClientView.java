@@ -143,14 +143,32 @@ public void showAddLectureForm() {
         scheduleStage.show();
     }
     
-        public void otherButton() {
-        Stage scheduleStage = new Stage();
+    public void otherButton() {
+        Stage otherStage = new Stage();
         VBox layout = new VBox();
         layout.setSpacing(10);
         layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout, 300, 200);
-        scheduleStage.setTitle("Other");
-        scheduleStage.setScene(scene);
-        scheduleStage.show();
+        Label otherLabel = new Label("Request:");
+        TextField inputField = new TextField();
+        inputField.setPromptText("Enter Service");
+        inputField.setMaxWidth(200);
+    
+        Button submitButton = new Button("Submit");
+        submitButton.setOnAction(e -> {
+        String request = inputField.getText();
+        
+        
+        // For now, simply print out the values. In a real application, you'd likely send these details to the server.
+        System.out.println("Request: " + request);;
+        
+        // You might also want to close the window after submission:
+        otherStage.close();
+        });
+        layout.getChildren().addAll(otherLabel, inputField, submitButton);
+        
+        Scene scene = new Scene(layout, 300, 400);
+    otherStage.setTitle("Enter Lecture Details To Add");
+    otherStage.setScene(scene);
+    otherStage.show();
     }
 }
