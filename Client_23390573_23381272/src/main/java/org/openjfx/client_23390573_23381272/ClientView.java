@@ -1,0 +1,141 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package org.openjfx.client_23390573_23381272;
+
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+import java.time.LocalDate;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+
+/**
+ *
+ * @author lukes
+ */
+
+public class ClientView {
+    private Stage primaryStage;
+    private Button addLectureButton;
+    private Button removeLectureButton;
+    private Button viewScheduleButton;
+    private Button quitButton;
+    
+    public ClientView(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        initUI();
+    }
+    
+    private void initUI() {
+        VBox root = new VBox();
+        root.setSpacing(15);
+        root.setAlignment(Pos.CENTER);
+        
+        addLectureButton = new Button("Add a Lecture");
+        removeLectureButton = new Button("Remove a Lecture");
+        viewScheduleButton = new Button("View Schedule");
+        quitButton = new Button("Quit");
+        
+        addLectureButton.setPrefSize(120, 50);
+        removeLectureButton.setPrefSize(120, 50);
+        viewScheduleButton.setPrefSize(120, 50);
+        quitButton.setPrefSize(120, 50);
+        
+        root.getChildren().addAll(addLectureButton, removeLectureButton, viewScheduleButton, quitButton);
+        Scene scene = new Scene(root, 600, 400);
+        
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("JavaFX Client");
+        primaryStage.show();
+    }
+    
+    // Getters for controller to attach event handlers
+    public Button getAddLectureButton() { return addLectureButton; }
+    public Button getRemoveLectureButton() { return removeLectureButton; }
+    public Button getViewScheduleButton() { return viewScheduleButton; }
+    public Button getQuitButton() { return quitButton; }
+    
+    // Methods to display additional forms/windows
+
+public void showAddLectureForm() {
+    Stage lectureAddStage = new Stage();
+    VBox layout = new VBox();
+    layout.setSpacing(10);
+    layout.setAlignment(Pos.CENTER);
+    
+    // Date pickers for start and end dates
+    Label startDateLabel = new Label("Start Date:");
+    DatePicker startDatePicker = new DatePicker();
+    Label endDateLabel = new Label("End Date:");
+    DatePicker endDatePicker = new DatePicker();
+    
+    // Text fields for lecture and course names
+    Label lectureNameLabel = new Label("Lecture Name:");
+    TextField lectureNameField = new TextField();
+    lectureNameField.setPromptText("Enter lecture name");
+    lectureNameField.setMaxWidth(200);
+    Label courseNameLabel = new Label("Course Name:");
+    TextField courseNameField = new TextField();
+    courseNameField.setPromptText("Enter course name");
+    courseNameField.setMaxWidth(200);
+    // Submit button to process the input
+    Button submitButton = new Button("Submit");
+    submitButton.setOnAction(e -> {
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+        String lectureName = lectureNameField.getText();
+        String courseName = courseNameField.getText();
+        
+        // For now, simply print out the values. In a real application, you'd likely send these details to the server.
+        System.out.println("Lecture Name: " + lectureName);
+        System.out.println("Course Name: " + courseName);
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+        
+        // You might also want to close the window after submission:
+        lectureAddStage.close();
+    });
+    
+    // Add all components to the layout
+    layout.getChildren().addAll(
+        startDateLabel, startDatePicker, 
+        endDateLabel, endDatePicker, 
+        lectureNameLabel, lectureNameField, 
+        courseNameLabel, courseNameField,
+        submitButton
+    );
+    
+    Scene scene = new Scene(layout, 300, 400);
+    lectureAddStage.setTitle("Enter Lecture Details To Add");
+    lectureAddStage.setScene(scene);
+    lectureAddStage.show();
+}
+
+    
+    public void showRemoveLectureForm() {
+        Stage lectureRemoveStage = new Stage();
+        VBox layout = new VBox();
+        layout.setSpacing(10);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(layout, 300, 200);
+        lectureRemoveStage.setTitle("Enter Lecture Details To Remove");
+        lectureRemoveStage.setScene(scene);
+        lectureRemoveStage.show();
+    }
+    
+    public void showSchedule() {
+        Stage scheduleStage = new Stage();
+        VBox layout = new VBox();
+        layout.setSpacing(10);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(layout, 300, 200);
+        scheduleStage.setTitle("Timetable");
+        scheduleStage.setScene(scene);
+        scheduleStage.show();
+    }
+}
