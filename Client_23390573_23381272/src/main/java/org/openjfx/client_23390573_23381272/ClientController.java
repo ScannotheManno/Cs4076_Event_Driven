@@ -27,6 +27,7 @@ public class ClientController {
         view.getAddLectureButton().setOnAction(e -> handleAddLecture());
         view.getRemoveLectureButton().setOnAction(e -> handleRemoveLecture());
         view.getViewScheduleButton().setOnAction(e -> handleViewSchedule());
+        view.getotherButton().setOnAction(e -> handleOther());
         view.getQuitButton().setOnAction(e -> {
             handleQuit();
             Platform.exit();
@@ -69,6 +70,21 @@ public class ClientController {
                 String response = model.sendMessage("VIEW_SCHEDULE");
                 if ("OPEN_VIEW_SCHEDULE_PAGE".equals(response)) {
                     Platform.runLater(() -> view.showSchedule());
+                } else {
+                    System.out.println("Unexpected response: " + response);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    
+    public void handleOther() {
+        new Thread(() -> {
+            try {
+                String response = model.sendMessage("Other");
+                if ("OPEN_OTHER_PAGE".equals(response)) {
+                    Platform.runLater(() -> view.otherButton());
                 } else {
                     System.out.println("Unexpected response: " + response);
                 }

@@ -6,6 +6,7 @@
 package org.openjfx.client_23390573_23381272;
 
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 

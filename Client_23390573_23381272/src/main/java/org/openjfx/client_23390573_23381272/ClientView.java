@@ -24,6 +24,7 @@ public class ClientView {
     private Button addLectureButton;
     private Button removeLectureButton;
     private Button viewScheduleButton;
+    private Button otherButton;
     private Button quitButton;
     
     public ClientView(Stage primaryStage) {
@@ -39,14 +40,16 @@ public class ClientView {
         addLectureButton = new Button("Add a Lecture");
         removeLectureButton = new Button("Remove a Lecture");
         viewScheduleButton = new Button("View Schedule");
+        otherButton = new Button("Other");
         quitButton = new Button("Quit");
         
         addLectureButton.setPrefSize(120, 50);
         removeLectureButton.setPrefSize(120, 50);
         viewScheduleButton.setPrefSize(120, 50);
+        otherButton.setPrefSize(120, 50);
         quitButton.setPrefSize(120, 50);
         
-        root.getChildren().addAll(addLectureButton, removeLectureButton, viewScheduleButton, quitButton);
+        root.getChildren().addAll(addLectureButton, removeLectureButton, viewScheduleButton, otherButton, quitButton);
         Scene scene = new Scene(root, 600, 400);
         
         primaryStage.setScene(scene);
@@ -58,6 +61,7 @@ public class ClientView {
     public Button getAddLectureButton() { return addLectureButton; }
     public Button getRemoveLectureButton() { return removeLectureButton; }
     public Button getViewScheduleButton() { return viewScheduleButton; }
+    public Button getotherButton() { return otherButton; }
     public Button getQuitButton() { return quitButton; }
     
     // Methods to display additional forms/windows
@@ -135,6 +139,17 @@ public void showAddLectureForm() {
         layout.setAlignment(Pos.CENTER);
         Scene scene = new Scene(layout, 300, 200);
         scheduleStage.setTitle("Timetable");
+        scheduleStage.setScene(scene);
+        scheduleStage.show();
+    }
+    
+        public void otherButton() {
+        Stage scheduleStage = new Stage();
+        VBox layout = new VBox();
+        layout.setSpacing(10);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(layout, 300, 200);
+        scheduleStage.setTitle("Other");
         scheduleStage.setScene(scene);
         scheduleStage.show();
     }
