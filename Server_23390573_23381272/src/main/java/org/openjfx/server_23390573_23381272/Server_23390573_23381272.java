@@ -56,6 +56,9 @@ public class Server_23390573_23381272 {
                 } else if (message.equals("VIEW_SCHEDULE")) {
                     System.out.println("Opening Schedule page...\n");
                     out.println("OPEN_VIEW_SCHEDULE_PAGE");
+                } else if (message.equals("OTHER")) {
+                    System.out.println("Opening other page...\n");
+                    out.println("OPEN_OTHER_PAGE");
                 } else if ("QUIT".equals(message)) {
                     System.out.println("Closing Connection...\n");
                     out.println("GOODBYE");
