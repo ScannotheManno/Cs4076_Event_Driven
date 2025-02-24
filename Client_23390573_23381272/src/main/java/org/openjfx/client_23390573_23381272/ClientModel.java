@@ -13,10 +13,11 @@ public class ClientModel {
     private BufferedReader in;
     private PrintWriter out;
     
-    private final String host;
+    private final InetAddress host;
     private final int port;
+    ;
     
-    public ClientModel(String host, int port) {
+    public ClientModel(InetAddress host, int port) {
         this.host = host;
         this.port = port;
     }

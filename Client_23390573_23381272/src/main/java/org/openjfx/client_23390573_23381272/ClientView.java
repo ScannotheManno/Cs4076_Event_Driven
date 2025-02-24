@@ -4,6 +4,8 @@
  */
 package org.openjfx.client_23390573_23381272;
 
+import java.io.IOException;
+import java.net.*;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -27,6 +29,12 @@ public class ClientView {
     private Button viewScheduleButton;
     private Button otherButton;
     private Button quitButton;
+    
+    private ClientController controller;
+    
+    public ClientView(ClientController controller) {
+        this.controller = controller;
+    }
     
     public ClientView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -165,16 +173,17 @@ public void showAddLectureForm() {
         
         
         // For now, simply print out the values. In a real application, you'd likely send these details to the server.
-        System.out.println("Request: " + request);;
+        System.out.println("Request: " + request);
         
+        controller.handleOtherRequest(request);
         // You might also want to close the window after submission:
         otherStage.close();
         });
         layout.getChildren().addAll(otherLabel, inputField, submitButton);
         
         Scene scene = new Scene(layout, 300, 400);
-    otherStage.setTitle("Enter Lecture Details To Add");
-    otherStage.setScene(scene);
-    otherStage.show();
+        otherStage.setTitle("Enter Lecture Details To Add");
+        otherStage.setScene(scene);
+        otherStage.show();
     }
 }

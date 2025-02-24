@@ -107,5 +107,17 @@ public class ClientController {
                 e.printStackTrace();
             }
         }).start();
+        
+    }
+    
+    public void handleOtherRequest(String request) {
+        new Thread(()-> {
+            try {
+                String response = model.sendMessage(request);
+                if (response.equals("")) {
+                    
+                }
+            }
+        })
     }
 }

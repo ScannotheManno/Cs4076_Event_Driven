@@ -10,6 +10,8 @@ import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
+import java.net.*;
+
 /**
  * 
  * @author lukes
@@ -21,12 +23,12 @@ public class ClientGUI_23390573_23381272 extends Application {
     private ClientController controller;
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws UnknownHostException {
         // Create the view (builds the UI)
         view = new ClientView(primaryStage);
         
         // Create the model (with server details)
-        model = new ClientModel("localhost", 5555);
+        model = new ClientModel(InetAddress.getLocalHost(), 5555);
         
         // Initialize the connection on a separate thread.
         new Thread(() -> {
