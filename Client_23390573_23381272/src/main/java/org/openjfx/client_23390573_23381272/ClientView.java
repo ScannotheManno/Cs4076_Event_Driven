@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
 
 /**
  *
@@ -73,17 +74,22 @@ public void showAddLectureForm() {
     layout.setAlignment(Pos.CENTER);
     
     // Date pickers for start and end dates
-    Label startDateLabel = new Label("Start Date:");
+    Label startDateLabel = new Label("Date:");
     DatePicker startDatePicker = new DatePicker();
-    Label endDateLabel = new Label("End Date:");
-    DatePicker endDatePicker = new DatePicker();
+    Label timeLabel = new Label("Time:");
+    ComboBox<String> timeComboBox = new ComboBox<>();
+    timeComboBox.getItems().addAll(
+        "09:00", "10:00", "11:00", "12:00", "13:00",
+        "14:00", "15:00", "16:00", "17:00", "18:00"
+    );
+    timeComboBox.setPromptText("Select time");
     
     // Text fields for lecture and course names
     Label lectureNameLabel = new Label("Lecture Name:");
     TextField lectureNameField = new TextField();
     lectureNameField.setPromptText("Enter lecture name");
     lectureNameField.setMaxWidth(200);
-    Label courseNameLabel = new Label("Course Name:");
+    Label courseNameLabel = new Label("Course ID:");
     TextField courseNameField = new TextField();
     courseNameField.setPromptText("Enter course name");
     courseNameField.setMaxWidth(200);
@@ -91,15 +97,15 @@ public void showAddLectureForm() {
     Button submitButton = new Button("Submit");
     submitButton.setOnAction(e -> {
         LocalDate startDate = startDatePicker.getValue();
-        LocalDate endDate = endDatePicker.getValue();
+        String time = timeComboBox.getValue();
         String lectureName = lectureNameField.getText();
         String courseName = courseNameField.getText();
         
         // For now, simply print out the values. In a real application, you'd likely send these details to the server.
         System.out.println("Lecture Name: " + lectureName);
         System.out.println("Course Name: " + courseName);
-        System.out.println("Start Date: " + startDate);
-        System.out.println("End Date: " + endDate);
+        System.out.println("Date: " + startDate);
+        System.out.println("Time: " + time);
         
         // You might also want to close the window after submission:
         lectureAddStage.close();
@@ -108,7 +114,7 @@ public void showAddLectureForm() {
     // Add all components to the layout
     layout.getChildren().addAll(
         startDateLabel, startDatePicker, 
-        endDateLabel, endDatePicker, 
+        timeLabel, timeComboBox, 
         lectureNameLabel, lectureNameField, 
         courseNameLabel, courseNameField,
         submitButton
