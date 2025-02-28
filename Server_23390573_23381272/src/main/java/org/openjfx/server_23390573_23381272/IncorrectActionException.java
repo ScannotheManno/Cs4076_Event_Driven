@@ -6,20 +6,16 @@ package org.openjfx.server_23390573_23381272;
 
 /**
  *
- * @author lukes
+ * @author Luke
  */
+
 public class IncorrectActionException extends Exception {
-    private String msg;
-    
     public IncorrectActionException() {
-        this.msg = "Not a Valid Action.";
+        super("Not a Valid Action.");
     }
-    
+
     public IncorrectActionException(String msg) {
         super(msg);
     }
-    
-    public String getIncorrectActionMsg() {
-        return this.msg;
-    }
 }
+

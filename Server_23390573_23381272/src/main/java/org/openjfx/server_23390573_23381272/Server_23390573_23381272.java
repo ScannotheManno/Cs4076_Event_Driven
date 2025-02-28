@@ -5,9 +5,12 @@
 
 package org.openjfx.server_23390573_23381272;
 
+/**
+ * 
+ * @author Luke
+ */
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class Server_23390573_23381272 {
     private static ServerSocket servSock;
@@ -24,7 +27,6 @@ public class Server_23390573_23381272 {
             System.exit(1);
         }
 
-        // Continuously accept new client connections
         while (true) {
             try {
                 Socket link = servSock.accept();
@@ -43,28 +45,39 @@ public class Server_23390573_23381272 {
             PrintWriter out = new PrintWriter(link.getOutputStream(), true);
             String message;
 
-            // Loop to continuously read messages from the client
             while ((message = in.readLine()) != null) {
                 System.out.println("Client: " + message);
 
-                if ("ADD_LECTURE".equals(message)) {
-                    System.out.println("Opening lecture entry page...\n");
-                    out.println("OPEN_ADD_LECTURE_PAGE");
-                } else if (message.equals("REMOVE_LECTURE")) {
-                    System.out.println("Opening lecture removal page...\n");
-                    out.println("OPEN_REMOVE_LECTURE_PAGE");
-                } else if (message.equals("VIEW_SCHEDULE")) {
-                    System.out.println("Opening Schedule page...\n");
-                    out.println("OPEN_VIEW_SCHEDULE_PAGE");
-                } else if (message.equals("Other")){
-                    System.out.println("Opening Other page...\n");
-                    out.println("OPEN_OTHER_PAGE");
-                } else if ("QUIT".equals(message)) {
-                    System.out.println("Closing Connection...\n");
-                    out.println("GOODBYE");
-                } else {
-                    out.println("UNKNOWN_COMMAND");
+                try {
+                    switch (message) {
+                        case "ADD_LECTURE":
+                            System.out.println("Opening add lecture page...\n");
+                            out.println("OPEN_ADD_LECTURE_PAGE");
+                            break;
+                        case "REMOVE_LECTURE":
+                            System.out.println("opening remove lecture page...\n");
+                            out.println("OPEN_REMOVE_LECTURE_PAGE");
+                            break;
+                        case "VIEW_SCHEDULE":
+                            out.println("OPEN_VIEW_SCHEDULE_PAGE");
+                            break;
+                        case "OTHER":
+                            System.out.println("Opening other page...\n");
+                            out.println("OPEN_OTHER_PAGE");
+                            break;
+                        case "QUIT":
+                            System.out.println("Closing connection...\n");
+                            out.println("GOODBYE");
+                            break;
+                        default:
+                            
+                            throw new IncorrectActionException("Invalid request received: " + message + " The server does not support this request.");
+                    }
+                } catch (IncorrectActionException e) {
+                    System.out.println("Error: " + e.getMessage());
+                    out.println("ERROR: " + e.getMessage());
                 }
+            
             }
         } catch (IOException e) {
             e.printStackTrace();
