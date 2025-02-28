@@ -4,13 +4,14 @@
  */
 package org.openjfx.client_23390573_23381272;
 
+/**
+ * 
+ * @author Luke
+ */
+
 import javafx.application.Platform;
 import java.io.IOException;
-
-/**
- *
- * @author lukes
- */
+import javafx.scene.control.Alert;
 
 public class ClientController {
     private ClientModel model;
@@ -82,7 +83,7 @@ public class ClientController {
     public void handleOther() {
         new Thread(() -> {
             try {
-                String response = model.sendMessage("Other");
+                String response = model.sendMessage("OTHER");
                 if ("OPEN_OTHER_PAGE".equals(response)) {
                     Platform.runLater(() -> view.otherButton());
                 } else {
@@ -113,11 +114,33 @@ public class ClientController {
     public void handleOtherRequest(String request) {
         new Thread(()-> {
             try {
-                String response = model.sendMessage(request);
-                if (response.equals("")) {
-                    
+                String response = " ";
+                if (request.equals("ADD_LECTURE")) {
+                    handleAddLecture();
+                } else if (request.equals("REMOVE_LECTURE")) {
+                    handleRemoveLecture();
+                } else if (request.equals("VIEW_SCHEDULE")) {
+                    handleViewSchedule();
+                } else {
+                    response = model.sendMessage(request);
+                     if (response.startsWith("ERROR:")) {
+                        String errorMessage = response.substring(7).trim(); // Remove "ERROR:" prefix
+                        Platform.runLater(() -> showAlert("Invalid Action", errorMessage));
+                    } 
                 }
+                
+                
+            } catch(IOException e) {
+                System.err.println(e);
             }
-        })
+        }).start();
     }
+    
+    private void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+}
 }

@@ -5,17 +5,17 @@
 
 package org.openjfx.client_23390573_23381272;
 
+/**
+ * 
+ * @author Luke
+ */
+
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.net.*;
-
-/**
- * 
- * @author lukes
- */
 
 public class ClientGUI_23390573_23381272 extends Application {
     private ClientModel model;
@@ -24,12 +24,11 @@ public class ClientGUI_23390573_23381272 extends Application {
     
     @Override
     public void start(Stage primaryStage) throws UnknownHostException {
-        // Create the view (builds the UI)
-        view = new ClientView(primaryStage);
-        
-        // Create the model (with server details)
         model = new ClientModel(InetAddress.getLocalHost(), 5555);
+        view = new ClientView(primaryStage);
+        controller = new ClientController(model, view);
         
+        view.setController(controller);
         // Initialize the connection on a separate thread.
         new Thread(() -> {
             boolean success = model.initialise();

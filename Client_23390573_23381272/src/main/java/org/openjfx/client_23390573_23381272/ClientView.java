@@ -4,23 +4,23 @@
  */
 package org.openjfx.client_23390573_23381272;
 
-import java.io.IOException;
-import java.net.*;
+/**
+ * 
+ * @author Luke
+ */
+
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import java.time.LocalDate;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
-
-/**
- *
- * @author lukes
- */
 
 public class ClientView {
     private Stage primaryStage;
@@ -39,6 +39,10 @@ public class ClientView {
     public ClientView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initUI();
+    }
+    
+    public void setController(ClientController controller) {
+        this.controller = controller;
     }
     
     private void initUI() {
@@ -66,14 +70,12 @@ public class ClientView {
         primaryStage.show();
     }
     
-    // Getters for controller to attach event handlers
     public Button getAddLectureButton() { return addLectureButton; }
     public Button getRemoveLectureButton() { return removeLectureButton; }
     public Button getViewScheduleButton() { return viewScheduleButton; }
     public Button getotherButton() { return otherButton; }
     public Button getQuitButton() { return quitButton; }
     
-    // Methods to display additional forms/windows
 
 public void showAddLectureForm() {
     Stage lectureAddStage = new Stage();
@@ -81,7 +83,6 @@ public void showAddLectureForm() {
     layout.setSpacing(10);
     layout.setAlignment(Pos.CENTER);
     
-    // Date pickers for start and end dates
     Label startDateLabel = new Label("Date:");
     DatePicker startDatePicker = new DatePicker();
     Label timeLabel = new Label("Time:");
@@ -92,7 +93,6 @@ public void showAddLectureForm() {
     );
     timeComboBox.setPromptText("Select time");
     
-    // Text fields for lecture and course names
     Label lectureNameLabel = new Label("Lecture Name:");
     TextField lectureNameField = new TextField();
     lectureNameField.setPromptText("Enter lecture name");
@@ -101,7 +101,7 @@ public void showAddLectureForm() {
     TextField courseNameField = new TextField();
     courseNameField.setPromptText("Enter course name");
     courseNameField.setMaxWidth(200);
-    // Submit button to process the input
+
     Button submitButton = new Button("Submit");
     submitButton.setOnAction(e -> {
         LocalDate startDate = startDatePicker.getValue();
@@ -109,17 +109,14 @@ public void showAddLectureForm() {
         String lectureName = lectureNameField.getText();
         String courseName = courseNameField.getText();
         
-        // For now, simply print out the values. In a real application, you'd likely send these details to the server.
         System.out.println("Lecture Name: " + lectureName);
         System.out.println("Course Name: " + courseName);
         System.out.println("Date: " + startDate);
         System.out.println("Time: " + time);
         
-        // You might also want to close the window after submission:
         lectureAddStage.close();
     });
     
-    // Add all components to the layout
     layout.getChildren().addAll(
         startDateLabel, startDatePicker, 
         timeLabel, timeComboBox, 
@@ -157,33 +154,90 @@ public void showAddLectureForm() {
         scheduleStage.show();
     }
     
+
+
+
     public void otherButton() {
-        Stage otherStage = new Stage();
-        VBox layout = new VBox();
-        layout.setSpacing(10);
-        layout.setAlignment(Pos.CENTER);
-        Label otherLabel = new Label("Request:");
-        TextField inputField = new TextField();
-        inputField.setPromptText("Enter Service");
-        inputField.setMaxWidth(200);
+    Stage otherStage = new Stage();
+    VBox layout = new VBox();
+    layout.setSpacing(10);
+    layout.setAlignment(Pos.CENTER);
+    Label otherLabel = new Label("Make a Request:");
+
+    ComboBox<String> dropdown = new ComboBox<>();
+    dropdown.getItems().addAll("Add Lecture", "Remove Lecture", "View Schedule", "Other");
+    dropdown.setPromptText("Choose a request:");
+
+    TextField otherTextField = new TextField();
+    otherTextField.setPromptText("Enter your request");
+    otherTextField.setMaxWidth(200);
+    otherTextField.setVisible(false);
+    dropdown.setOnAction(e -> {
+        if ("Other".equals(dropdown.getValue())) {
+            otherTextField.setVisible(true);
+        } else {
+            otherTextField.setVisible(false);
+        }
+    });
     
-        Button submitButton = new Button("Submit");
-        submitButton.setOnAction(e -> {
-        String request = inputField.getText();
-        
-        
-        // For now, simply print out the values. In a real application, you'd likely send these details to the server.
-        System.out.println("Request: " + request);
-        
-        controller.handleOtherRequest(request);
-        // You might also want to close the window after submission:
-        otherStage.close();
-        });
-        layout.getChildren().addAll(otherLabel, inputField, submitButton);
-        
-        Scene scene = new Scene(layout, 300, 400);
-        otherStage.setTitle("Enter Lecture Details To Add");
-        otherStage.setScene(scene);
-        otherStage.show();
-    }
+    Button submitButton = new Button("Submit");
+    submitButton.setOnAction(e -> {
+        if (controller == null) {
+            System.out.println("Error: Controller is NULL!");
+            return;
+        }
+
+        String selectedOption = dropdown.getValue();
+        String message = null;
+
+        if (selectedOption == null) {
+            System.out.println("No option selected.");
+            return;
+        }
+
+        switch (selectedOption) {
+            case "Add Lecture":
+                message = "ADD_LECTURE";
+                break;
+            case "Remove Lecture":
+                message = "REMOVE_LECTURE";
+                break;
+            case "View Schedule":
+                message = "VIEW_SCHEDULE";
+                break;
+            case "Other":
+                
+                String userRequest = otherTextField.getText().trim();
+                if (userRequest.isEmpty()) {
+                    Platform.runLater(() -> showAlert("No Request Made", "No other request entered."));
+                    System.out.println("No custom request entered.");
+                    return; 
+                }
+                message = userRequest;
+                break;
+            default:
+                System.out.println("Invalid selection.");
+                return;
+        }
+        controller.handleOtherRequest(message);
+
+        javafx.application.Platform.runLater(() -> otherStage.close());
+    });
+
+    layout.getChildren().addAll(otherLabel, dropdown, otherTextField, submitButton);
+
+    Scene scene = new Scene(layout, 300, 250);
+    otherStage.setTitle("Select a Service");
+    otherStage.setScene(scene);
+    otherStage.show();
+}
+
+private void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+}
+
 }
