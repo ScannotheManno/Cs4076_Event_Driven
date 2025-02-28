@@ -71,7 +71,7 @@ public class Server_23390573_23381272 {
                             break;
                         default:
                             
-                            throw new IncorrectActionException("Invalid request received: " + message + " The server does not support this request.");
+                            throw new IncorrectActionException("Invalid request received: " + message + ". The server does not support this request.");
                     }
                 } catch (IncorrectActionException e) {
                     System.out.println("Error: " + e.getMessage());
