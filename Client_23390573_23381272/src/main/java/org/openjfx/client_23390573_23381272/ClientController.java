@@ -85,16 +85,16 @@ public class ClientController {
         new Thread(() -> {
             try {
                 String response = model.sendMessage("VIEW_SCHEDULE");
-                if ("OPEN_VIEW_SCHEDULE_PAGE".equals(response)) {
-                    Platform.runLater(() -> view.showSchedule());
-                } else {
-                    System.out.println("Unexpected response: " + response);
+                if (response.equals("OPEN_SCHEDULE_PAGE")) {
+                    Platform.runLater(() -> view.showSchedule(response));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Platform.runLater(() -> showAlert("Error", "Failed to retrieve schedule: " + e.getMessage()));
             }
         }).start();
     }
+
+
     
     public void handleOther() {
         new Thread(() -> {
@@ -152,7 +152,7 @@ public class ClientController {
         }).start();
     }
     
-    private void showAlert(String title, String message) {
+    public void showAlert(String title, String message) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(title);
     alert.setHeaderText(null);
