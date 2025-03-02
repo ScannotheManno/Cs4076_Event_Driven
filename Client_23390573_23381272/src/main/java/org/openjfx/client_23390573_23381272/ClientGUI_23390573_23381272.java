@@ -29,7 +29,7 @@ public class ClientGUI_23390573_23381272 extends Application {
         controller = new ClientController(model, view);
         
         view.setController(controller);
-        // Initialize the connection on a separate thread.
+
         new Thread(() -> {
             boolean success = model.initialise();
             if (!success) {
@@ -38,7 +38,7 @@ public class ClientGUI_23390573_23381272 extends Application {
             }
         }).start();
         
-        // Create the controller to wire the model and view.
+        
         controller = new ClientController(model, view);
     }
     

@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.GridPane;
 
 public class ClientView {
     private Stage primaryStage;
@@ -38,14 +39,16 @@ public class ClientView {
     
     public ClientView(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        initUI();
+        mainMenu();
+        
     }
     
     public void setController(ClientController controller) {
         this.controller = controller;
     }
     
-    private void initUI() {
+   
+    public void mainMenu() {
         VBox root = new VBox();
         root.setSpacing(15);
         root.setAlignment(Pos.CENTER);
@@ -66,15 +69,29 @@ public class ClientView {
         Scene scene = new Scene(root, 600, 400);
         
         primaryStage.setScene(scene);
-        primaryStage.setTitle("JavaFX Client");
+        primaryStage.setTitle("Main Menu");
         primaryStage.show();
     }
     
-    public Button getAddLectureButton() { return addLectureButton; }
-    public Button getRemoveLectureButton() { return removeLectureButton; }
-    public Button getViewScheduleButton() { return viewScheduleButton; }
-    public Button getotherButton() { return otherButton; }
-    public Button getQuitButton() { return quitButton; }
+    public Button getAddLectureButton() {
+        return addLectureButton;
+    }
+    
+    public Button getRemoveLectureButton() {
+        return removeLectureButton;
+    }
+    
+    public Button getViewScheduleButton() {
+        return viewScheduleButton;
+    }
+    
+    public Button getotherButton() {
+        return otherButton;
+    }
+    
+    public Button getQuitButton() {
+        return quitButton;
+    }
     
 
 public void showAddLectureForm() {
@@ -83,49 +100,81 @@ public void showAddLectureForm() {
     layout.setSpacing(10);
     layout.setAlignment(Pos.CENTER);
     
-    Label startDateLabel = new Label("Date:");
+    Label startDateLabel = new Label("Start Date:");
     DatePicker startDatePicker = new DatePicker();
-    Label timeLabel = new Label("Time:");
-    ComboBox<String> timeComboBox = new ComboBox<>();
-    timeComboBox.getItems().addAll(
-        "09:00", "10:00", "11:00", "12:00", "13:00",
-        "14:00", "15:00", "16:00", "17:00", "18:00"
-    );
-    timeComboBox.setPromptText("Select time");
+    Label endDateLabel = new Label("End Date:");
+    DatePicker endDatePicker = new DatePicker();
     
-    Label lectureNameLabel = new Label("Lecture Name:");
-    TextField lectureNameField = new TextField();
-    lectureNameField.setPromptText("Enter lecture name");
-    lectureNameField.setMaxWidth(200);
-    Label courseNameLabel = new Label("Course ID:");
-    TextField courseNameField = new TextField();
-    courseNameField.setPromptText("Enter course name");
-    courseNameField.setMaxWidth(200);
+    Label timeStartLabel = new Label("Start Time:");
+    ComboBox<String> timeStartComboBox = new ComboBox<>();
+    Label timeEndLabel = new Label("End Time:");
+    ComboBox<String> timeEndComboBox = new ComboBox<>();
+    Label roomsLabel = new Label("Room:");
+    ComboBox<String> roomsComboBox = new ComboBox<>();
+    Label typeLabel = new Label("Class Type:");
+    ComboBox<String> typeComboBox = new ComboBox<>();
+    
+    timeStartComboBox.getItems().addAll(
+        "09:00", "10:00", "11:00", "12:00", "13:00",
+        "14:00", "15:00", "16:00", "17:00");
+    timeStartComboBox.setPromptText("Select Start Time");
+    
+    timeEndComboBox.getItems().addAll(
+        "10:00", "11:00", "12:00", "13:00", "14:00",
+        "15:00", "16:00", "17:00", "18:00");
+    timeEndComboBox.setPromptText("Select End Time");
+    
+    roomsComboBox.getItems().addAll(
+        "CSG-001", "CS1-044","CS1-045", "CS2-044", "CS2-045",
+            "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
+    roomsComboBox.setPromptText("Select Room");
+    
+    typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
+    typeComboBox.setPromptText("Select Class Type");
+    Label moduleNameLabel = new Label("Mondule Name:");
+    TextField moduleNameField = new TextField();
+    moduleNameField.setPromptText("Enter Mondule name");
+    moduleNameField.setMaxWidth(200);
+    Label moduleIDLabel = new Label("Module ID:");
+    TextField moduleIDField = new TextField();
+    moduleIDField.setPromptText("Enter Module ID");
+    moduleIDField.setMaxWidth(200);
 
     Button submitButton = new Button("Submit");
     submitButton.setOnAction(e -> {
         LocalDate startDate = startDatePicker.getValue();
-        String time = timeComboBox.getValue();
-        String lectureName = lectureNameField.getText();
-        String courseName = courseNameField.getText();
+        LocalDate endDate = endDatePicker.getValue();
+        String room = roomsComboBox.getValue();
+        String type = typeComboBox.getValue();
+        String startTime = timeStartComboBox.getValue();
+        String endTime = timeEndComboBox.getValue();
+        String moduleName = moduleNameField.getText();
+        String moduleID = moduleIDField.getText();
         
-        System.out.println("Lecture Name: " + lectureName);
-        System.out.println("Course Name: " + courseName);
-        System.out.println("Date: " + startDate);
-        System.out.println("Time: " + time);
+        if (moduleName.isEmpty() || moduleID.isEmpty() || room == null || type == null || startDate == null || endDate == null || startTime == null || endTime == null) {
+            showAlert("Error", "All fields must be filled out!");
+            return;
+        }
+        
+        controller.addLecture(moduleName, moduleID, room, type, startDate, endDate, startTime, endTime);
         
         lectureAddStage.close();
     });
     
     layout.getChildren().addAll(
-        startDateLabel, startDatePicker, 
-        timeLabel, timeComboBox, 
-        lectureNameLabel, lectureNameField, 
-        courseNameLabel, courseNameField,
+        moduleNameLabel, moduleNameField, 
+        moduleIDLabel, moduleIDField,
+        startDateLabel, startDatePicker,
+        endDateLabel, endDatePicker,
+        roomsLabel, roomsComboBox,
+        typeLabel, typeComboBox,
+        timeStartLabel, timeStartComboBox,
+        timeEndLabel, timeEndComboBox,
+        
         submitButton
     );
     
-    Scene scene = new Scene(layout, 300, 400);
+    Scene scene = new Scene(layout, 300, 700);
     lectureAddStage.setTitle("Enter Lecture Details To Add");
     lectureAddStage.setScene(scene);
     lectureAddStage.show();
@@ -145,12 +194,36 @@ public void showAddLectureForm() {
     
     public void showSchedule() {
         Stage scheduleStage = new Stage();
-        VBox layout = new VBox();
-        layout.setSpacing(10);
-        layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout, 300, 200);
+        GridPane grid = new GridPane();
+        grid.setHgap(10); // Horizontal gap between columns
+        grid.setVgap(10); // Vertical gap between rows
+        grid.setAlignment(Pos.CENTER); // Center the grid on the screen
+
+        // Create column and row labels for the timetable
+        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+        String[] times = {"09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"};
+
+        for (int col = 0; col < days.length; col++) {
+            Label dayLabel = new Label(days[col]);
+            dayLabel.setStyle("-fx-font-size: 18px;");
+            grid.add(dayLabel, col + 1, 0);
+        }
+
+        for (int col = 0; col < days.length; col++) {
+            for (int row = 0; row < times.length; row++) {
+                Label timeLabel = new Label(times[row]);
+                timeLabel.setStyle("-fx-font-size: 16px;");
+                grid.add(timeLabel, 0, row + 1);
+
+                // Add timetable entry labels
+                Label timetableEntry = new Label("Class");
+                timetableEntry.setStyle("-fx-font-size: 16px;");
+                grid.add(timetableEntry, col + 1, row + 1);
+            }
+        }
+        Scene scheduleScene = new Scene(grid, 600, 400);
         scheduleStage.setTitle("Timetable");
-        scheduleStage.setScene(scene);
+        scheduleStage.setScene(scheduleScene);
         scheduleStage.show();
     }
     
@@ -182,16 +255,12 @@ public void showAddLectureForm() {
     
     Button submitButton = new Button("Submit");
     submitButton.setOnAction(e -> {
-        if (controller == null) {
-            System.out.println("Error: Controller is NULL!");
-            return;
-        }
-
+        
         String selectedOption = dropdown.getValue();
         String message = null;
 
         if (selectedOption == null) {
-            System.out.println("No option selected.");
+            Platform.runLater(() -> showAlert("Empty Seclection", "No option selected. Please try again."));
             return;
         }
 
@@ -209,19 +278,18 @@ public void showAddLectureForm() {
                 
                 String userRequest = otherTextField.getText().trim();
                 if (userRequest.isEmpty()) {
-                    Platform.runLater(() -> showAlert("No Request Made", "No other request entered."));
-                    System.out.println("No custom request entered.");
+                    Platform.runLater(() -> showAlert("No Request Made", "No other request entered"));
                     return; 
                 }
                 message = userRequest;
                 break;
             default:
-                System.out.println("Invalid selection.");
+                Platform.runLater(() -> showAlert("Invalid Selection", "Invalid selection. Please try again."));
                 return;
         }
         controller.handleOtherRequest(message);
 
-        javafx.application.Platform.runLater(() -> otherStage.close());
+        Platform.runLater(() -> otherStage.close());
     });
 
     layout.getChildren().addAll(otherLabel, dropdown, otherTextField, submitButton);

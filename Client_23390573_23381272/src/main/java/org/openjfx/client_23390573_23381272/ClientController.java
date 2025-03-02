@@ -11,6 +11,7 @@ package org.openjfx.client_23390573_23381272;
 
 import javafx.application.Platform;
 import java.io.IOException;
+import java.time.LocalDate;
 import javafx.scene.control.Alert;
 
 public class ClientController {
@@ -24,7 +25,6 @@ public class ClientController {
     }
     
     private void attachEventHandlers() {
-        // When buttons are clicked, call the corresponding handler methods.
         view.getAddLectureButton().setOnAction(e -> handleAddLecture());
         view.getRemoveLectureButton().setOnAction(e -> handleRemoveLecture());
         view.getViewScheduleButton().setOnAction(e -> handleViewSchedule());
@@ -46,6 +46,22 @@ public class ClientController {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }).start();
+    }
+    
+    public void addLecture(String moduleName, String moduleID, String room, String type, LocalDate startDate, LocalDate endDate, String startTime, String endTime) {
+        new Thread(() -> {
+            try {
+                
+                String message = moduleName + "," + moduleID + "," + room + "," + type + "," + startDate + "," + endDate + "," + startTime + "," + endTime;
+                
+                String response = model.sendMessage(message);
+
+                Platform.runLater(() -> showAlert("Server Response", response));
+
+            } catch (IOException e) {
+                Platform.runLater(() -> showAlert("Error", "Failed to send request: " + e.getMessage()));
             }
         }).start();
     }
