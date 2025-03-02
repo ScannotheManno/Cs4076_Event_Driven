@@ -63,7 +63,7 @@ public class Server_23390573_23381272 {
                             out.println("OPEN_REMOVE_LECTURE_PAGE");
                             break;
                         case "VIEW_SCHEDULE":
-                            out.println("OPEN_VIEW_SCHEDULE_PAGE");
+                            out.println("OPEN_SCHEDULE_PAGE");
                             break;
                         case "OTHER":
                             System.out.println("Opening other page...\n");
@@ -99,20 +99,22 @@ public class Server_23390573_23381272 {
             String response = in.readLine();
             String[] module = response.split(",");
 
-            if (module.length == 6) {
-                String lectureName = module[0];
-                String courseName = module[1];
-                String startDate = module[2];
-                String endDate = module[3];
-                String startTime = module[4];
-                String endTime = module[5];
+            if (module.length == 8) {
+                String moduleName = module[0];
+                String moduleID = module[1];
+                String room = module[2];
+                String type = module[3];
+                String startDate = module[4];
+                String endDate = module[5];
+                String startTime = module[6];
+                String endTime = module[7];
 
-                 String lectureKey = lectureName;
+                 String lectureKey = moduleName + "\n" + room + "\n" + type;
                 System.out.println("New Lecture Added:");
-                System.out.println("Lecture Name: " + lectureName);
-                System.out.println("Course Name: " + courseName);
+                System.out.println("Lecture Name: " + moduleName);
+                System.out.println("Course Name: " + moduleID);
                 System.out.println("Start Date: " + startDate);
-                System.out.println("Ebd Date: " + endDate);
+                System.out.println("End Date: " + endDate);
                 System.out.println("Start Time: " + startTime);
                 System.out.println("End Time " + endTime);
 
@@ -124,4 +126,5 @@ public class Server_23390573_23381272 {
             System.out.println("Unable to read message");
         }
     }
+    
 }
