@@ -11,12 +11,15 @@ package org.openjfx.server_23390573_23381272;
  */
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class Server_23390573_23381272 {
     private static ServerSocket servSock;
     private static final int PORT = 5555;
     private static int clientConnections = 0;
+    private static final Map<String, String> lectureStorage = new HashMap<>();
 
+    
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
@@ -34,7 +37,7 @@ public class Server_23390573_23381272 {
                 System.out.println("Client Connected (" + clientConnections + ")");
                 new Thread(() -> handleClient(link)).start();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Unable to connect to client.");
             }
         }
     }
@@ -53,6 +56,7 @@ public class Server_23390573_23381272 {
                         case "ADD_LECTURE":
                             System.out.println("Opening add lecture page...\n");
                             out.println("OPEN_ADD_LECTURE_PAGE");
+                            handleAddLecture(in, out);
                             break;
                         case "REMOVE_LECTURE":
                             System.out.println("opening remove lecture page...\n");
@@ -70,7 +74,7 @@ public class Server_23390573_23381272 {
                             out.println("GOODBYE");
                             break;
                         default:
-                            
+
                             throw new IncorrectActionException("Invalid request received: " + message + ". The server does not support this request.");
                     }
                 } catch (IncorrectActionException e) {
@@ -87,6 +91,37 @@ public class Server_23390573_23381272 {
             } catch (IOException e) {
                 System.out.println("Unable to disconnect");
             }
+        }
+    }
+    
+    private static void handleAddLecture(BufferedReader in ,PrintWriter out) {
+        try {
+            String response = in.readLine();
+            String[] module = response.split(",");
+
+            if (module.length == 6) {
+                String lectureName = module[0];
+                String courseName = module[1];
+                String startDate = module[2];
+                String endDate = module[3];
+                String startTime = module[4];
+                String endTime = module[5];
+
+                 String lectureKey = lectureName;
+                System.out.println("New Lecture Added:");
+                System.out.println("Lecture Name: " + lectureName);
+                System.out.println("Course Name: " + courseName);
+                System.out.println("Start Date: " + startDate);
+                System.out.println("Ebd Date: " + endDate);
+                System.out.println("Start Time: " + startTime);
+                System.out.println("End Time " + endTime);
+
+                out.println("Lecture Added Successfully!");
+            } else {
+                out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, StartDate, EndDate, StartTime, EndTime");
+            }
+        } catch (IOException e) {
+            System.out.println("Unable to read message");
         }
     }
 }
