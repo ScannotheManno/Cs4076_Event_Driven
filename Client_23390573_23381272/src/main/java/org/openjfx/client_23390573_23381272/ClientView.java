@@ -208,25 +208,21 @@ public class ClientView {
     grid.setVgap(10);
     grid.setAlignment(Pos.CENTER);
 
-    // ✅ Define time slots (rows)
     String[] timeSlots = {"9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"};
 
-    // ✅ Define days (columns)
     String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
 
-    // ✅ Add time labels to the first column
     for (int i = 0; i < timeSlots.length; i++) {
         Label timeLabel = new Label(timeSlots[i]);
         timeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         grid.add(timeLabel, 0, i + 1); // Column 0, Row i+1
     }
 
-    // ✅ Add day labels to the first row
     for (int i = 0; i < days.length; i++) {
         Label dayLabel = new Label(days[i]);
         dayLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         dayLabel.setTextFill(Color.BLUE);
-        grid.add(dayLabel, i + 1, 0); // Column i+1, Row 0
+        grid.add(dayLabel, i + 1, 0);
     }
 
     Scene scene = new Scene(grid, 600, 400);
