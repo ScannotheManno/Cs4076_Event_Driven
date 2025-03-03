@@ -56,6 +56,7 @@ public class Server_23390573_23381272 {
                         case "ADD_LECTURE":
                             System.out.println("Opening add lecture page...\n");
                             out.println("OPEN_ADD_LECTURE_PAGE");
+                            
                             handleAddLecture(in, out);
                             break;
                         case "REMOVE_LECTURE":
@@ -109,7 +110,7 @@ public class Server_23390573_23381272 {
                 String startTime = module[6];
                 String endTime = module[7];
 
-                 String lectureKey = moduleName + "\n" + room + "\n" + type;
+                 String lectureKey = moduleName + "\n" + room + "\n" + type + "\n" + startTime;
                 System.out.println("New Lecture Added:");
                 System.out.println("Lecture Name: " + moduleName);
                 System.out.println("Course Name: " + moduleID);
@@ -117,9 +118,12 @@ public class Server_23390573_23381272 {
                 System.out.println("End Date: " + endDate);
                 System.out.println("Start Time: " + startTime);
                 System.out.println("End Time " + endTime);
+                
+                lectureStorage.put(lectureKey, moduleName);
 
                 out.println("Lecture Added Successfully!");
             } else {
+                response = in.readLine();
                 out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, StartDate, EndDate, StartTime, EndTime");
             }
         } catch (IOException e) {
