@@ -10,8 +10,8 @@
             <Button fx:id="addLectureButton" text="Add a Lecture" maxWidth="200" onAction="#handleAddLecture"  />
             <Button fx:id="removeLectureButton" text="Remove a Lecture" maxWidth="200" />
             <Button fx:id="viewScheduleButton" text="View Schedule" maxWidth="200" />
-            <Button fx:id="otherButton" text="Other" maxWidth="200" />
-            <Button fx:id="quitButton" text="Quit" maxWidth="200" />
+            <Button fx:id="otherButton" text="Other" maxWidth="200" onAction="#handleOther" />
+            <Button fx:id="quitButton" text="Quit" maxWidth="200" onAction="#handleQuit" />
         </VBox>
     </center>
 </BorderPane>
