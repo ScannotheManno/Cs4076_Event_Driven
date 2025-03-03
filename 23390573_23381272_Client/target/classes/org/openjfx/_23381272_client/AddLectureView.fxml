@@ -4,23 +4,21 @@
 <?import javafx.geometry.*?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx._23381272_client.AddLectureController">
-    <VBox alignment="CENTER" spacing="10">
-        <Label text="Start Date:" />
-        <DatePicker fx:id="startDatePicker" />
-        <Label text="End Date:" />
-        <DatePicker fx:id="endDatePicker" />
+    <VBox alignment="CENTER" spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Label text="Lecture Name:" />
+        <TextField fx:id="moduleNameField" promptText="Enter Lecture Name" maxWidth="200" />
+        <Label text="Course ID:" />
+        <TextField fx:id="moduleIDField" promptText="Enter Course ID" maxWidth="200" />
+        <Label text="Day:" />
+        <ComboBox fx:id="dayComboBox" maxWidth="200" />
         <Label text="Start Time:" />
-        <ComboBox fx:id="timeStartComboBox" />
+        <ComboBox fx:id="timeStartComboBox" maxWidth="200" />
         <Label text="End Time:" />
-        <ComboBox fx:id="timeEndComboBox" />
+        <ComboBox fx:id="timeEndComboBox" maxWidth="200" />
         <Label text="Room:" />
-        <ComboBox fx:id="roomsComboBox" />
+        <ComboBox fx:id="roomsComboBox" maxWidth="200" />
         <Label text="Class Type:" />
-        <ComboBox fx:id="typeComboBox" />
-        <Label text="Module Name:" />
-        <TextField fx:id="moduleNameField" promptText="Enter Module name" />
-        <Label text="Module ID:" />
-        <TextField fx:id="moduleIDField" promptText="Enter Module ID" />
-        <Button fx:id="submitLectureButton" text="Submit" />
+        <ComboBox fx:id="typeComboBox" maxWidth="200" />
+        <Button fx:id="submitLectureButton" text="Submit" maxWidth="200" />
     </VBox>
 </AnchorPane>
