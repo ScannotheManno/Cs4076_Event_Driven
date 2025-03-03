@@ -123,7 +123,6 @@ public class Server_23390573_23381272 {
 
                 out.println("Lecture Added Successfully!");
             } else {
-                response = in.readLine();
                 out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, StartDate, EndDate, StartTime, EndTime");
             }
         } catch (IOException e) {
