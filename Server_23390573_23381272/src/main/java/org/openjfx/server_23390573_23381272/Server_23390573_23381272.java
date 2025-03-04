@@ -6,29 +6,47 @@ import java.util.*;
 
 public class Server_23390573_23381272 {
     private static ServerSocket servSock;
-    private static final int PORT = 5555;
+    private static final int PORT = 5555; // Change this if the port is in use
     private static int clientConnections = 0;
     private static final Map<String, String> lectureStorage = new HashMap<>();
 
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
-        try {
-            servSock = new ServerSocket(PORT);
-        } catch (IOException e) {
-            System.out.println("Unable to attach to port");
+        // Check if the port is available
+        if (!isPortAvailable(PORT)) {
+            System.out.println("Port " + PORT + " is already in use. Please free the port or use a different one.");
             System.exit(1);
         }
 
-        while (true) {
-            try {
-                Socket link = servSock.accept();
-                clientConnections++;
-                System.out.println("Client Connected (" + clientConnections + ")");
-                new Thread(() -> handleClient(link)).start();
-            } catch (IOException e) {
-                System.out.println("Unable to connect to client.");
+        try {
+            servSock = new ServerSocket(PORT);
+
+            // Add a shutdown hook to close the server socket on exit
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    if (servSock != null && !servSock.isClosed()) {
+                        servSock.close();
+                        System.out.println("Server socket closed.");
+                    }
+                } catch (IOException e) {
+                    System.out.println("Error closing server socket: " + e.getMessage());
+                }
+            }));
+
+            while (true) {
+                try {
+                    Socket link = servSock.accept();
+                    clientConnections++;
+                    System.out.println("Client Connected (" + clientConnections + ")");
+                    new Thread(() -> handleClient(link)).start();
+                } catch (IOException e) {
+                    System.out.println("Unable to connect to client.");
+                }
             }
+        } catch (IOException e) {
+            System.out.println("Unable to attach to port: " + e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -138,6 +156,14 @@ public class Server_23390573_23381272 {
             for (Map.Entry<String, String> entry : lectureStorage.entrySet()) {
                 out.println(entry.getValue());
             }
+        }
+    }
+
+    private static boolean isPortAvailable(int port) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 }
