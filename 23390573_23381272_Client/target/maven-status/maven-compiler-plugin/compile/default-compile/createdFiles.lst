@@ -4,4 +4,5 @@ org\openjfx\_23381272_client\AddLectureController.class
 module-info.class
 org\openjfx\_23381272_client\ClientController.class
 org\openjfx\_23381272_client\OtherController.class
+org\openjfx\_23381272_client\ViewScheduleController.class
 org\openjfx\_23381272_client\RemoveLectureController.class

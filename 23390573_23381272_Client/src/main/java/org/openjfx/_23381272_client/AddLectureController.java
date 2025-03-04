@@ -2,11 +2,14 @@ package org.openjfx._23381272_client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+import javafx.application.Platform;
 import java.io.IOException;
+import java.net.Socket;
+import java.io.PrintWriter;
 
 public class AddLectureController {
-    @FXML private DatePicker startDatePicker;
-    @FXML private DatePicker endDatePicker;
+    @FXML private ComboBox<String> dayComboBox;
     @FXML private ComboBox<String> timeStartComboBox;
     @FXML private ComboBox<String> timeEndComboBox;
     @FXML private ComboBox<String> roomsComboBox;
@@ -15,15 +18,15 @@ public class AddLectureController {
     @FXML private TextField moduleIDField;
     @FXML private Button submitLectureButton;
 
-    private ClientModel model; // Reference to ClientModel
+    private ClientModel model;
 
-    // Method to set ClientModel
     public void setModel(ClientModel model) {
         this.model = model;
     }
 
     @FXML
     public void initialize() {
+        dayComboBox.getItems().addAll("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
         timeStartComboBox.getItems().addAll("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00");
         timeEndComboBox.getItems().addAll("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
@@ -33,37 +36,45 @@ public class AddLectureController {
     }
 
     private void handleSubmitLecture() {
-        if (model == null) {
-            showAlert("Error", "Server connection not established.");
-            return;
-        }
-
-        String startDate = startDatePicker.getValue() != null ? startDatePicker.getValue().toString() : "";
-        String endDate = endDatePicker.getValue() != null ? endDatePicker.getValue().toString() : "";
-        String timeStart = timeStartComboBox.getValue();
-        String timeEnd = timeEndComboBox.getValue();
+        String lectureName = moduleNameField.getText();
+        String courseID = moduleIDField.getText();
+        String day = dayComboBox.getValue();
+        String startTime = timeStartComboBox.getValue();
+        String endTime = timeEndComboBox.getValue();
         String room = roomsComboBox.getValue();
         String type = typeComboBox.getValue();
-        String moduleName = moduleNameField.getText().trim();
-        String moduleID = moduleIDField.getText().trim();
 
-        if (startDate.isEmpty() || endDate.isEmpty() || timeStart == null || timeEnd == null ||
-            room == null || type == null || moduleName.isEmpty() || moduleID.isEmpty()) {
+        if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || endTime == null || room == null || type == null) {
             showAlert("Missing Fields", "Please fill in all fields before submitting.");
             return;
         }
 
-        String lectureData = String.format("ADD_LECTURE,%s,%s,%s,%s,%s,%s,%s,%s",
-                moduleName, moduleID, startDate, endDate, timeStart, timeEnd, room, type);
+        String message = String.format("ADD_LECTURE %s,%s,%s,%s,%s,%s,%s",
+                lectureName, courseID, room, type, day, startTime, endTime);
 
-        new Thread(() -> {
-            try {
-                String response = model.sendMessage(lectureData);
-                showAlert("Server Response", response);
+        System.out.println("✅ Sending message to server: " + message);
+
+        if (model != null) {
+            new Thread(() -> {
+                try {
+                    String response = model.sendMessage(message);
+                    Platform.runLater(() -> showAlert("Server Response", response));
+                } catch (IOException e) {
+                    Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
+                }
+            }).start();
+        } else {
+            try (Socket socket = new Socket("localhost", 5555);
+                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+                out.println(message);
+                System.out.println("✅ Lecture submitted successfully.");
             } catch (IOException e) {
-                showAlert("Error", "Failed to communicate with server: " + e.getMessage());
+                System.out.println("❌ Error connecting to server: " + e.getMessage());
+                return;
             }
-        }).start();
+        }
+
+        closeWindow();
     }
 
     private void showAlert(String title, String message) {
@@ -72,5 +83,12 @@ public class AddLectureController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void closeWindow() {
+        Platform.runLater(() -> {
+            Stage stage = (Stage) submitLectureButton.getScene().getWindow();
+            stage.close();
+        });
     }
 }
