@@ -6,14 +6,13 @@ import java.util.*;
 
 public class Server_23390573_23381272 {
     private static ServerSocket servSock;
-    private static final int PORT = 5555; // Change this if the port is in use
+    private static final int PORT = 5555;
     private static int clientConnections = 0;
     private static final Map<String, String> lectureStorage = new HashMap<>();
 
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
-        // Check if the port is available
         if (!isPortAvailable(PORT)) {
             System.out.println("Port " + PORT + " is already in use. Please free the port or use a different one.");
             System.exit(1);
@@ -22,7 +21,6 @@ public class Server_23390573_23381272 {
         try {
             servSock = new ServerSocket(PORT);
 
-            // Add a shutdown hook to close the server socket on exit
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     if (servSock != null && !servSock.isClosed()) {
@@ -66,23 +64,34 @@ public class Server_23390573_23381272 {
                             out.println("OPEN_ADD_LECTURE_PAGE");
                             handleAddLecture(in, out);
                             break;
+
                         case "REMOVE_LECTURE":
                             System.out.println("Opening remove lecture page...\n");
                             out.println("OPEN_REMOVE_LECTURE_PAGE");
                             handleRemoveLecture(in, out);
                             break;
+
                         case "VIEW_SCHEDULE":
                             System.out.println("Opening schedule...\n");
-                            out.println("OPEN_SCHEDULE_PAGE");
+                            out.println("OPEN_VIEW_SCHEDULE_PAGE");
                             handleViewSchedule(out);
                             break;
+
                         case "OTHER":
-                            System.out.println("opening other page...\n");
+                            System.out.println("Opening other page...\n");
                             out.println("OPEN_OTHER_PAGE");
-                        case "QUIT":
-                            System.out.println("Closing connection...\n");
-                            out.println("GOODBYE");
                             break;
+
+                        case "QUIT":
+                            System.out.println("Client requested disconnection...\n");
+                            out.println("GOODBYE");
+                            try {
+                                link.close();
+                            } catch (IOException e) {
+                                System.out.println("Error closing connection: " + e.getMessage());
+                            }
+                            return;
+
                         default:
                             throw new IncorrectActionException("Invalid request received: " + message + ". The server does not support this request.");
                     }
@@ -104,9 +113,18 @@ public class Server_23390573_23381272 {
 
     private static void handleAddLecture(BufferedReader in, PrintWriter out) {
         try {
-            String response = in.readLine();
-            String[] module = response.split(",");
+            if (!in.ready()) {
+                System.out.println("No input received for ADD_LECTURE. Ignoring.\n");
+                return;
+            }
 
+            String response = in.readLine();
+            if (response == null || response.trim().isEmpty()) {
+                System.out.println("Empty message received. Ignoring.");
+                return;
+            }
+
+            String[] module = response.split(",");
             if (module.length == 7) {
                 String moduleName = module[0];
                 String moduleID = module[1];
@@ -121,23 +139,17 @@ public class Server_23390573_23381272 {
 
                 lectureStorage.put(lectureKey, lectureDetails);
 
-                System.out.println("New Lecture Added:");
-                System.out.println("Lecture Name: " + moduleName);
-                System.out.println("Course Name: " + moduleID);
-                System.out.println("Room: " + room);
-                System.out.println("Type: " + type);
-                System.out.println("Day: " + day);
-                System.out.println("Start Time: " + startTime);
-                System.out.println("End Time: " + endTime);
-
+                System.out.println("New Lecture Added: " + lectureDetails);
                 out.println("Lecture Added Successfully!");
             } else {
+                System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
                 out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, EndTime");
             }
         } catch (IOException e) {
-            System.out.println("Unable to read message");
+            System.out.println("Unable to read message.");
         }
     }
+
 
     private static void handleRemoveLecture(BufferedReader in, PrintWriter out) {
         try {
