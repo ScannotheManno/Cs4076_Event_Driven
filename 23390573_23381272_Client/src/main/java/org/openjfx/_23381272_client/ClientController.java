@@ -122,7 +122,6 @@ public class ClientController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("OtherView.fxml"));
             Parent root = loader.load();
 
-            // Get controller and pass ClientController
             OtherController otherController = loader.getController();
             otherController.setClientController(this);
 
@@ -138,23 +137,24 @@ public class ClientController {
     @FXML public void handleOtherRequest(String request) {
         new Thread(() -> {
             try {
+                
                 switch (request) {
                     case "ADD_LECTURE":
-                        Platform.runLater(() -> openAddLectureForm());
-                        return;
+                        sendRequestToServer(request);
+                        break;
                     case "REMOVE_LECTURE":
-                        Platform.runLater(() -> openRemoveLectureForm());
-                        return;
+                        sendRequestToServer(request);
+                        break;
                     case "VIEW_SCHEDULE":
-                        Platform.runLater(() -> openViewScheduleForm());
-                        return;
+                        sendRequestToServer(request);
+                        break;
                     default:
                         String response = model.sendMessage(request);
                         Platform.runLater(() -> showAlert("Server Response", response));
                         return;
                 }
             } catch (IOException e) {
-                System.err.println("❌ Error sending request: " + e.getMessage());
+                System.err.println("Error sending request: " + e.getMessage());
             }
         }).start();
     }
