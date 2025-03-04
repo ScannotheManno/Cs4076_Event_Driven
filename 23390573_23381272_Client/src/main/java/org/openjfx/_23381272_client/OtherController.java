@@ -1,5 +1,6 @@
 package org.openjfx._23381272_client;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -9,7 +10,7 @@ public class OtherController {
     @FXML private TextField otherTextField;
     @FXML private Button submitButton;
 
-    private ClientController clientController; // Reference to main controller
+    private ClientController clientController;
 
     public void setClientController(ClientController clientController) {
         this.clientController = clientController;
@@ -18,14 +19,22 @@ public class OtherController {
     @FXML
     public void initialize() {
         dropdown.getItems().addAll("Add Lecture", "Remove Lecture", "View Schedule", "Other");
-        dropdown.setOnAction(e -> otherTextField.setVisible("Other".equals(dropdown.getValue())));
+        dropdown.setOnAction(e -> {
+            boolean isOther = "Other".equals(dropdown.getValue());
+            otherTextField.setVisible(isOther);
+            submitButton.setDisable(isOther && otherTextField.getText().trim().isEmpty());
+        });
+
+        otherTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            submitButton.setDisable(dropdown.getValue().equals("Other") && newValue.trim().isEmpty());
+        });
 
         submitButton.setOnAction(e -> handleSubmit());
     }
 
     private void handleSubmit() {
         String selectedOption = dropdown.getValue();
-        String message;
+        String message = "";
 
         if (selectedOption == null) {
             showAlert("Error", "No option selected. Please select an action.");
@@ -45,7 +54,7 @@ public class OtherController {
             case "Other":
                 message = otherTextField.getText().trim();
                 if (message.isEmpty()) {
-                    showAlert("Error", "No request entered for 'Other'. Please enter a request.");
+                    showAlert("Error", "Please enter a request for 'Other'.");
                     return;
                 }
                 break;
@@ -55,14 +64,17 @@ public class OtherController {
         }
 
         if (clientController != null) {
-            clientController.handleOtherRequest(message);
+            System.out.println("Sending request from Other page: " + message); // Debug log
+            clientController.sendRequestToServer(message);
         } else {
             showAlert("Error", "ClientController is not set.");
+            return;
         }
 
-        // Close the window after submission
-        Stage stage = (Stage) submitButton.getScene().getWindow();
-        stage.close();
+        Platform.runLater(() -> {
+            Stage stage = (Stage) submitButton.getScene().getWindow();
+            stage.close();
+        });
     }
 
     private void showAlert(String title, String message) {

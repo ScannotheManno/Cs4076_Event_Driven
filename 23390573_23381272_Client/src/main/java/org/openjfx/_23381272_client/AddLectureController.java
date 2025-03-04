@@ -33,6 +33,13 @@ public class AddLectureController {
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
 
         submitLectureButton.setOnAction(e -> handleSubmitLecture());
+        
+        Platform.runLater(() -> {
+            Stage stage = (Stage) submitLectureButton.getScene().getWindow();
+            stage.setOnCloseRequest(event -> {
+                System.out.println("❌ Window closed using the X button. No request sent.");
+            });
+        });
     }
 
     private void handleSubmitLecture() {

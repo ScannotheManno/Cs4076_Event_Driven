@@ -57,55 +57,65 @@ public class ClientController {
             return;
         }
 
+        System.out.println("📢 Attempting to send request: " + message);
         new Thread(() -> {
             try {
                 String response = model.sendMessage(message);
                 if (response == null || response.isEmpty()) {
-                response = "No response from server.";
-            }
-
-                
-                switch (response) {
-                    case "OPEN_ADD_LECTURE_PAGE":
-                        Platform.runLater(() -> openAddLectureForm());
-                        break;
-                    case "OPEN_OTHER_PAGE":
-                        Platform.runLater(() -> openOther());
-                        break;
-                    
+                    response = "No response from server.";
                 }
+                
+                System.out.println("📩 Server Response: " + response);
+                String request = response;
+                Platform.runLater(() -> handleServerResponse(request));
+
             } catch (IOException e) {
                 Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
             }
         }).start();
-    }
+}
+
     
-    private void openAddLectureForm() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddLectureView.fxml"));
-            Parent root = loader.load();
-
-
-            AddLectureController addLectureController = loader.getController();
-            addLectureController.setModel(model);
-
-            Stage stage = new Stage();
-            stage.setTitle("Add Lecture");
-            stage.setScene(new Scene(root, 400, 500));
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Failed to open Add Lecture page: " + e.getMessage());
+   private void handleServerResponse(String response) {
+        switch (response) {
+            case "OPEN_ADD_LECTURE_PAGE":
+                openAddLectureForm();
+                break;
+            case "OPEN_REMOVE_LECTURE_PAGE":
+                openRemoveLectureForm();
+                break;
+            case "OPEN_VIEW_SCHEDULE_PAGE":
+                openViewScheduleForm();
+                break;
+            case "OPEN_OTHER_PAGE":
+                openOther();
+                break;
+            default:
+                showAlert("Server Response", response);
+                break;
         }
     }
+
+
+    
+    private void openAddLectureForm() {
+        FXMLHelper.loadWindow("AddLectureView.fxml", "Add Lecture", 400, 500);
+    }
+    
+    private void openRemoveLectureForm() {
+        FXMLHelper.loadWindow("RemoveLectureView.fxml", "Remove Lecture", 400, 500);
+    }
+
+
     
     private void openViewScheduleForm() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewScheduleView.fxml"));
             Parent root = loader.load();
 
-            String scheduleData = model.sendMessage("VIEW_SCHEDULE");
-
             ViewScheduleController viewScheduleController = loader.getController();
+
+            String scheduleData = model.sendMessage("VIEW_SCHEDULE");
             viewScheduleController.populateSchedule(scheduleData);
 
             Stage stage = new Stage();
@@ -116,6 +126,7 @@ public class ClientController {
             System.out.println("Failed to open View Schedule page: " + e.getMessage());
         }
     }
+
     
     private void openOther() {
         try {
@@ -123,54 +134,31 @@ public class ClientController {
             Parent root = loader.load();
 
             OtherController otherController = loader.getController();
-            otherController.setClientController(this);
+            otherController.setClientController(this); // ✅ Pass the client controller
 
             Stage stage = new Stage();
-            stage.setTitle("Select a Service");
+            stage.setTitle("Other Services");
             stage.setScene(new Scene(root, 300, 250));
             stage.show();
         } catch (IOException e) {
-            System.out.println("Failed to open Other Request form: " + e.getMessage());
+            System.out.println("Failed to open Other page: " + e.getMessage());
         }
-    }
+}
+
     
     @FXML public void handleOtherRequest(String request) {
         new Thread(() -> {
             try {
-                
-                switch (request) {
-                    case "ADD_LECTURE":
-                        sendRequestToServer(request);
-                        break;
-                    case "REMOVE_LECTURE":
-                        sendRequestToServer(request);
-                        break;
-                    case "VIEW_SCHEDULE":
-                        sendRequestToServer(request);
-                        break;
-                    default:
-                        String response = model.sendMessage(request);
-                        Platform.runLater(() -> showAlert("Server Response", response));
-                        return;
-                }
+                String response = model.sendMessage(request);
+                Platform.runLater(() -> showAlert("Server Response", response));
             } catch (IOException e) {
-                System.err.println("Error sending request: " + e.getMessage());
+                Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
             }
         }).start();
-    }
+}
 
-    private void openRemoveLectureForm() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveLectureView.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Remove Lecture");
-            stage.setScene(new Scene(root, 400, 500));
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Failed to open Remove Lecture page: " + e.getMessage());
-        }
-    }
+
+    
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
