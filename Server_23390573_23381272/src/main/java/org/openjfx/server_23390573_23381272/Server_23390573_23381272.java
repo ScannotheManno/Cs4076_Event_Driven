@@ -72,9 +72,13 @@ public class Server_23390573_23381272 {
                             handleRemoveLecture(in, out);
                             break;
                         case "VIEW_SCHEDULE":
+                            System.out.println("Opening schedule...\n");
                             out.println("OPEN_SCHEDULE_PAGE");
                             handleViewSchedule(out);
                             break;
+                        case "OTHER":
+                            System.out.println("opening other page...\n");
+                            out.println("OPEN_OTHER_PAGE");
                         case "QUIT":
                             System.out.println("Closing connection...\n");
                             out.println("GOODBYE");
