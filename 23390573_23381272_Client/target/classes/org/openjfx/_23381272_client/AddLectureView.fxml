@@ -19,6 +19,6 @@
         <ComboBox fx:id="roomsComboBox" maxWidth="200" />
         <Label text="Class Type:" />
         <ComboBox fx:id="typeComboBox" maxWidth="200" />
-        <Button fx:id="submitLectureButton" text="Submit" maxWidth="200" />
+        <Button fx:id="submitLectureButton" text="Submit" maxWidth="50" />
     </VBox>
 </AnchorPane>

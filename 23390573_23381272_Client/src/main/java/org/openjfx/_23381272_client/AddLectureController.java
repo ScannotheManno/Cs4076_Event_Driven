@@ -2,6 +2,11 @@ package org.openjfx._23381272_client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class AddLectureController {
     @FXML private ComboBox<String> dayComboBox;
@@ -29,15 +34,33 @@ public class AddLectureController {
         String day = dayComboBox.getValue();
         String startTime = timeStartComboBox.getValue();
         String endTime = timeEndComboBox.getValue();
+        String room = roomsComboBox.getValue();
+        String type = typeComboBox.getValue();
 
-        if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || endTime == null) {
+        if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || endTime == null || room == null || type == null) {
             System.out.println("❌ Please fill in all fields.");
             return;
         }
 
-        String message = String.format("ADD_LECTURE %s,%s,%s,%s,%s",
-                lectureName, courseID, day, startTime, endTime);
+        String message = String.format("ADD_LECTURE %s,%s,%s,%s,%s,%s,%s",
+                lectureName, courseID, room, type, day, startTime, endTime);
 
         System.out.println("✅ Sending message to server: " + message);
+
+        try (Socket socket = new Socket("localhost", 5555);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            out.println(message);
+            System.out.println("✅ Lecture submitted successfully.");
+        } catch (IOException e) {
+            System.out.println("❌ Error connecting to server: " + e.getMessage());
+            return;
+        }
+
+        closeWindow();
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) submitLectureButton.getScene().getWindow();
+        stage.close();
     }
 }
