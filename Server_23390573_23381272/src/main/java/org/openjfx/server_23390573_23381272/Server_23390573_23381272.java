@@ -52,48 +52,46 @@ public class Server_23390573_23381272 {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(link.getInputStream()));
             PrintWriter out = new PrintWriter(link.getOutputStream(), true);
-            String message;
 
-            while ((message = in.readLine()) != null) {
-                System.out.println("Client: " + message);
+            while (true) {
+                String message = in.readLine();
+                if (message == null) break;
+
+                System.out.println("Received from client: " + message);
 
                 try {
                     switch (message) {
                         case "ADD_LECTURE":
-                            System.out.println("Opening add lecture page...\n");
+                            System.out.println("Opening Add Lecture page...\n");
                             out.println("OPEN_ADD_LECTURE_PAGE");
                             handleAddLecture(in, out);
                             break;
 
                         case "REMOVE_LECTURE":
-                            System.out.println("Opening remove lecture page...\n");
+                            System.out.println("Opening Remove Lecture page...\n");
                             out.println("OPEN_REMOVE_LECTURE_PAGE");
-                            handleRemoveLecture(in, out);
                             break;
 
                         case "VIEW_SCHEDULE":
-                            System.out.println("Opening schedule...\n");
+                            System.out.println("Opening Schedule...\n");
                             out.println("OPEN_VIEW_SCHEDULE_PAGE");
+                            break;
+                            
+                        case "SEND_LECTURE_DETAILS":
                             handleViewSchedule(out);
                             break;
 
                         case "OTHER":
-                            System.out.println("Opening other page...\n");
+                            System.out.println("🟣 Opening Other Services...");
                             out.println("OPEN_OTHER_PAGE");
                             break;
 
                         case "QUIT":
-                            System.out.println("Client requested disconnection...\n");
+                            System.out.println("❌ Client disconnected...");
                             out.println("GOODBYE");
-                            try {
-                                link.close();
-                            } catch (IOException e) {
-                                System.out.println("Error closing connection: " + e.getMessage());
-                            }
                             return;
-
                         default:
-                            throw new IncorrectActionException("Invalid request received: " + message + ". The server does not support this request.");
+                            throw new IncorrectActionException("Invalid request received: " + message);
                     }
                 } catch (IncorrectActionException e) {
                     System.out.println("Error: " + e.getMessage());
@@ -101,12 +99,13 @@ public class Server_23390573_23381272 {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection error: " + e.getMessage());
         } finally {
             try {
                 link.close();
+                System.out.println("Client connection closed.");
             } catch (IOException e) {
-                System.out.println("Unable to disconnect");
+                System.out.println("Unable to close connection.");
             }
         }
     }
