@@ -64,11 +64,24 @@ public class ClientController {
                 if (response == null || response.isEmpty()) {
                     response = "No response from server.";
                 }
+                System.out.println("Message Sent: " + message);
+                System.out.println("Server Response: " + response + "\n");
                 
-                System.out.println("📩 Server Response: " + response);
-                String request = response;
-                Platform.runLater(() -> handleServerResponse(request));
-
+                switch (response) {
+                    case "OPEN_ADD_LECTURE_PAGE":
+                        Platform.runLater(() -> openAddLectureForm());
+                        break;
+                    case "OPEN_REMOVE_LECTURE_PAGE":
+                        Platform.runLater(() -> openRemoveLectureForm());
+                        break;
+                    case "OPEN_VIEW_SCHEDULE_PAGE":
+                        Platform.runLater(() -> openViewScheduleForm());
+                        break;
+                    case "OPEN_OTHER_PAGE":
+                        Platform.runLater(() -> openOther());
+                        break;
+                }
+                
             } catch (IOException e) {
                 Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
             }
@@ -76,31 +89,26 @@ public class ClientController {
 }
 
     
-   private void handleServerResponse(String response) {
-        switch (response) {
-            case "OPEN_ADD_LECTURE_PAGE":
-                openAddLectureForm();
-                break;
-            case "OPEN_REMOVE_LECTURE_PAGE":
-                openRemoveLectureForm();
-                break;
-            case "OPEN_VIEW_SCHEDULE_PAGE":
-                openViewScheduleForm();
-                break;
-            case "OPEN_OTHER_PAGE":
-                openOther();
-                break;
-            default:
-                showAlert("Server Response", response);
-                break;
-        }
-    }
-
+   
 
     
-    private void openAddLectureForm() {
-        FXMLHelper.loadWindow("AddLectureView.fxml", "Add Lecture", 400, 500);
-    }
+   private void openAddLectureForm() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddLectureView.fxml"));
+            Parent root = loader.load();
+
+            AddLectureController addLectureController = loader.getController();
+            addLectureController.setModel(model);
+
+            Stage stage = new Stage();
+            stage.setTitle("Add Lecture");
+            stage.setScene(new Scene(root, 400, 500));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open Add Lecture page: " + e.getMessage());
+        }
+}
+
     
     private void openRemoveLectureForm() {
         FXMLHelper.loadWindow("RemoveLectureView.fxml", "Remove Lecture", 400, 500);
@@ -115,7 +123,7 @@ public class ClientController {
 
             ViewScheduleController viewScheduleController = loader.getController();
 
-            String scheduleData = model.sendMessage("VIEW_SCHEDULE");
+            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
             viewScheduleController.populateSchedule(scheduleData);
 
             Stage stage = new Stage();

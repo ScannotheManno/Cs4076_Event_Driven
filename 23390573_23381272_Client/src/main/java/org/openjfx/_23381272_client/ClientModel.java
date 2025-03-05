@@ -28,10 +28,8 @@ public class ClientModel {
             return "Not connected to server.";
         }
 
-        System.out.println("Sending message to server: " + message);
         out.println(message);
         String response = in.readLine();
-        System.out.println("Server Response: " + response + "\n");
         return response;
     }
 

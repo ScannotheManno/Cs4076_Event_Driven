@@ -56,33 +56,26 @@ public class AddLectureController {
             return;
         }
 
-        String message = String.format("ADD_LECTURE %s,%s,%s,%s,%s,%s,%s",
+        // Format message properly
+        String message = String.format("ADD_LECTURE,%s,%s,%s,%s,%s,%s,%s",
                 lectureName, courseID, room, type, day, startTime, endTime);
 
-        System.out.println("✅ Sending message to server: " + message);
+        System.out.println("📤 Sending to server: " + message); // Debugging log
 
-        if (model != null) {
-            new Thread(() -> {
-                try {
-                    String response = model.sendMessage(message);
-                    Platform.runLater(() -> showAlert("Server Response", response));
-                } catch (IOException e) {
-                    Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
-                }
-            }).start();
-        } else {
-            try (Socket socket = new Socket("localhost", 5555);
-                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-                out.println(message);
-                System.out.println("✅ Lecture submitted successfully.");
+        new Thread(() -> {
+            try {
+                String response = model.sendMessage(message);
+                System.out.println("📩 Server Response: " + response); // Debugging log
+                Platform.runLater(() -> showAlert("Server Response", response));
             } catch (IOException e) {
-                System.out.println("❌ Error connecting to server: " + e.getMessage());
-                return;
+                Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
             }
-        }
+        }).start();
 
         closeWindow();
     }
+
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
