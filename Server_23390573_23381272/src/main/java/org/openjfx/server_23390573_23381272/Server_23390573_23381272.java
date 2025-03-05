@@ -64,9 +64,16 @@ public class Server_23390573_23381272 {
                         case "ADD_LECTURE":
                             System.out.println("Opening Add Lecture page...\n");
                             out.println("OPEN_ADD_LECTURE_PAGE");
-                            handleAddLecture(in, out);
+                            
                             break;
 
+                        case "SUBMIT_LECTURE":
+                            System.out.println("Waiting for data...\n");
+                            out.println("SEND_DATA");
+                            String lectureData = in.readLine();
+                            handleAddLecture(lectureData, out);
+                            break;
+                            
                         case "REMOVE_LECTURE":
                             System.out.println("Opening Remove Lecture page...\n");
                             out.println("OPEN_REMOVE_LECTURE_PAGE");
@@ -110,44 +117,39 @@ public class Server_23390573_23381272 {
         }
     }
 
-    private static void handleAddLecture(BufferedReader in, PrintWriter out) {
-        try {
-            if (!in.ready()) {
-                System.out.println("No input received for ADD_LECTURE. Ignoring.\n");
-                return;
-            }
+    private static void handleAddLecture(String lectureData, PrintWriter out) {
+        
+        String response = lectureData;
+        if (response == null || response.trim().isEmpty()) {
+            System.out.println("Empty message received. Ignoring.");
+            return;
+        }
 
-            String response = in.readLine();
-            if (response == null || response.trim().isEmpty()) {
-                System.out.println("Empty message received. Ignoring.");
-                return;
-            }
+        String[] module = response.split(",");
+        if (module.length == 7) {
+            String moduleName = module[0];
+            String moduleID = module[1];
+            String room = module[2];
+            String type = module[3];
+            String day = module[4];
+            String startTime = module[5];
+            String endTime = module[6];
 
-            String[] module = response.split(",");
-            if (module.length == 7) {
-                String moduleName = module[0];
-                String moduleID = module[1];
-                String room = module[2];
-                String type = module[3];
-                String day = module[4];
-                String startTime = module[5];
-                String endTime = module[6];
+            String lectureKey = moduleName + "_" + room + "_" + type + "_" + day + "_" + startTime;
+            String lectureDetails = moduleName + "," + moduleID + "," + room + "," + type + "," + day + "," + startTime + "," + endTime;
 
-                String lectureKey = moduleName + "_" + room + "_" + type + "_" + day + "_" + startTime;
-                String lectureDetails = moduleName + "," + moduleID + "," + room + "," + type + "," + day + "," + startTime + "," + endTime;
+            lectureStorage.put(lectureKey, lectureDetails);
 
-                lectureStorage.put(lectureKey, lectureDetails);
+            System.out.println("New Lecture Added: " + lectureDetails);
+            out.println("Lecture Added Successfully!");
+        } else {
 
-                System.out.println("New Lecture Added: " + lectureDetails);
-                out.println("Lecture Added Successfully!");
-            } else {
-                System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
-                out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, EndTime");
-            }
-        } catch (IOException e) {
-            System.out.println("Unable to read message.");
+            System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
+            out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, EndTime");
         }
     }
+        
+    
 
 
     private static void handleRemoveLecture(BufferedReader in, PrintWriter out) {
