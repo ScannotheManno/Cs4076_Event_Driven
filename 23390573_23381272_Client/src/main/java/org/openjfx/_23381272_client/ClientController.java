@@ -107,7 +107,7 @@ public class ClientController {
         } catch (IOException e) {
             System.out.println("Failed to open Add Lecture page: " + e.getMessage());
         }
-}
+    }
 
     
     private void openRemoveLectureForm() {

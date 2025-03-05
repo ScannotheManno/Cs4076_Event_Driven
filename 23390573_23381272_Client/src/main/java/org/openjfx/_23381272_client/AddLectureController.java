@@ -19,9 +19,14 @@ public class AddLectureController {
     @FXML private Button submitLectureButton;
 
     private ClientModel model;
+    private ClientController controller;
 
     public void setModel(ClientModel model) {
         this.model = model;
+    }
+    
+    public void setController(ClientController controller) {
+        this.controller = controller;
     }
 
     @FXML
@@ -32,7 +37,7 @@ public class AddLectureController {
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
 
-        submitLectureButton.setOnAction(e -> handleSubmitLecture());
+        submitLectureButton.setOnAction(e -> handleSubmitButton());
         
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();
@@ -40,6 +45,18 @@ public class AddLectureController {
                 System.out.println("❌ Window closed using the X button. No request sent.");
             });
         });
+    }
+    
+    private void handleSubmitButton(){
+        try {
+            String response = model.sendMessage("SUBMIT_LECTURE");
+            if (response.equals("SEND_DATA")) {
+                handleSubmitLecture();
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleSubmitLecture() {
@@ -57,7 +74,7 @@ public class AddLectureController {
         }
 
         // Format message properly
-        String message = String.format("ADD_LECTURE,%s,%s,%s,%s,%s,%s,%s",
+        String message = String.format("%s,%s,%s,%s,%s,%s,%s",
                 lectureName, courseID, room, type, day, startTime, endTime);
 
         System.out.println("📤 Sending to server: " + message); // Debugging log
