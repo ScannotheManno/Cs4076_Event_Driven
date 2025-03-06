@@ -19,33 +19,15 @@ public class ViewScheduleController {
         "14:00", "15:00", "16:00", "17:00", "18:00"
     };
 
-    
-    @FXML
-    public void initialize() {
-        scheduleGrid.getChildren().clear(); // Clear any old data
-
-        // Add headers for days (Monday - Friday)
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-        for (int col = 0; col < days.length; col++) {
-            Label dayLabel = new Label(days[col]);
-            dayLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-            dayLabel.setTextFill(Color.BLUE); // Make it stand out
-
-            // Add the day label to the first row (rowIndex = 0), one per column
-            scheduleGrid.add(dayLabel, col + 1, 0);
-        }
-    }
-
-    
     public void populateSchedule(String scheduleData) {
         if (scheduleData.equals("No lectures scheduled.")) {
             System.out.println("No lectures available.");
             return;
         }
 
+        createTimetable();
         Platform.runLater(() -> {
-            scheduleGrid.getChildren().clear(); // ✅ Clear previous entries
-
+            
             String[] lectures = scheduleData.split(";");
             for (String lecture : lectures) {
                 String[] details = lecture.split(",");
@@ -76,8 +58,11 @@ public class ViewScheduleController {
                         // Add background and text to the stack
                         lectureBox.getChildren().addAll(background, lectureLabel);
 
-                        // Add stack to grid
-                        scheduleGrid.add(lectureBox, col, row);
+                        scheduleGrid.getChildren().removeIf(node -> 
+                            GridPane.getColumnIndex(node) == col + 1 &&
+                            GridPane.getRowIndex(node) == row + 1
+                            );
+                        scheduleGrid.add(lectureBox, col + 1, row + 1);
                     } else {
                         System.out.println("❌ Invalid Position: " + moduleName + " (" + day + " " + startTime + ")");
                     }
@@ -106,5 +91,54 @@ public class ViewScheduleController {
             }
         }
         return -1; // ❌ Error case
+    }
+    
+    private void createTimetable() {
+        Platform.runLater(() -> {
+            scheduleGrid.getChildren().clear(); // ✅ Clears everything before adding elements
+
+            // Add day headers at the top (Monday - Friday)
+            String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+            for (int col = 0; col < days.length; col++) {
+                StackPane headerPane = new StackPane();
+
+                // Create black background rectangle for day headers
+                Rectangle background = new Rectangle(120, 40);
+                background.setFill(Color.BLACK);
+                background.setStroke(Color.GRAY);
+
+                // Create label for the day name
+                Label dayLabel = new Label(days[col]);
+                dayLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+                dayLabel.setTextFill(Color.WHITE);
+
+                // Stack the label on top of the rectangle
+                headerPane.getChildren().addAll(background, dayLabel);
+
+                // Add to the GridPane at row 0 (header row)
+                scheduleGrid.add(headerPane, col + 1, 0);
+            }
+
+            // Define all time slots
+            String[] timeSlots = {"09:00", "10:00", "11:00", "12:00", "13:00",
+                                  "14:00", "15:00", "16:00", "17:00", "18:00"};
+
+            // Fill the entire timetable with blank boxes
+            for (int col = 0; col < days.length; col++) { // Loop through days
+                for (int row = 0; row < timeSlots.length; row++) { // Loop through times
+                    StackPane blankBox = new StackPane();
+
+                    // Create a light gray background rectangle for empty slots
+                    Rectangle blankBackground = new Rectangle(120, 40);
+                    blankBackground.setFill(Color.LIGHTGRAY);
+                    blankBackground.setStroke(Color.GRAY);
+
+                    blankBox.getChildren().add(blankBackground);
+
+                    // Add blank box to grid at (col + 1, row + 1) since headers are in row 0
+                    scheduleGrid.add(blankBox, col + 1, row + 1);
+                }
+            }
+        });
     }
 }
