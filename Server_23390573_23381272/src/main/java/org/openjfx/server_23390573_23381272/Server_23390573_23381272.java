@@ -85,16 +85,17 @@ public class Server_23390573_23381272 {
                             break;
                             
                         case "SEND_LECTURE_DETAILS":
+                            System.out.println("Sending lecture data...\n");
                             handleViewSchedule(out);
                             break;
 
                         case "OTHER":
-                            System.out.println("🟣 Opening Other Services...");
+                            System.out.println("Opening Other Services...");
                             out.println("OPEN_OTHER_PAGE");
                             break;
 
                         case "QUIT":
-                            System.out.println("❌ Client disconnected...");
+                            System.out.println("Client disconnected...");
                             out.println("GOODBYE");
                             return;
                         default:
@@ -168,13 +169,16 @@ public class Server_23390573_23381272 {
 
     private static void handleViewSchedule(PrintWriter out) {
         if (lectureStorage.isEmpty()) {
-            out.println("No lectures scheduled.");
+            out.println("NO_LECTURES_SCHEDULED");
         } else {
+            StringBuilder scheduleData = new StringBuilder();
             for (Map.Entry<String, String> entry : lectureStorage.entrySet()) {
-                out.println(entry.getValue());
+                scheduleData.append(entry.getValue()).append(";"); // Separate lectures by ;
             }
+            out.println(scheduleData.toString());
         }
-    }
+}
+
 
     private static boolean isPortAvailable(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
