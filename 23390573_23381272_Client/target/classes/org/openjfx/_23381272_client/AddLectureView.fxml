@@ -13,8 +13,8 @@
         <ComboBox fx:id="dayComboBox" maxWidth="200" />
         <Label text="Start Time:" />
         <ComboBox fx:id="timeStartComboBox" maxWidth="200" />
-        <Label text="End Time:" />
-        <ComboBox fx:id="timeEndComboBox" maxWidth="200" />
+        <Label text="Duration:" />
+        <Spinner fx:id="durationSpinner" maxWidth="100" />
         <Label text="Room:" />
         <ComboBox fx:id="roomsComboBox" maxWidth="200" />
         <Label text="Class Type:" />

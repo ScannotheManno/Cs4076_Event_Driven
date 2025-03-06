@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 public class AddLectureController {
     @FXML private ComboBox<String> dayComboBox;
     @FXML private ComboBox<String> timeStartComboBox;
-    @FXML private ComboBox<String> timeEndComboBox;
+    @FXML private Spinner<Integer> durationSpinner;
     @FXML private ComboBox<String> roomsComboBox;
     @FXML private ComboBox<String> typeComboBox;
     @FXML private TextField moduleNameField;
@@ -33,7 +33,7 @@ public class AddLectureController {
     public void initialize() {
         dayComboBox.getItems().addAll("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
         timeStartComboBox.getItems().addAll("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00");
-        timeEndComboBox.getItems().addAll("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
+        durationSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1));
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
         
@@ -63,18 +63,18 @@ public class AddLectureController {
         String courseID = moduleIDField.getText();
         String day = dayComboBox.getValue();
         String startTime = timeStartComboBox.getValue();
-        String endTime = timeEndComboBox.getValue();
+        String duration = durationSpinner.getValue().toString();
         String room = roomsComboBox.getValue();
         String type = typeComboBox.getValue();
 
-        if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || endTime == null || room == null || type == null) {
+        if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || duration == null || room == null || type == null) {
             showAlert("Missing Fields", "Please fill in all fields before submitting.");
             return;
         }
 
         // Format message properly
         String message = String.format("%s,%s,%s,%s,%s,%s,%s",
-                lectureName, courseID, room, type, day, startTime, endTime);
+                lectureName, courseID, room, type, day, startTime, duration);
 
         System.out.println("📤 Sending to server: " + message); // Debugging log
 

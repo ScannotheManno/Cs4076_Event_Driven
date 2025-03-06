@@ -16,8 +16,7 @@ public class ViewScheduleController {
     // Define the time slots in the correct order
     private static final String[] timeSlots = {
         "09:00", "10:00", "11:00", "12:00", "13:00",
-        "14:00", "15:00", "16:00", "17:00", "18:00"
-    };
+        "14:00", "15:00", "16:00", "17:00"};
 
     public void populateSchedule(String scheduleData) {
         if (scheduleData.equals("No lectures scheduled.")) {
@@ -33,11 +32,29 @@ public class ViewScheduleController {
                 String[] details = lecture.split(",");
                 if (details.length == 7) {
                     String moduleName = details[0];
+                    String moduleID = details[1];
+                    String room = details[2];
+                    String type = details[3];
                     String day = details[4];
                     String startTime = details[5];
-
+                    String duration = details[6];
+                    
                     int col = getColumnForDay(day);
                     int row = getRowForTime(startTime);
+                    
+                    
+                    for (int i = moduleID.length()/2; i < ((moduleName.length() / 2) + (moduleID.length() / 4)); i++) {
+                        moduleID = " " + moduleID;
+                    }
+                    
+                    
+                    for (int i = room.length()/2; i < ((moduleName.length() / 2) + (room.length() / 4)); i++) {
+                        room = " " + room;
+                    }
+                    
+                    for (int i = startTime.length()/2; i < ((moduleName.length() / 2) + (startTime.length() / 4)); i++) {
+                        startTime = " " + startTime;
+                    }
 
                     System.out.println("📌 Placing: " + moduleName + " at Column: " + col + ", Row: " + row);
 
@@ -45,24 +62,45 @@ public class ViewScheduleController {
                         // Create a stack to hold the black box and text
                         StackPane lectureBox = new StackPane();
 
-                        // Create black background rectangle
-                        Rectangle background = new Rectangle(100, 40); // Adjust width & height if needed
-                        background.setFill(Color.WHITE);
-                        background.setStroke(Color.GRAY);
-
+                        Rectangle background;
+                        if (duration.equals("1")) {
+                            background = new Rectangle(200, 40);
+                            background.setFill(Color.WHITE);
+                            background.setStroke(Color.BLACK);
+                        } else {
+                            background = new Rectangle(200, 80);
+                            background.setFill(Color.WHITE);
+                            background.setStroke(Color.BLACK);
+                            
+                        }
                         // Create label for lecture name
-                        Label lectureLabel = new Label(moduleName);
+                        Label lectureLabel = new Label(startTime + "\n" + moduleName + "\n" + moduleID + "-" + type + "\n" + room );
                         lectureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
                         lectureLabel.setTextFill(Color.BLACK);
 
                         // Add background and text to the stack
                         lectureBox.getChildren().addAll(background, lectureLabel);
+                        
+                        if (duration.equals("1")) {
+                            scheduleGrid.getChildren().removeIf(node -> 
+                                GridPane.getColumnIndex(node) == col + 1 &&
+                                GridPane.getRowIndex(node) == row + 1
+                                );
+                        } else {
+                            for (int i = 0; i < 2; i++) {
+                                
+                                int removeRow = row + 1 + i;
+                                int removeCol = col + 1;
+                                
+                                scheduleGrid.getChildren().removeIf(node -> 
+                                GridPane.getColumnIndex(node) == removeCol &&
+                                GridPane.getRowIndex(node) == removeRow 
+                                );
+                            }
+                        }
+                        int durationInt = Integer.parseInt(duration); // Convert duration to an integer
+                        scheduleGrid.add(lectureBox, col + 1, row + 1, 1, durationInt); // Span rows properly
 
-                        scheduleGrid.getChildren().removeIf(node -> 
-                            GridPane.getColumnIndex(node) == col + 1 &&
-                            GridPane.getRowIndex(node) == row + 1
-                            );
-                        scheduleGrid.add(lectureBox, col + 1, row + 1);
                     } else {
                         System.out.println("❌ Invalid Position: " + moduleName + " (" + day + " " + startTime + ")");
                     }
@@ -103,9 +141,9 @@ public class ViewScheduleController {
                 StackPane headerPane = new StackPane();
 
                 // Create black background rectangle for day headers
-                Rectangle background = new Rectangle(120, 40);
-                background.setFill(Color.BLACK);
-                background.setStroke(Color.GRAY);
+                Rectangle background = new Rectangle(200, 40);
+                background.setFill(Color.GREEN);
+                background.setStroke(Color.BLACK);
 
                 // Create label for the day name
                 Label dayLabel = new Label(days[col]);
@@ -121,7 +159,7 @@ public class ViewScheduleController {
 
             // Define all time slots
             String[] timeSlots = {"09:00", "10:00", "11:00", "12:00", "13:00",
-                                  "14:00", "15:00", "16:00", "17:00", "18:00"};
+                                  "14:00", "15:00", "16:00", "17:00"};
 
             // Fill the entire timetable with blank boxes
             for (int col = 0; col < days.length; col++) { // Loop through days
@@ -129,9 +167,9 @@ public class ViewScheduleController {
                     StackPane blankBox = new StackPane();
 
                     // Create a light gray background rectangle for empty slots
-                    Rectangle blankBackground = new Rectangle(120, 40);
-                    blankBackground.setFill(Color.LIGHTGRAY);
-                    blankBackground.setStroke(Color.GRAY);
+                    Rectangle blankBackground = new Rectangle(200, 40);
+                    blankBackground.setFill(Color.WHITE);
+                    blankBackground.setStroke(Color.BLACK);
 
                     blankBox.getChildren().add(blankBackground);
 

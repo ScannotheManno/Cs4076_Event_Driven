@@ -128,7 +128,7 @@ public class ClientController {
 
             Stage stage = new Stage();
             stage.setTitle("View Schedule");
-            stage.setScene(new Scene(root, 600, 400));
+            stage.setScene(new Scene(root, 900, 600));
             stage.show();
         } catch (IOException e) {
             System.out.println("Failed to open View Schedule page: " + e.getMessage());
