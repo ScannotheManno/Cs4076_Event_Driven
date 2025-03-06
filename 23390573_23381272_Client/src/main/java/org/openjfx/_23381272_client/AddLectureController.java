@@ -36,8 +36,6 @@ public class AddLectureController {
         timeEndComboBox.getItems().addAll("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
-
-        submitLectureButton.setOnAction(e -> handleSubmitButton());
         
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();
@@ -47,6 +45,7 @@ public class AddLectureController {
         });
     }
     
+    @FXML
     private void handleSubmitButton(){
         try {
             String response = model.sendMessage("SUBMIT_LECTURE");
