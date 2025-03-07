@@ -49,7 +49,7 @@ public class AddLectureController {
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();
             stage.setOnCloseRequest(event -> {
-                System.out.println("❌ Window closed using the X button. No request sent.");
+                System.out.println("Window closed using the X button. No request sent.\n");
             });
         });
     }
@@ -80,16 +80,15 @@ public class AddLectureController {
             return;
         }
 
-        // Format message properly
         String message = String.format("%s,%s,%s,%s,%s,%s,%s",
                 lectureName, courseID, room, type, day, startTime, duration);
 
-        System.out.println("📤 Sending to server: " + message); // Debugging log
+        System.out.println("Sending to server: " + message); // Debugging log
 
         new Thread(() -> {
             try {
                 String response = model.sendMessage(message);
-                System.out.println("📩 Server Response: " + response); // Debugging log
+                System.out.println("Server Response: " + response + "\n"); // Debugging log
                 Platform.runLater(() -> showAlert("Server Response", response));
             } catch (IOException e) {
                 Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));

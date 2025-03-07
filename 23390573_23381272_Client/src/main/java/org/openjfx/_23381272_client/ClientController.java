@@ -66,7 +66,7 @@ public class ClientController {
             return;
         }
 
-        System.out.println("📢 Attempting to send request: " + message);
+        System.out.println("Attempting to send request: " + message);
         new Thread(() -> {
             try {
                 
@@ -101,13 +101,8 @@ public class ClientController {
                 Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
             }
         }).start();
-}
+    }
     
-    
-
-
-    
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
