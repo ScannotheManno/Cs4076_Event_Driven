@@ -9,7 +9,8 @@ public class Server_23390573_23381272 {
     private static final int PORT = 5555;
     private static int clientConnections = 0;
     private static final Map<String, String> lectureStorage = new HashMap<>();
-
+    private static final ArrayList<String> timetableSpaces = new ArrayList<>();
+    private static final ArrayList<String> studentAvailibility = new ArrayList<>();
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
@@ -20,17 +21,6 @@ public class Server_23390573_23381272 {
 
         try {
             servSock = new ServerSocket(PORT);
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    if (servSock != null && !servSock.isClosed()) {
-                        servSock.close();
-                        System.out.println("Server socket closed.");
-                    }
-                } catch (IOException e) {
-                    System.out.println("Error closing server socket: " + e.getMessage());
-                }
-            }));
 
             while (true) {
                 try {
@@ -70,13 +60,26 @@ public class Server_23390573_23381272 {
                         case "SUBMIT_LECTURE":
                             System.out.println("Waiting for data...\n");
                             out.println("SEND_DATA");
-                            String lectureData = in.readLine();
-                            handleAddLecture(lectureData, out);
+                            String scheduleData = in.readLine();
+                            handleAddLecture(scheduleData, out);
                             break;
                             
                         case "REMOVE_LECTURE":
                             System.out.println("Opening Remove Lecture page...\n");
                             out.println("OPEN_REMOVE_LECTURE_PAGE");
+                            break;
+                            
+                        case "SEND_LECTURES":
+                            System.out.println("Sending lecture data...\n");
+                            sendLectureKeys(out);
+                            break;
+                            
+                        case "REMOVE_THIS_LECTURE":
+                            System.out.println("Waiting for data...");
+                            out.println("SEND_DATA");
+                            String lectureData = in.readLine();
+                            handleRemoveLecture(lectureData, out);
+                            System.out.println("Removing " + lectureData + "...\n");
                             break;
 
                         case "VIEW_SCHEDULE":
@@ -134,50 +137,113 @@ public class Server_23390573_23381272 {
             String type = module[3];
             String day = module[4];
             String startTime = module[5];
-            String endTime = module[6];
+            String duration = module[6];
 
-            String lectureKey = moduleName + "_" + room + "_" + type + "_" + day + "_" + startTime;
-            String lectureDetails = moduleName + "," + moduleID + "," + room + "," + type + "," + day + "," + startTime + "," + endTime;
-
-            lectureStorage.put(lectureKey, lectureDetails);
-
-            System.out.println("New Lecture Added: " + lectureDetails);
-            out.println("Lecture Added Successfully!");
+            String availibility = day + "_" + startTime;
+            String fillTimetable = room + "_" + day + "_" + startTime;
+            String lectureKey = moduleName + "_" + type + "_" + room + "_" + day + "_" + startTime;
+            String lectureDetails = moduleName + "," + moduleID + "," + type + "," + room + "," + day + "," + startTime + "," + duration;
+            
+            
+            
+            if (lectureStorage.containsKey(lectureKey)) {
+                System.out.println("Error: Lecture already exists");
+                out.println("Error: Lecture already exists.");
+            } else if (timetableSpaces.contains(fillTimetable)) {
+                System.out.println("Error: This room is already in use at this time.");
+                out.println("Error: This room is already in use at the time specified.");
+            } else if (studentAvailibility.contains(availibility)) {
+                System.out.println("Student unavailable at this time.");
+                out.println("Error: Student already has a class at this time.");
+            } else {
+                lectureStorage.put(lectureKey, lectureDetails);
+                timetableSpaces.add(fillTimetable);
+                studentAvailibility.add(availibility);
+                if (duration.equals("2")) {
+                    int time = Integer.parseInt(startTime.split(":")[0]);
+                    time += 1;
+                    String extraTime = String.format("%02d:00", time);
+                    String extraSpace = room + "_" + day + "_" + extraTime;
+                    String extraAvail = day + "_" + extraTime; 
+                    timetableSpaces.add(extraSpace); 
+                    studentAvailibility.add(extraAvail);
+                }
+                System.out.println("New Lecture Added: " + lectureDetails);
+                out.println("Lecture Added Successfully!");
+            }
         } else {
 
             System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
-            out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, EndTime");
+            out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, duration");
         }
     }
         
     
 
 
-    private static void handleRemoveLecture(BufferedReader in, PrintWriter out) {
-        try {
-            String lectureKey = in.readLine();
-            if (lectureStorage.containsKey(lectureKey)) {
-                lectureStorage.remove(lectureKey);
-                out.println("Lecture Removed Successfully!");
-            } else {
-                out.println("ERROR: Lecture not found.");
+    private static void handleRemoveLecture(String lectureData, PrintWriter out) {
+        if (lectureStorage.containsKey(lectureData)) {
+            String[] lectureDetails = lectureStorage.get(lectureData).split(",");
+            String room = lectureDetails[3];
+            String day = lectureDetails[4];
+            String startTime = lectureDetails[5];
+            String duration = lectureDetails[6];
+            
+            String availData = day + "_" + startTime;
+            String spaceData = room + "_" + day + "_" + startTime;
+                        
+            if (timetableSpaces.contains(spaceData) && studentAvailibility.contains(availData)) {                
+                if (duration.equals("2")) {
+                    int time = Integer.parseInt(startTime.split(":")[0]);
+                    time += 1;
+                    String extraTime = String.format("%02d:00", time);
+                    String extraSpace = room + "_" + day + "_" + extraTime;
+                    String extraAvail = day + "_" + extraTime;
+                    timetableSpaces.remove(spaceData);
+                    timetableSpaces.remove(extraSpace);
+                    studentAvailibility.remove(availData);
+                    studentAvailibility.remove(extraAvail);
+                    lectureStorage.remove(lectureData);
+                    System.out.println("Removing two hour lecture");
+                } else {
+                    timetableSpaces.remove(spaceData);
+                    studentAvailibility.remove(availData);
+                    lectureStorage.remove(lectureData);
+                    System.out.println("Removing one hour lecture");
+                }
             }
-        } catch (IOException e) {
-            System.out.println("Unable to read message");
-        }
+            out.println("Lecture Removed Successfully!");
+        } else {
+            out.println("ERROR: Lecture not found.");
+        }   
     }
-
+    
     private static void handleViewSchedule(PrintWriter out) {
         if (lectureStorage.isEmpty()) {
             out.println("NO_LECTURES_SCHEDULED");
         } else {
             StringBuilder scheduleData = new StringBuilder();
             for (Map.Entry<String, String> entry : lectureStorage.entrySet()) {
-                scheduleData.append(entry.getValue()).append(";"); // Separate lectures by ;
+                scheduleData.append(entry.getValue()).append(";");
             }
             out.println(scheduleData.toString());
         }
-}
+    }
+    
+    private static void sendLectureKeys(PrintWriter out) {
+        if (lectureStorage.isEmpty()) {
+            out.println("No lectures available.");
+        } else {
+            StringBuilder keys = new StringBuilder();
+            for (String key : lectureStorage.keySet()) {
+                keys.append(key).append(";");
+            }
+            out.println(keys.toString());
+        }
+    }
+    
+    
+
 
 
     private static boolean isPortAvailable(int port) {
