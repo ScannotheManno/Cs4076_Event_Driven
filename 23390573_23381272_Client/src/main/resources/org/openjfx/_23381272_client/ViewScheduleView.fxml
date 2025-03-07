@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
 
-<GridPane xmlns="http://javafx.com/javafx"
-          xmlns:fx="http://javafx.com/fxml"
-          fx:controller="org.openjfx._23381272_client.ViewScheduleController"
-          fx:id="scheduleGrid"
-          hgap="0" vgap="0"
-          alignment="CENTER"
-          style="-fx-background-color: white; -fx-padding: 20;">
-</GridPane>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openjfx._23381272_client.ViewScheduleController"
+      alignment="CENTER"
+      spacing="20"
+      style="-fx-background-color: white; -fx-padding: 20;">
+    
+    <!-- ImageView for Logo -->
+    <ImageView fx:id="logo" fitWidth="200" fitHeight="100"/>
+
+    <!-- Schedule Grid -->
+    <GridPane fx:id="scheduleGrid"
+              hgap="0" vgap="0"
+              alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 20;">
+    </GridPane>
+
+</VBox>

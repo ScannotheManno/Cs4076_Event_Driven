@@ -2,6 +2,7 @@ package org.openjfx._23381272_client;
 
 import java.io.*;
 import java.net.*;
+import javafx.scene.control.Alert;
 
 public class ClientModel {
     private Socket socket;
@@ -17,9 +18,12 @@ public class ClientModel {
             socket = new Socket(serverAddress, serverPort);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("Connection Established\n");
 
         } catch (IOException e) {
-            System.err.println("Connection failed: " + e.getMessage());
+            showAlert("Error", "Failed to connect to server. Check that server is online.");
+            System.err.println("Failed to connect to server. Check that server is online.");
+            System.exit(0);
         }
     }
 
@@ -38,5 +42,13 @@ public class ClientModel {
              socket.close();
         }   
 
+    }
+    
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

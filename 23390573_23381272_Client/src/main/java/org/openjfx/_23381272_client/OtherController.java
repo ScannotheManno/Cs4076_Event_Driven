@@ -3,12 +3,15 @@ package org.openjfx._23381272_client;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class OtherController {
     @FXML private ComboBox<String> dropdown;
     @FXML private TextField otherTextField;
     @FXML private Button submitButton;
+    @FXML private ImageView logo;
 
     private ClientController clientController;
 
@@ -18,6 +21,13 @@ public class OtherController {
 
     @FXML
     public void initialize() {
+        if (logo == null) {
+            System.out.println("Error: ImageView 'logo' is null!");
+        } else {
+            Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+            logo.setImage(image);
+        }
+        
         dropdown.getItems().addAll("Add Lecture", "Remove Lecture", "View Schedule", "Other");
         dropdown.setOnAction(e -> {
             boolean isOther = "Other".equals(dropdown.getValue());
@@ -67,7 +77,7 @@ public class OtherController {
             System.out.println("Sending request from Other page: " + message); // Debug log
             clientController.sendRequestToServer(message);
         } else {
-            showAlert("Error", "ClientController is not set.");
+            Platform.runLater(() -> showAlert("Error", "ClientController is not set."));
             return;
         }
 

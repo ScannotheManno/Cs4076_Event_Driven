@@ -3,6 +3,7 @@ package org.openjfx._23381272_client;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -12,6 +13,18 @@ import javafx.scene.text.FontWeight;
 
 public class ViewScheduleController {
     @FXML private GridPane scheduleGrid;
+    @FXML private ImageView logo;
+    
+    @FXML
+    public void initialize() {
+        if (logo == null) {
+            System.out.println("❌ Error: ImageView 'logo' is null! Check fx:id in FXML.");
+        } else {
+            Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+            logo.setImage(image);
+            System.out.println("✅ Image Loaded Successfully!");
+        }
+    }
 
     // Define the time slots in the correct order
     private static final String[] timeSlots = {
@@ -64,18 +77,18 @@ public class ViewScheduleController {
 
                         Rectangle background;
                         if (duration.equals("1")) {
-                            background = new Rectangle(200, 40);
+                            background = new Rectangle(135, 50);
                             background.setFill(Color.WHITE);
                             background.setStroke(Color.BLACK);
                         } else {
-                            background = new Rectangle(200, 80);
+                            background = new Rectangle(135, 100);
                             background.setFill(Color.WHITE);
                             background.setStroke(Color.BLACK);
                             
                         }
                         // Create label for lecture name
                         Label lectureLabel = new Label(startTime + "\n" + moduleName + "\n" + moduleID + "-" + type + "\n" + room );
-                        lectureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+                        lectureLabel.setFont(Font.font("Arial", 10));
                         lectureLabel.setTextFill(Color.BLACK);
 
                         // Add background and text to the stack
@@ -141,7 +154,7 @@ public class ViewScheduleController {
                 StackPane headerPane = new StackPane();
 
                 // Create black background rectangle for day headers
-                Rectangle background = new Rectangle(200, 40);
+                Rectangle background = new Rectangle(135, 50);
                 background.setFill(Color.GREEN);
                 background.setStroke(Color.BLACK);
 
@@ -167,7 +180,7 @@ public class ViewScheduleController {
                     StackPane blankBox = new StackPane();
 
                     // Create a light gray background rectangle for empty slots
-                    Rectangle blankBackground = new Rectangle(200, 40);
+                    Rectangle blankBackground = new Rectangle(135, 50);
                     blankBackground.setFill(Color.WHITE);
                     blankBackground.setStroke(Color.BLACK);
 

@@ -5,8 +5,8 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 import java.io.IOException;
-import java.net.Socket;
-import java.io.PrintWriter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class AddLectureController {
     @FXML private ComboBox<String> dayComboBox;
@@ -17,7 +17,8 @@ public class AddLectureController {
     @FXML private TextField moduleNameField;
     @FXML private TextField moduleIDField;
     @FXML private Button submitLectureButton;
-
+    @FXML private ImageView logo;
+    
     private ClientModel model;
     private ClientController controller;
 
@@ -31,6 +32,14 @@ public class AddLectureController {
 
     @FXML
     public void initialize() {
+        if (logo == null) {
+            System.out.println("Error: ImageView 'logo' is null! Check fx:id in FXML.");
+        } else {
+            Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+            logo.setImage(image);
+            System.out.println("Image Loaded Successfully!");
+        }
+        
         dayComboBox.getItems().addAll("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
         timeStartComboBox.getItems().addAll("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00");
         durationSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1));
@@ -52,7 +61,6 @@ public class AddLectureController {
             if (response.equals("SEND_DATA")) {
                 handleSubmitLecture();
             }
-            
         } catch (IOException e) {
             e.printStackTrace();
         }

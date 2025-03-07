@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
+
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx._23381272_client.ClientController">
-    <!-- Main Menu -->
     <center>
         <VBox alignment="CENTER" spacing="15">
+            <ImageView fx:id="logo" fitWidth="200" fitHeight="100" >
+                <image>
+                    <Image url="@Images/ul_logo.jpg" />
+                </image>
+            </ImageView>
+
             <Button fx:id="addLectureButton" text="Add a Lecture" maxWidth="200" onAction="#handleAddLecture"  />
             <Button fx:id="removeLectureButton" text="Remove a Lecture" maxWidth="200" onAction="#handleRemoveLecture" />
             <Button fx:id="viewScheduleButton" text="View Schedule" maxWidth="200" onAction="#handleViewSchedule" />

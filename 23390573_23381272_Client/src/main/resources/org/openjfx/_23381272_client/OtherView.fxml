@@ -2,9 +2,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.image.ImageView?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx._23381272_client.OtherController">
-    <VBox alignment="CENTER" spacing="10" layoutX="50" layoutY="50">
+    <VBox alignment="CENTER" spacing="20" layoutX="75" layoutY="50" >
+        <ImageView fx:id="logo" fitWidth="150" fitHeight="75"/>
         <Label text="Make a Request:" />
         <ComboBox fx:id="dropdown" promptText="Choose a request" />
         <TextField fx:id="otherTextField" promptText="Enter your request" maxWidth="200" visible="false" />
