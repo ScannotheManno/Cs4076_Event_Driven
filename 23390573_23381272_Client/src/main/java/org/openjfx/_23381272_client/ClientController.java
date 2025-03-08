@@ -6,6 +6,8 @@ import java.io.IOException;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
 
 public class ClientController {
     @FXML private ImageView logo;
@@ -13,6 +15,7 @@ public class ClientController {
     @FXML private ImageView removeLectureImage;
     @FXML private ImageView viewScheduleImage;
     @FXML private ImageView otherImage;
+    @FXML private VBox borderVBox;
 
     private ClientModel model;
     private ClientView view;
@@ -51,6 +54,19 @@ public class ClientController {
             System.err.println("Error loading image: " + e.getMessage());
         }
     }
+    
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
+    }
+
 
     @FXML
     public void handleAddLecture() {
