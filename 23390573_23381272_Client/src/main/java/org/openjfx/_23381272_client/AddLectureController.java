@@ -32,9 +32,7 @@ public class AddLectureController {
 
     @FXML
     public void initialize() {
-        if (logo == null) {
-            System.out.println("Error: ImageView 'logo' is null! Check fx:id in FXML.");
-        } else {
+        {
             Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
             logo.setImage(image);
             System.out.println("Image Loaded Successfully!");

@@ -21,9 +21,7 @@ public class OtherController {
 
     @FXML
     public void initialize() {
-        if (logo == null) {
-            System.out.println("Error: ImageView 'logo' is null!");
-        } else {
+        {
             Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
             logo.setImage(image);
         }

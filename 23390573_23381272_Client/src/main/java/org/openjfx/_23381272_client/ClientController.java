@@ -27,12 +27,6 @@ public class ClientController {
 
     @FXML
     public void initialize() {
-        //debugging to print image paths
-        System.out.println("Logo Path: " + getClass().getResource("/Images/ul_logo.jpg"));
-        System.out.println("Add Lecture Image Path: " + getClass().getResource("/Images/add_lecture_image.jpg"));
-        System.out.println("Remove Lecture Image Path: " + getClass().getResource("/Images/remove_lecture_image.jpg"));
-        System.out.println("View Schedule Image Path: " + getClass().getResource("/Images/view_schedule_image.jpg"));
-        System.out.println("Other Image Path: " + getClass().getResource("/Images/other_image.jpg"));
 
         //loading images onto the UI
         try {
