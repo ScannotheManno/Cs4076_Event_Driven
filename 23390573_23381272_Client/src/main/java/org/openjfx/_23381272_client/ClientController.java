@@ -24,26 +24,32 @@ public class ClientController {
 
     @FXML
     public void initialize() {
+        // Debugging: Print image paths
         System.out.println("Logo Path: " + getClass().getResource("/Images/ul_logo.jpg"));
         System.out.println("Add Lecture Image Path: " + getClass().getResource("/Images/add_lecture_image.jpg"));
         System.out.println("Remove Lecture Image Path: " + getClass().getResource("/Images/remove_lecture_image.jpg"));
         System.out.println("View Schedule Image Path: " + getClass().getResource("/Images/view_schedule_image.jpg"));
         System.out.println("Other Image Path: " + getClass().getResource("/Images/other_image.jpg"));
 
-        Image logoImage = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
-        logo.setImage(logoImage);
+        // Load images
+        try {
+            Image logoImage = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+            logo.setImage(logoImage);
 
-        Image addLectureImg = new Image(getClass().getResource("/Images/add_lecture_image.jpg").toExternalForm());
-        addLectureImage.setImage(addLectureImg);
+            Image addLectureImg = new Image(getClass().getResource("/Images/add_lecture_image.jpg").toExternalForm());
+            addLectureImage.setImage(addLectureImg);
 
-        Image removeLectureImg = new Image(getClass().getResource("/Images/remove_lecture_image.jpg").toExternalForm());
-        removeLectureImage.setImage(removeLectureImg);
+            Image removeLectureImg = new Image(getClass().getResource("/Images/remove_lecture_image.jpg").toExternalForm());
+            removeLectureImage.setImage(removeLectureImg);
 
-        Image viewScheduleImg = new Image(getClass().getResource("/Images/view_schedule_image.jpg").toExternalForm());
-        viewScheduleImage.setImage(viewScheduleImg);
+            Image viewScheduleImg = new Image(getClass().getResource("/Images/view_schedule_image.jpg").toExternalForm());
+            viewScheduleImage.setImage(viewScheduleImg);
 
-        Image otherImg = new Image(getClass().getResource("/Images/other_image.jpg").toExternalForm());
-        otherImage.setImage(otherImg);
+            Image otherImg = new Image(getClass().getResource("/Images/other_image.jpg").toExternalForm());
+            otherImage.setImage(otherImg);
+        } catch (NullPointerException e) {
+            System.err.println("Error loading image: " + e.getMessage());
+        }
     }
 
     @FXML
