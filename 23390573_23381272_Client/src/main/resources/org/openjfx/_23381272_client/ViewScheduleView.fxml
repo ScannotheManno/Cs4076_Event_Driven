@@ -13,7 +13,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.openjfx._23381272_client.ViewScheduleController"
             prefWidth="1000" prefHeight="700" style="-fx-background-color: white;">
-    <Rectangle fill="GREEN" width="900" height="20"
+    
+    <Rectangle fill="GREEN" width="10000" height="20"
            AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
 
 

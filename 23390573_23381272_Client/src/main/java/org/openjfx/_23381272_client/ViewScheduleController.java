@@ -1,5 +1,6 @@
 package org.openjfx._23381272_client;
 
+import java.io.IOException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -20,6 +21,12 @@ public class ViewScheduleController {
     @FXML private GridPane scheduleGrid;
     @FXML private ImageView logo;
     @FXML private Button backButton;
+    
+    private ClientModel model;
+            
+    public void setModel(ClientModel model) {
+        this.model = model;
+    }
 
     @FXML
     public void initialize() {
@@ -34,8 +41,14 @@ public class ViewScheduleController {
 
     @FXML
     private void handleBackButton() {
-        Stage stage = (Stage) backButton.getScene().getWindow();
-        stage.close();
+        try {
+            String response = model.sendMessage("BACK");
+            if (response.equals("RETURNING")) {
+                closeWindow();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final String[] timeSlots = {
@@ -204,6 +217,13 @@ public class ViewScheduleController {
                     scheduleGrid.add(blankBox, col + 1, row + 1);
                 }
             }
+        });
+    }
+    
+     private void closeWindow() {
+        Platform.runLater(() -> {
+            Stage stage = (Stage) backButton.getScene().getWindow();
+            stage.close();
         });
     }
 }

@@ -70,6 +70,7 @@ public class ClientView {
             ViewScheduleController viewScheduleController = loader.getController();
             String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
             viewScheduleController.populateSchedule(scheduleData);
+            viewScheduleController.setModel(model);
 
             Stage stage = new Stage();
             stage.setTitle("View Schedule");

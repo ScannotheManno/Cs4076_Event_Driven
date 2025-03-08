@@ -3,18 +3,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Rectangle?>
+
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx._23381272_client.OtherController" style="-fx-background-color: white;">
-    <VBox alignment="CENTER" spacing="20" layoutX="75" layoutY="50">
-        
-        <Region prefHeight="5" maxWidth="800" style="-fx-background-color: green; -fx-padding: 5;"/>
+    
+    <Rectangle fill="GREEN" width="10000" height="20"
+           AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+
+    <VBox alignment="CENTER" spacing="20" layoutX="75" layoutY="50"
+          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
 
         <ImageView fx:id="logo" fitWidth="150" fitHeight="75"/>
-        <Label text="Make a Request:" />
-        <ComboBox fx:id="dropdown" promptText="Choose a request" />
-        <TextField fx:id="otherTextField" promptText="Enter your request" maxWidth="200" visible="false" />
-
-        <Button fx:id="submitButton" text="Submit" 
-                style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"/>
+        <Label text="Make a Request:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;" />
+        <ComboBox fx:id="dropdown" promptText="Choose a request"
+                  style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;" />
+        <TextField fx:id="otherTextField" promptText="Enter your request" maxWidth="200" visible="false"
+                   style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;" />
+        <Button fx:id="submitButton" text="Submit" maxWidth="100" 
+                style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;"/>
     </VBox>
 </AnchorPane>
