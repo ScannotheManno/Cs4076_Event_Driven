@@ -42,13 +42,14 @@ public class Server_23390573_23381272 {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(link.getInputStream()));
             PrintWriter out = new PrintWriter(link.getOutputStream(), true);
-
+            //reads message from client and if non is sent breaks the loop
             while (true) {
                 String message = in.readLine();
                 if (message == null) break;
 
                 System.out.println("Received from client: " + message);
-
+                
+                //finds client message and opens appropriate menu or completes an action
                 try {
                     switch (message) {
                         case "ADD_LECTURE":
@@ -138,7 +139,8 @@ public class Server_23390573_23381272 {
             String day = module[4];
             String startTime = module[5];
             String duration = module[6];
-
+            
+            //checks availablity and if slot/room is free adds the lecture
             String availibility = day + "_" + startTime;
             String fillTimetable = room + "_" + day + "_" + startTime;
             String lectureKey = moduleName + "_" + type + "_" + room + "_" + day + "_" + startTime;
@@ -156,10 +158,12 @@ public class Server_23390573_23381272 {
                 System.out.println("Student unavailable at this time.");
                 out.println("Error: Student already has a class at this time.");
             } else {
+                //if the above is available add lecture
                 lectureStorage.put(lectureKey, lectureDetails);
                 timetableSpaces.add(fillTimetable);
                 studentAvailibility.add(availibility);
                 if (duration.equals("2")) {
+                    //handles if the lecture is 2 hours long
                     int time = Integer.parseInt(startTime.split(":")[0]);
                     time += 1;
                     String extraTime = String.format("%02d:00", time);
@@ -189,6 +193,7 @@ public class Server_23390573_23381272 {
             String startTime = lectureDetails[5];
             String duration = lectureDetails[6];
             
+            //removes the lecture from the timetable and availablility
             String availData = day + "_" + startTime;
             String spaceData = room + "_" + day + "_" + startTime;
                         
