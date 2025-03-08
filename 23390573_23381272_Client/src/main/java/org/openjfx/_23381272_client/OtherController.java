@@ -28,13 +28,16 @@ public class OtherController {
             logo.setImage(image);
         }
         
+        //adds items to drop down box
         dropdown.getItems().addAll("Add Lecture", "Remove Lecture", "View Schedule", "Other");
+        //listener to see whats added to the box
         dropdown.setOnAction(e -> {
             boolean isOther = "Other".equals(dropdown.getValue());
             otherTextField.setVisible(isOther);
+            //shows text field if other is selected
             submitButton.setDisable(isOther && otherTextField.getText().trim().isEmpty());
         });
-
+        //adds listener to text field to enable/disable the text box based on input
         otherTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             submitButton.setDisable(dropdown.getValue().equals("Other") && newValue.trim().isEmpty());
         });
@@ -46,11 +49,13 @@ public class OtherController {
         String selectedOption = dropdown.getValue();
         String message = "";
 
+        //if nothing is selected
         if (selectedOption == null) {
             showAlert("Error", "No option selected. Please select an action.");
             return;
         }
 
+        //message based on selected option
         switch (selectedOption) {
             case "Add Lecture":
                 message = "ADD_LECTURE";
@@ -73,6 +78,7 @@ public class OtherController {
                 return;
         }
 
+        //message to the ClientController
         if (clientController != null) {
             System.out.println("Sending request from Other page: " + message); // Debug log
             clientController.sendRequestToServer(message);

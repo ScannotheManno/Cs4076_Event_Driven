@@ -17,7 +17,7 @@ public class RemoveLectureController {
     }
     
     
-    
+    //populates the selection boxes with available lecture information
     public void populateLectureDropdown(String scheduleData) {
         if (scheduleData.equals("No lectures available.")) {
             showAlert("Info", "No lectures available to remove.");
@@ -29,13 +29,16 @@ public class RemoveLectureController {
 
     @FXML
     private void handleRemoveLecture() {
+        //finds the selected lecture from the combobox
         String selectedLecture = lectureComboBox.getValue();
+        //shows alert if non is selected
         if (selectedLecture == null || selectedLecture.isEmpty()) {
             showAlert("Error", "Please select a lecture to remove.");
             return;
         }
 
         try {
+            //sends a request to the server to remove the lecture
             String response = model.sendMessage("REMOVE_THIS_LECTURE");
             if (response.equals("SEND_DATA")) {
                 String lectureToRemove = model.sendMessage(selectedLecture);

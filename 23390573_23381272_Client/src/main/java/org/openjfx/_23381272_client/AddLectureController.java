@@ -40,12 +40,14 @@ public class AddLectureController {
             System.out.println("Image Loaded Successfully!");
         }
         
+        //populates the selection boxes on the UI with options to choose
         dayComboBox.getItems().addAll("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
         timeStartComboBox.getItems().addAll("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00");
         durationSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1));
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
         
+        //handles when the window closes to avoid unsent requests
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();
             stage.setOnCloseRequest(event -> {
@@ -57,6 +59,7 @@ public class AddLectureController {
     @FXML
     private void handleSubmitButton(){
         try {
+            //requests permission to send data to server
             String response = model.sendMessage("SUBMIT_LECTURE");
             if (response.equals("SEND_DATA")) {
                 handleSubmitLecture();
@@ -67,6 +70,7 @@ public class AddLectureController {
     }
 
     private void handleSubmitLecture() {
+        //retrieve values entered by the user
         String lectureName = moduleNameField.getText();
         String courseID = moduleIDField.getText();
         String day = dayComboBox.getValue();
@@ -75,16 +79,19 @@ public class AddLectureController {
         String room = roomsComboBox.getValue();
         String type = typeComboBox.getValue();
 
+        //checks if a field is empty to not allow submittion
         if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || duration == null || room == null || type == null) {
             showAlert("Missing Fields", "Please fill in all fields before submitting.");
             return;
         }
 
+        //formats data for server
         String message = String.format("%s,%s,%s,%s,%s,%s,%s",
                 lectureName, courseID, room, type, day, startTime, duration);
 
         System.out.println("Sending to server: " + message); // Debugging log
 
+        //sends data in a thread to avoid blocking the UI
         new Thread(() -> {
             try {
                 String response = model.sendMessage(message);
@@ -99,7 +106,6 @@ public class AddLectureController {
     }
 
 
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -107,7 +113,8 @@ public class AddLectureController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
+    
+    //closes window after submittion
     private void closeWindow() {
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();

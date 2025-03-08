@@ -27,14 +27,14 @@ public class ClientController {
 
     @FXML
     public void initialize() {
-        // Debugging: Print image paths
+        //debugging to print image paths
         System.out.println("Logo Path: " + getClass().getResource("/Images/ul_logo.jpg"));
         System.out.println("Add Lecture Image Path: " + getClass().getResource("/Images/add_lecture_image.jpg"));
         System.out.println("Remove Lecture Image Path: " + getClass().getResource("/Images/remove_lecture_image.jpg"));
         System.out.println("View Schedule Image Path: " + getClass().getResource("/Images/view_schedule_image.jpg"));
         System.out.println("Other Image Path: " + getClass().getResource("/Images/other_image.jpg"));
 
-        // Load images
+        //loading images onto the UI
         try {
             Image logoImage = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
             logo.setImage(logoImage);
@@ -51,10 +51,12 @@ public class ClientController {
             Image otherImg = new Image(getClass().getResource("/Images/other_button.jpg").toExternalForm());
             otherImage.setImage(otherImg);
         } catch (NullPointerException e) {
+            //if an image fails to load
             System.err.println("Error loading image: " + e.getMessage());
         }
     }
     
+    //highlighting the box effect
     @FXML
     private void handleMouseEnter(MouseEvent event) {
         VBox vbox = (VBox) event.getSource();
@@ -68,6 +70,7 @@ public class ClientController {
     }
 
 
+    //handles which button is clicked / message is sent
     @FXML
     public void handleAddLecture() {
         sendRequestToServer("ADD_LECTURE");
@@ -107,6 +110,7 @@ public class ClientController {
         }).start();
     }
 
+    //sends message to server with provided message and handles a response
     public void sendRequestToServer(String message) {
         if (model == null) {
             showAlert("Error", "Server connection not established.");
