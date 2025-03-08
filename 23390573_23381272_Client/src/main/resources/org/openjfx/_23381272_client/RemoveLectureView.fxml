@@ -4,21 +4,24 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Rectangle?>
 
 
-<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.openjfx._23381272_client.RemoveLectureController"
-      style="-fx-background-color: #FFFFFF; -fx-padding: 20;">
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.openjfx._23381272_client.RemoveLectureController">
+    <Rectangle fill="GREEN" width="10000" height="20"
+           AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
     
-    <Region prefHeight="5" maxWidth="Infinity" style="-fx-background-color: green; -fx-padding: 5;"/>
+    <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #FFFFFF; -fx-padding: 20;"
+          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
 
-    <Label text="Remove a Lecture" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+        <Label text="Remove a Lecture" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;"/>
 
-    <ComboBox fx:id="lectureComboBox" prefWidth="250" style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black;"/>
-    
-    <Button fx:id="removeLectureButton" text="Remove Lecture" onAction="#handleRemoveLecture" prefWidth="150" 
-            style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"/>
+        <ComboBox fx:id="lectureComboBox" prefWidth="250" style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black;"/>
 
-</VBox>
+        <Button fx:id="removeLectureButton" text="Remove Lecture" onAction="#handleRemoveLecture" prefWidth="150" 
+                style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;"/>
+
+    </VBox>
+</AnchorPane>
