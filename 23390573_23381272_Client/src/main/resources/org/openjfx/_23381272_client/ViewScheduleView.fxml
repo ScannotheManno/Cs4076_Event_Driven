@@ -11,10 +11,8 @@
       spacing="20"
       style="-fx-background-color: white; -fx-padding: 20;">
     
-    <!-- ImageView for Logo -->
     <ImageView fx:id="logo" fitWidth="200" fitHeight="100"/>
 
-    <!-- Schedule Grid -->
     <GridPane fx:id="scheduleGrid"
               hgap="0" vgap="0"
               alignment="CENTER"

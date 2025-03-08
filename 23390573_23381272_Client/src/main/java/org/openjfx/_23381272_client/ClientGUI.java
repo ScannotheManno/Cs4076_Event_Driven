@@ -11,22 +11,24 @@ public class ClientGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("org/openjfx/_23381272_client/ClientView.fxml"));
             Parent root = loader.load();
             
             ClientController controller = loader.getController();
             ClientModel model = new ClientModel();
             controller.setModel(model);
-            
+
             primaryStage.setTitle("Lecture Management System");
-            primaryStage.setScene(new Scene(root, 600, 400));
+            primaryStage.setScene(new Scene(root));
+            primaryStage.sizeToScene();
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    public static void ClientGUI(String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 }
