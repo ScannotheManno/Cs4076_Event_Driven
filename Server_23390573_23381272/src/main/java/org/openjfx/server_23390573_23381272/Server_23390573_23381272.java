@@ -93,12 +93,12 @@ public class Server_23390573_23381272 {
                             break;
 
                         case "OTHER":
-                            System.out.println("Opening Other Services...");
+                            System.out.println("Opening Other Services...\n");
                             out.println("OPEN_OTHER_PAGE");
                             break;
 
                         case "QUIT":
-                            System.out.println("Client disconnected...");
+                            System.out.println("Client disconnected...\n");
                             out.println("GOODBYE");
                             return;
                         default:
@@ -114,7 +114,7 @@ public class Server_23390573_23381272 {
         } finally {
             try {
                 link.close();
-                System.out.println("Client connection closed.");
+                System.out.println("Client connection closed.\n");
             } catch (IOException e) {
                 System.out.println("Unable to close connection.");
             }
