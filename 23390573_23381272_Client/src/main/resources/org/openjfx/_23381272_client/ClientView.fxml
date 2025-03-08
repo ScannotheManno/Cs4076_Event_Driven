@@ -53,7 +53,7 @@
                         <VBox alignment="CENTER" spacing="5">
                             <ImageView fx:id="viewScheduleImage" fitWidth="100" fitHeight="100">
                                 <image>
-                                    <Image url="@Images/view_schedule_image.jpg" />
+                                    <Image url="@Images/schedule_button.jpg" />
                                 </image>
                             </ImageView>
                             <Label text="View Schedule" style="-fx-font-weight: bold; -fx-font-size: 14;" />
@@ -66,7 +66,7 @@
                         <VBox alignment="CENTER" spacing="5">
                             <ImageView fx:id="otherImage" fitWidth="100" fitHeight="100">
                                 <image>
-                                    <Image url="@Images/other_image.jpg" />
+                                    <Image url="@Images/other_button.jpg" />
                                 </image>
                             </ImageView>
                             <Label text="Other" style="-fx-font-weight: bold; -fx-font-size: 14;" />

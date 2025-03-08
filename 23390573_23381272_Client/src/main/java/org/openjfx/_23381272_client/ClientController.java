@@ -42,10 +42,10 @@ public class ClientController {
             Image removeLectureImg = new Image(getClass().getResource("/Images/remove_lecture_image.jpg").toExternalForm());
             removeLectureImage.setImage(removeLectureImg);
 
-            Image viewScheduleImg = new Image(getClass().getResource("/Images/view_schedule_image.jpg").toExternalForm());
+            Image viewScheduleImg = new Image(getClass().getResource("/Images/schedule_button.jpg").toExternalForm());
             viewScheduleImage.setImage(viewScheduleImg);
 
-            Image otherImg = new Image(getClass().getResource("/Images/other_image.jpg").toExternalForm());
+            Image otherImg = new Image(getClass().getResource("/Images/other_button.jpg").toExternalForm());
             otherImage.setImage(otherImg);
         } catch (NullPointerException e) {
             System.err.println("Error loading image: " + e.getMessage());
