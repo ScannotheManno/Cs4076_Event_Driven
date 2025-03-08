@@ -2,15 +2,14 @@ package org.openjfx._23381272_client;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -79,19 +78,7 @@ public class ViewScheduleController {
 
                         int col = getColumnForDay(day);
                         int row = getRowForTime(startTime);
-
-                        for (int i = moduleID.length() / 2; i < ((moduleName.length() / 2) + (moduleID.length() / 4)); i++) {
-                            moduleID = " " + moduleID;
-                        }
-
-                        for (int i = room.length() / 2; i < ((moduleName.length() / 2) + (room.length() / 4)); i++) {
-                            room = " " + room;
-                        }
-
-                        for (int i = startTime.length() / 2; i < ((moduleName.length() / 2) + (startTime.length() / 4)); i++) {
-                            startTime = " " + startTime;
-                        }
-
+                        
                         System.out.println("📌 Placing: " + moduleName + " at Column: " + col + ", Row: " + row);
 
                         if (col != -1 && row != -1) {
@@ -99,19 +86,35 @@ public class ViewScheduleController {
 
                             Rectangle background;
                             if (duration.equals("1")) {
-                                background = new Rectangle(100, 40);
+                                background = new Rectangle(120, 55);
                                 background.setFill(Color.WHITE);
                                 background.setStroke(Color.BLACK);
                             } else {
-                                background = new Rectangle(100, 80);
+                                background = new Rectangle(120, 110);
                                 background.setFill(Color.WHITE);
                                 background.setStroke(Color.BLACK);
                             }
-                            Label lectureLabel = new Label(startTime + "\n" + moduleName + "\n" + moduleID + "-" + type + "\n" + room);
-                            lectureLabel.setFont(Font.font("Arial", 10));
-                            lectureLabel.setTextFill(Color.BLACK);
-
-                            lectureBox.getChildren().addAll(background, lectureLabel);
+                            
+                            Label timeLabel = new Label(startTime);
+                            timeLabel.setFont(Font.font("Arial", 9));
+                            timeLabel.setTextFill(Color.BLACK);
+                            
+                            Label nameLabel = new Label(moduleName);
+                            nameLabel.setFont(Font.font("Arial", 9));
+                            nameLabel.setTextFill(Color.BLACK);
+                            
+                            Label idLabel = new Label(moduleID + "_" + type);
+                            idLabel.setFont(Font.font("Arial", 9));
+                            idLabel.setTextFill(Color.BLACK);
+                            
+                            Label roomLabel = new Label(room);
+                            roomLabel.setFont(Font.font("Arial", 9));
+                            roomLabel.setTextFill(Color.BLACK);
+                            
+                            VBox lectureVBox = new VBox();
+                            lectureVBox.setAlignment(Pos.CENTER);
+                            lectureVBox.getChildren().addAll(timeLabel,idLabel, nameLabel, roomLabel);
+                            lectureBox.getChildren().addAll(background, lectureVBox);
 
                             if (duration.equals("1")) {
                                 scheduleGrid.getChildren().removeIf(node ->
@@ -172,7 +175,7 @@ public class ViewScheduleController {
             for (int col = 0; col < days.length; col++) {
                 StackPane headerPane = new StackPane();
 
-                Rectangle background = new Rectangle(100, 30);
+                Rectangle background = new Rectangle(120, 30);
                 background.setFill(Color.GREEN);
                 background.setStroke(Color.BLACK);
 
@@ -192,7 +195,7 @@ public class ViewScheduleController {
                 for (int row = 0; row < timeSlots.length; row++) {
                     StackPane blankBox = new StackPane();
 
-                    Rectangle blankBackground = new Rectangle(100, 40);
+                    Rectangle blankBackground = new Rectangle(120, 55);
                     blankBackground.setFill(Color.WHITE);
                     blankBackground.setStroke(Color.BLACK);
 
