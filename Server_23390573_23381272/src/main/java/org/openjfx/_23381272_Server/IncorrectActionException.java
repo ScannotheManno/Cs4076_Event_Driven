@@ -1,4 +1,4 @@
-package org.openjfx.server_23390573_23381272;
+package org.openjfx._23381272_Server;
 
 public class IncorrectActionException extends Exception {
     public IncorrectActionException() {
