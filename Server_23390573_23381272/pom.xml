@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>23</maven.compiler.release>
-        <exec.mainClass>org.openjfx.server_23390573_23381272.Server_23390573_23381272</exec.mainClass>
+        <exec.mainClass>org.openjfx._23381272_Server.ServerTCP</exec.mainClass>
     </properties>
-    <name>_23390573_23381272_Server</name>
+    <name>23390573_23381272_Server</name>
 </project>

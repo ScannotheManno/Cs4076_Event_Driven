@@ -110,11 +110,11 @@ public class ServerTCP {
                             out.println("GOODBYE");
                             return;
                         default: // If request is not available in the server then throw IncorrectActionException
-                            throw new IncorrectActionException("Invalid request received: " + message);
+                            throw new IncorrectActionException();
                     }
                 } catch (IncorrectActionException e) { // catch this exception and send message to server
-                    System.out.println("Error: " + e.getMessage());
-                    out.println("ERROR: " + e.getMessage());
+                    System.out.println("Error: " + e.getMessage() + message + "\n");
+                    out.println("ERROR: " + e.getMessage() + message);
                 }
             }
         } catch (IOException e) {
@@ -161,13 +161,13 @@ public class ServerTCP {
             
             
             if (lectureStorage.containsKey(lectureKey)) { // Check if the Lecture is already in the HashMap
-                System.out.println("Error: Lecture already exists");
+                System.out.println("Error: Lecture already exists. \n");
                 out.println("Error: Lecture already exists.");
             } else if (timetableSpaces.contains(fillTimetable)) { // Check if the room is available at a specified time
-                System.out.println("Error: This room is already in use at this time.");
+                System.out.println("Error: This room is already in use at this time. \n");
                 out.println("Error: This room is already in use at the time specified.");
             } else if (studentAvailibility.contains(availibility)) { // Check if student is available at a specified time (seperate from room)
-                System.out.println("Student unavailable at this time.");
+                System.out.println("Student unavailable at this time. \n");
                 out.println("Error: Student already has a class at this time.");
             } else { // If the above is available add lecture
                 lectureStorage.put(lectureKey, lectureDetails);
@@ -183,10 +183,11 @@ public class ServerTCP {
                     studentAvailibility.add(extraAvail);
                 }
                 
-                System.out.println("New Lecture Added: " + lectureDetails);
+                System.out.println("New Lecture Added: " + lectureDetails + "\n");
                 out.println("Lecture Added Successfully!");
             }
-        } else { // If all the data is not present or the data is formatted incorrectly then print appropriate message and send to server
+        } else {
+            // If all the data is not present or the data is formatted incorrectly then print appropriate message and send to server
             System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
             out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, duration");
         }
