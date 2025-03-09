@@ -26,7 +26,6 @@ public class RemoveLectureController {
         // Loads logo into UI
         Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
         logo.setImage(image);
-        System.out.println("Image Loaded Successfully!");
     }
     
     // Highlighting the box effect

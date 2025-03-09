@@ -34,6 +34,7 @@ public class ClientView {
             stage.setTitle("Add Lecture");
             stage.setScene(new Scene(root, 400, 520));
             
+            // If x is hit to close seen ensures no errors with server expecting extra messages
             stage.setOnCloseRequest(e -> {model.sendMessage("BACK");});
             stage.show();
         } catch (IOException e) {

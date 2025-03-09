@@ -34,7 +34,6 @@ public class ViewScheduleController {
         // Loads logo into UI
         Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
         logo.setImage(image);
-        System.out.println("Image Loaded Successfully!");
     }
     
     // Highlighting the box effect
@@ -72,7 +71,7 @@ public class ViewScheduleController {
 
         // Checks if there are lectures saved to the server. If server says NO_LECTURES_SCHEDULED then create blank timetable
         if (scheduleData.equals("NO_LECTURES_SCHEDULED")) {
-            System.out.println("No lectures scheduled.");
+            System.out.println("No lectures scheduled.\n");
             createTimetable();
             return;
         }
@@ -174,10 +173,10 @@ public class ViewScheduleController {
                             scheduleGrid.add(lectureBox, col + 1, row + 1, 1, durationInt);
 
                         } else {
-                            System.out.println("Invalid Position: " + moduleName + " (" + day + " " + startTime + ")");
+                            System.out.println("Invalid Position: " + moduleName + " (" + day + " " + startTime + ")\n");
                         }
                     } else {
-                        System.out.println("Invalid Data Format: " + lecture);
+                        System.out.println("Invalid Data Format: " + lecture + "\n");
                     }
                 } catch (Exception e) {
                     System.out.println("Error processing lecture data: " + e.getMessage());
