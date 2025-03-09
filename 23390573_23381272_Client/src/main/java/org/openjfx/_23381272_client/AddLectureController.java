@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-import java.io.IOException;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -22,53 +21,46 @@ public class AddLectureController {
     private ClientModel model;
     private ClientController controller;
 
+    // Setter Method for ClientModel
     public void setModel(ClientModel model) {
         this.model = model;
     }
     
+    // Setter Method for ClientController
     public void setController(ClientController controller) {
         this.controller = controller;
     }
 
     @FXML
     public void initialize() {
-        {
-            Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
-            logo.setImage(image);
-            System.out.println("Image Loaded Successfully!");
-        }
+        // Loads logo into UI
+        Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+        logo.setImage(image);
+        System.out.println("Image Loaded Successfully!");
         
-        //populates the selection boxes on the UI with options to choose
+        
+        // Populates the selection boxes on the UI
         dayComboBox.getItems().addAll("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
         timeStartComboBox.getItems().addAll("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00");
         durationSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1));
         roomsComboBox.getItems().addAll("CSG-001", "CS1-044", "CS1-045", "CS2-044", "CS2-045", "CS3-004a", "CS3-004b", "CS3-005a", "CS3-005b");
         typeComboBox.getItems().addAll("Lec", "Lab", "Tut");
         
-        //handles when the window closes to avoid unsent requests
-        Platform.runLater(() -> {
-            Stage stage = (Stage) submitLectureButton.getScene().getWindow();
-            stage.setOnCloseRequest(event -> {
-                System.out.println("Window closed using the X button. No request sent.\n");
-            });
-        });
+        
     }
     
+    // Handles the submit button action. Requests to send data and sends once approved
     @FXML
     private void handleSubmitButton(){
-        try {
-            //requests permission to send data to server
-            String response = model.sendMessage("SUBMIT_LECTURE");
-            if (response.equals("SEND_DATA")) {
-                handleSubmitLecture();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String response = model.sendMessage("SUBMIT_LECTURE");
+        if (response.equals("SEND_DATA")) {
+            handleSubmitLecture();
         }
     }
 
+    // Method to get and send lecture data
     private void handleSubmitLecture() {
-        //retrieve values entered by the user
+        // Retrieve values entered by the client
         String lectureName = moduleNameField.getText();
         String courseID = moduleIDField.getText();
         String day = dayComboBox.getValue();
@@ -77,33 +69,28 @@ public class AddLectureController {
         String room = roomsComboBox.getValue();
         String type = typeComboBox.getValue();
 
-        //checks if a field is empty to not allow submittion
+        // Checks if a field is empty to not allow submittion
         if (lectureName.isEmpty() || courseID.isEmpty() || day == null || startTime == null || duration == null || room == null || type == null) {
             showAlert("Missing Fields", "Please fill in all fields before submitting.");
             return;
         }
 
-        //formats data for server
+        // Formats data for server
         String message = String.format("%s,%s,%s,%s,%s,%s,%s",
                 lectureName, courseID, room, type, day, startTime, duration);
 
-        System.out.println("Sending to server: " + message); // Debugging log
 
-        //sends data in a thread to avoid blocking the UI
+        //Sends data
         new Thread(() -> {
-            try {
-                String response = model.sendMessage(message);
-                System.out.println("Server Response: " + response + "\n"); // Debugging log
-                Platform.runLater(() -> showAlert("Server Response", response));
-            } catch (IOException e) {
-                Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
-            }
+            String response = model.sendMessage(message);
+            System.out.println("Server Response: " + response + "\n"); // Debugging log
+            Platform.runLater(() -> showAlert("Server Response", response));
         }).start();
 
         closeWindow();
     }
 
-
+    // Method to show alerts to client
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -112,7 +99,7 @@ public class AddLectureController {
         alert.showAndWait();
     }
     
-    //closes window after submittion
+    // Method to close window after submittion
     private void closeWindow() {
         Platform.runLater(() -> {
             Stage stage = (Stage) submitLectureButton.getScene().getWindow();

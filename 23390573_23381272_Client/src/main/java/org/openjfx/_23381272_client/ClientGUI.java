@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 public class ClientGUI extends Application {
+    // loads Main Menu
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -19,8 +20,9 @@ public class ClientGUI extends Application {
             ClientModel model = new ClientModel();
             controller.setModel(model);
 
+         
             primaryStage.setTitle("Lecture Management System");
-            primaryStage.setScene(new Scene(root));
+            primaryStage.setScene(new Scene(root, 800, 600));
             primaryStage.sizeToScene();
             primaryStage.show();
         } catch (IOException e) {

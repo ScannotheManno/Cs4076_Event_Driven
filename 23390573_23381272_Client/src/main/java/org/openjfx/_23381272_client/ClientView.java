@@ -12,19 +12,24 @@ public class ClientView {
     private ClientModel model;
     private ClientController clientController;
 
+    // Setter method for ClientView and ClientModel
     public ClientView(ClientModel model, ClientController clientController) {
         this.model = model;
         this.clientController = clientController;
     }
 
-    public void openAddLectureForm() {
+    // Handles opening the add lecture page
+    public void openAddLecturePage() {
         try {
+            // Loads AddViewLecture.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddLectureView.fxml"));
             Parent root = loader.load();
 
+            // Calls addLectureController and sets the model
             AddLectureController addLectureController = loader.getController();
             addLectureController.setModel(model);
 
+            // Creates and shows stage
             Stage stage = new Stage();
             stage.setTitle("Add Lecture");
             stage.setScene(new Scene(root, 400, 500));
@@ -33,45 +38,53 @@ public class ClientView {
             System.out.println("Failed to open Add Lecture page: " + e.getMessage());
         }
     }
-
-    public void openRemoveLectureForm() {
-    try {
-        
-        String scheduleData = model.sendMessage("SEND_LECTURES");
-        if (scheduleData.equals("No lectures available.") || scheduleData.trim().isEmpty()) {
-            Platform.runLater(() -> showAlert("Info", "No lectures available to remove."));
-            return;
-        }
-        
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveLectureView.fxml"));
-        Parent root = loader.load();
-
-        RemoveLectureController removeLectureController = loader.getController();
-        removeLectureController.populateLectureDropdown(scheduleData);
-        removeLectureController.setModel(model);
-
-        
-        
-        Stage stage = new Stage();
-        stage.setTitle("Remove Lecture");
-        stage.setScene(new Scene(root, 400, 500));
-        stage.show();
-    } catch (IOException e) {
-        System.out.println("Failed to open Remove Lecture page: " + e.getMessage());
-    }
-}
-
-
-    public void openViewScheduleForm() {
+    
+    // Handles opening the remove lecture page
+    public void openRemoveLecturePage() {
         try {
+            // Request lecture data fron server
+            String scheduleData = model.sendMessage("SEND_LECTURES");
+            // If no lectures are scheduled then alert client an do not open page
+            if (scheduleData.equals("NO_LECTURES_AVAILABLE") || scheduleData.trim().isEmpty()) {
+                Platform.runLater(() -> showAlert("Info", "No lectures available to remove."));
+                return;
+            }
+
+            // Loads RemoveLectureView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveLectureView.fxml"));
+            Parent root = loader.load();
+
+            // Calls RemoveLectureController, populates the dropdown box and sets model
+            RemoveLectureController removeLectureController = loader.getController();
+            removeLectureController.populateLectureDropdown(scheduleData);
+            removeLectureController.setModel(model);
+
+            // Creates and shows stage
+            Stage stage = new Stage();
+            stage.setTitle("Remove Lecture");
+            stage.setScene(new Scene(root, 400, 500));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open Remove Lecture page: " + e.getMessage());
+        }
+    }
+
+    // Handles opening the schedule page
+    public void openViewSchedulePage() {
+        try {
+            // Loads ViewScheduleView.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewScheduleView.fxml"));
             Parent root = loader.load();
 
+            // Calls ViewScheduleController
             ViewScheduleController viewScheduleController = loader.getController();
+            // Requests lecture data from server and populates the schdule
             String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
             viewScheduleController.populateSchedule(scheduleData);
+            // Sets model
             viewScheduleController.setModel(model);
 
+            // Creates and shows stage
             Stage stage = new Stage();
             stage.setTitle("View Schedule");
             stage.setScene(new Scene(root, 900, 750));
@@ -81,14 +94,18 @@ public class ClientView {
         }
     }
 
-    public void openOther() {
+    // Handles opening the other page
+    public void openOtherPage() {
         try {
+            // Loads OtherView.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("OtherView.fxml"));
             Parent root = loader.load();
 
+            // Calls OtherController and sets clientController
             OtherController otherController = loader.getController();
             otherController.setClientController(clientController);
 
+            // Creates and shows stage
             Stage stage = new Stage();
             stage.setTitle("Other Services");
             stage.setScene(new Scene(root, 300, 350));
@@ -98,6 +115,7 @@ public class ClientView {
         }
     }
     
+    // Method to show alerts to client
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

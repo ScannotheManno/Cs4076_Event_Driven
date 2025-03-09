@@ -20,6 +20,7 @@ public class ClientController {
     private ClientModel model;
     private ClientView view;
 
+    // Setter Method for ClientModel
     public void setModel(ClientModel model) {
         this.model = model;
         this.view = new ClientView(model, this);
@@ -28,7 +29,7 @@ public class ClientController {
     @FXML
     public void initialize() {
 
-        //loading images onto the UI
+        // Loading images onto the UI
         try {
             Image logoImage = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
             logo.setImage(logoImage);
@@ -50,7 +51,7 @@ public class ClientController {
         }
     }
     
-    //highlighting the box effect
+    // Highlighting the box effect
     @FXML
     private void handleMouseEnter(MouseEvent event) {
         VBox vbox = (VBox) event.getSource();
@@ -64,27 +65,28 @@ public class ClientController {
     }
 
 
-    //handles which button is clicked / message is sent
+    // Handles which button is clicked / message is sent
     @FXML
     public void handleAddLecture() {
-        sendRequestToServer("ADD_LECTURE");
+        sendRequestToServer("ADD_LECTURE"); // Sends ADD_LECTURE
     }
 
     @FXML
     public void handleRemoveLecture() {
-        sendRequestToServer("REMOVE_LECTURE");
+        sendRequestToServer("REMOVE_LECTURE"); // Sends REMOVE_LECTURE
     }
 
     @FXML
     public void handleViewSchedule() {
-        sendRequestToServer("VIEW_SCHEDULE");
+        sendRequestToServer("VIEW_SCHEDULE"); //Sends VIEW_SCHEDULE
     }
 
     @FXML
     public void handleOther() {
-        sendRequestToServer("OTHER");
+        sendRequestToServer("OTHER"); // Sends OTHER
     }
 
+    // Handles the quit button
     @FXML
     public void handleQuit() {
         new Thread(() -> {
@@ -104,46 +106,42 @@ public class ClientController {
         }).start();
     }
 
-    //sends message to server with provided message and handles a response
+    // Sends message to server with provided message and handles a response
     public void sendRequestToServer(String message) {
+        // Checks if the client is connected to server
         if (model == null) {
             showAlert("Error", "Server connection not established.");
             return;
         }
 
-        System.out.println("Attempting to send request: " + message);
         new Thread(() -> {
-            try {
-                String response = model.sendMessage(message);
-                if (response == null || response.isEmpty()) {
-                    response = "No response from server.";
-                }
-                System.out.println("Message Sent: " + message);
-                System.out.println("Server Response: " + response + "\n");
-
-                switch (response) {
-                    case "OPEN_ADD_LECTURE_PAGE":
-                        Platform.runLater(() -> view.openAddLectureForm());
-                        break;
-                    case "OPEN_REMOVE_LECTURE_PAGE":
-                        Platform.runLater(() -> view.openRemoveLectureForm());
-                        break;
-                    case "OPEN_VIEW_SCHEDULE_PAGE":
-                        Platform.runLater(() -> view.openViewScheduleForm());
-                        break;
-                    case "OPEN_OTHER_PAGE":
-                        Platform.runLater(() -> view.openOther());
-                        break;
-                    default:
-                        String request = response;
-                        Platform.runLater(() -> showAlert("Error", request));
-                }
-            } catch (IOException e) {
-                Platform.runLater(() -> showAlert("Error", "Failed to communicate with server: " + e.getMessage()));
+            String response = model.sendMessage(message); // Sends message
+            if (response == null || response.isEmpty()) {
+                response = "No response from server.";
+            }
+            System.out.println("Message Sent: " + message);
+            System.out.println("Server Response: " + response + "\n");
+            switch (response) { //Switch case the check the server response
+                case "OPEN_ADD_LECTURE_PAGE":
+                    Platform.runLater(() -> view.openAddLecturePage()); // Opens the add lecture page
+                    break;
+                case "OPEN_REMOVE_LECTURE_PAGE":
+                    Platform.runLater(() -> view.openRemoveLecturePage()); // Opens the remove lecture page
+                    break;
+                case "OPEN_VIEW_SCHEDULE_PAGE":
+                    Platform.runLater(() -> view.openViewSchedulePage()); // Opens the timetable
+                    break;
+                case "OPEN_OTHER_PAGE":
+                    Platform.runLater(() -> view.openOtherPage()); // Opens the other page
+                    break;
+                default: // If message is not recognised by server an exception is thrown and is displayed by client
+                    String request = response;
+                    Platform.runLater(() -> showAlert("Error", request));
             }
         }).start();
     }
 
+    // Method to show alerts to client
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

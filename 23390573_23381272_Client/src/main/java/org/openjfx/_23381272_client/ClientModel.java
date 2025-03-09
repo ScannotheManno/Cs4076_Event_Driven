@@ -10,6 +10,7 @@ public class ClientModel {
     private BufferedReader in;
 
     public ClientModel() {
+        // Attempts the make connection with server
         try {
             InetAddress serverAddress = InetAddress.getLocalHost();
             int serverPort = 5555;
@@ -21,29 +22,41 @@ public class ClientModel {
             System.out.println("Connection Established\n");
 
         } catch (IOException e) {
-            showAlert("Error", "Failed to connect to server. Check that server is online.");
+            showAlert("ERROR", "Failed to connect to server. Check that server is online.");
             System.err.println("Failed to connect to server. Check that server is online.");
             System.exit(0);
         }
     }
 
-    public String sendMessage(String message) throws IOException {
-        if (socket == null || socket.isClosed()) {
-            return "Not connected to server.";
-        }
+    // Mehtod to send messages to the server and returns the response
+    public String sendMessage(String message) {
+        try {
+            if (socket == null || socket.isClosed()) {
+                return "Not connected to server.";
+            }
 
-        out.println(message);
-        String response = in.readLine();
-        return response;
+            out.println(message);
+            String response = in.readLine();
+            return response;
+        } catch (IOException e) {
+            return "Not connnected to server";
+        }
     }
 
+    // Closes the connection with the server
     public void closeConnection() throws IOException {
-        if (socket != null && !socket.isClosed()) {
-             socket.close();
-        }   
+        try {
+            if (socket != null && !socket.isClosed()) {
+                 socket.close();
+            }
+        } catch (IOException e) {
+            System.err.println(e);
+            showAlert("ERROR", "ERROR :Unable to disconnect with Server");
+        }
 
     }
     
+    // Method to show alerts to client
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

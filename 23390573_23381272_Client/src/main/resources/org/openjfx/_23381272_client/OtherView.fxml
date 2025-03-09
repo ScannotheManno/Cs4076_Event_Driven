@@ -20,7 +20,7 @@
                   style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;" />
         <TextField fx:id="otherTextField" promptText="Enter your request" maxWidth="200" visible="false"
                    style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;" />
-        <Button fx:id="submitButton" text="Submit" maxWidth="100" 
+        <Button fx:id="submitButton" text="Submit" maxWidth="100" onAction="#handleSubmit" 
                 style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;"/>
     </VBox>
 </AnchorPane>
