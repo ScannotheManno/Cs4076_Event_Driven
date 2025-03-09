@@ -4,16 +4,42 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class RemoveLectureController {
     @FXML private ComboBox<String> lectureComboBox;
     @FXML private Button removeLectureButton;
+    @FXML private ImageView logo;
     
     private ClientModel model;
     
     // Setter Method for ClientModel
     public void setModel(ClientModel model) {
         this.model = model;
+    }
+    
+    @FXML
+    public void initialize() {
+        // Loads logo into UI
+        Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
+        logo.setImage(image);
+        System.out.println("Image Loaded Successfully!");
+    }
+    
+    // Highlighting the box effect
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
     }
     
     

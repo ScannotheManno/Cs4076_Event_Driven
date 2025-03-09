@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -34,6 +35,19 @@ public class ViewScheduleController {
         Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
         logo.setImage(image);
         System.out.println("Image Loaded Successfully!");
+    }
+    
+    // Highlighting the box effect
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
     }
 
     // Handles the back button

@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class AddLectureController {
     @FXML private ComboBox<String> dayComboBox;
@@ -49,6 +51,19 @@ public class AddLectureController {
         
     }
     
+    // Highlighting the box effect
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
+    }
+    
     // Handles the submit button action. Requests to send data and sends once approved
     @FXML
     private void handleSubmitButton(){
@@ -80,7 +95,7 @@ public class AddLectureController {
                 lectureName, courseID, room, type, day, startTime, duration);
 
 
-        //Sends data
+        // Sends data
         new Thread(() -> {
             String response = model.sendMessage(message);
             System.out.println("Server Response: " + response + "\n"); // Debugging log

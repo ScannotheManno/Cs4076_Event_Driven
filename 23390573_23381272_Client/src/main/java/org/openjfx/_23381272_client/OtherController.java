@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class OtherController {
@@ -40,6 +42,19 @@ public class OtherController {
         otherTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             submitButton.setDisable(dropdown.getValue().equals("Other") && newValue.trim().isEmpty());
         });
+    }
+    
+    // Highlighting the box effect
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
     }
 
     // Handles submitting request

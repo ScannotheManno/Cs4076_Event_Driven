@@ -32,7 +32,9 @@ public class ClientView {
             // Creates and shows stage
             Stage stage = new Stage();
             stage.setTitle("Add Lecture");
-            stage.setScene(new Scene(root, 400, 500));
+            stage.setScene(new Scene(root, 400, 520));
+            
+            stage.setOnCloseRequest(e -> {model.sendMessage("BACK");});
             stage.show();
         } catch (IOException e) {
             System.out.println("Failed to open Add Lecture page: " + e.getMessage());

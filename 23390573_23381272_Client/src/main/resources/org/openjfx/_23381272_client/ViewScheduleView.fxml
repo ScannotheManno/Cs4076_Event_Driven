@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
@@ -26,12 +26,13 @@
                   style="-fx-background-color: white; -fx-padding: 10;">
         </GridPane>
 
-        <Button fx:id="backButton" text="Back" 
-                style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"
-                onAction="#handleBackButton"/>
+        <VBox alignment="CENTER" spacing="5" maxWidth="100" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="backButton" text="Back" 
+                    style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"
+                    onAction="#handleBackButton"/>
+        </VBox>
     </VBox>
 
-    <!-- This VBox will appear on top -->
     <VBox layoutX="375" layoutY="25" spacing="0">
         <ImageView fx:id="logo" fitWidth="125" fitHeight="60"/>
     </VBox>
