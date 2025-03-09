@@ -57,14 +57,18 @@ public class ServerTCP {
                         case "ADD_LECTURE": // If ADD_LECTURE is recieved then respond with OPEN_ADD_LECTURE_PAGE(opens the add lecture page)
                             System.out.println("Opening Add Lecture page...\n");
                             out.println("OPEN_ADD_LECTURE_PAGE");
-                            
                             break;
 
                         case "SUBMIT_LECTURE": // If SUBMIT_LECTURE os recieved then respond with SEND_DATA(requests new lecture data from add lecture)
                             System.out.println("Waiting for data...\n");
                             out.println("SEND_DATA");
                             String scheduleData = in.readLine();
-                            handleAddLecture(scheduleData, out);
+                            if (scheduleData.equals("BACK")) {
+                                System.out.println("Recieved from client: BACK\nReturning to main menu...\n");
+                                out.println("RETURNING");
+                            } else {
+                                handleAddLecture(scheduleData, out);
+                            }
                             break;
                             
                         case "REMOVE_LECTURE": // If REMOVE_LECTURE is recieved then resoind with OPEN_REMOVE_LECTURE_PAGE(opens the remove lecture page)
