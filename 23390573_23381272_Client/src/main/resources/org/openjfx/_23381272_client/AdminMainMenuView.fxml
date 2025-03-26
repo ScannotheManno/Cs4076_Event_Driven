@@ -1,0 +1,51 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.openjfx._23381272_client.AdminController"
+            style="-fx-background-color: #FFFFFF;">
+    
+    <Rectangle width="10000" height="20" fill="GREEN"
+               AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+    
+
+    <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #FFFFFF;"
+          AnchorPane.topAnchor="135" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" >
+        <ImageView fx:id="logo" fitWidth="200" fitHeight="100">
+            <image>
+                <Image url="@Images/ul_logo.jpg" />
+            </image>
+        </ImageView>
+
+        <HBox alignment="CENTER" spacing="15">
+            <Button fx:id="manageStudentButton" onAction="#handleManageStudent" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 10;">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="5" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+                        <ImageView fx:id="manageUsersImage" fitWidth="100" fitHeight="100">
+                            <image>
+                                <Image url="@Images/people_logo.jpg" />
+                            </image>
+                        </ImageView>
+                        <Label text="Manage Students" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    </VBox>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+
+    <HBox alignment="CENTER" spacing="20" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <VBox alignment="CENTER" spacing="20" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="logoutButton" text="Log Out" prefWidth="200" onAction="#handleLogout" style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;" />
+        </VBox>
+        <VBox alignment="CENTER" spacing="20" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="quitButton" text="Quit" prefWidth="200" onAction="#handleQuit" style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;" />
+        </VBox>
+    </HBox>
+    
+</AnchorPane>

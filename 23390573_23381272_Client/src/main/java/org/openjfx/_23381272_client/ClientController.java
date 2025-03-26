@@ -16,7 +16,6 @@ public class ClientController {
     @FXML private ImageView removeLectureImage;
     @FXML private ImageView viewScheduleImage;
     @FXML private ImageView otherImage;
-    @FXML private VBox borderVBox;
     @FXML private Button logoutButton;
 
     private ClientModel model;

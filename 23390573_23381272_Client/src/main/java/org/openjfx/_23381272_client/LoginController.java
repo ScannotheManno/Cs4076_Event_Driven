@@ -26,7 +26,7 @@ public class LoginController {
         this.model = model;
     }
     
-     @FXML
+    @FXML
     public void initialize() {
         // Loads logo into UI
         Image image = new Image(getClass().getResource("/Images/ul_logo.jpg").toExternalForm());
@@ -61,9 +61,10 @@ public class LoginController {
             if (response.equals("SEND_USER_DETAILS")) {  // Server ready to receive credentials
                 String authResponse = model.sendMessage(username + ":" + password);
 
-                if ("LOGIN_SUCCESS".equals(authResponse)) {
-                    Platform.runLater(() -> openMainMenu());
-                    
+                if (authResponse.equals("LOGIN_SUCCESS_STUDENT")) {
+                    Platform.runLater(() -> openMainMenuStudent());
+                } else if (authResponse.equals("LOGIN_SUCCESS_ADMIN")) {
+                    Platform.runLater(() -> openMainMenuAdmin());
                 } else {
                     Platform.runLater(() -> showAlert("Login Failed", "Incorrect username/password."));
                 }
@@ -86,12 +87,12 @@ public class LoginController {
         }
     }
 
-    private void openMainMenu() {
+    private void openMainMenuStudent() {
         try {
             Stage loginStage = (Stage) usernameField.getScene().getWindow();
             loginStage.close();
             
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("StudentMainMenuView.fxml"));
             Parent root = loader.load();
 
             ClientController controller = loader.getController();
@@ -99,7 +100,27 @@ public class LoginController {
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
-            stage.setTitle("Lecture Management System");
+            stage.setTitle("Student Lecture Management System");
+            stage.show();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load main menu: " + e.getMessage());
+        }
+    }
+    
+    private void openMainMenuAdmin() {
+        try {
+            Stage loginStage = (Stage) usernameField.getScene().getWindow();
+            loginStage.close();
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminMainMenuView.fxml"));
+            Parent root = loader.load();
+
+            AdminController controller = loader.getController();
+            controller.setModel(model);
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle("Admin Lecture Management System");
             stage.show();
         } catch (Exception e) {
             showAlert("Error", "Failed to load main menu: " + e.getMessage());
