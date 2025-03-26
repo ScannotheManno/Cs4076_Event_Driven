@@ -12,6 +12,7 @@ public class ServerTCP {
     private static final Map<String, String> lectureStorage = new HashMap<>();
     private static final ArrayList<String> timetableSpaces = new ArrayList<>();
     private static final ArrayList<String> studentAvailibility = new ArrayList<>();
+    private static String userType;
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
@@ -60,8 +61,12 @@ public class ServerTCP {
                             String credentials = in.readLine();
                             String[] loginData = credentials.split(":");
                             if (loginData.length == 2 && authenticate(loginData[0], loginData[1]) == true) {
-                                out.println("LOGIN_SUCCESS");
-                                System.out.println("User " + loginData[0] + " logged in successfully.");
+                                if (userType.equals("Student")) {
+                                    out.println("LOGIN_SUCCESS_STUDENT");
+                                } else if (userType.equals("Admin")) {
+                                    out.println("LOGIN_SUCCESS_ADMIN");
+                                }
+                                System.out.println("User " + loginData[0] + " logged in successfully.\n");
                             } else {
                                 out.println("Invalid username or password.");
                                 System.out.println("Failed login attempt for user: " + loginData[0]);
@@ -291,13 +296,6 @@ public class ServerTCP {
     private static boolean authenticate(String studentId, String password) {
         InputStream input = ServerTCP.class.getResourceAsStream("/CSV_Files/User_Password.csv");
 
-        if (input == null) {
-            System.err.println("ERROR: CSV file not found! Check the file path.");
-            return false;
-        } else {
-            System.out.println("CSV file found! Reading data...");
-        }
-
         try (BufferedReader br = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
             br.readLine(); // Skip header line if it exists
 
@@ -305,9 +303,10 @@ public class ServerTCP {
             while ((line = br.readLine()) != null) {
                 String[] userData = line.split(",");
 
-                if (userData.length == 2) {
-                    String csvStudentId = userData[0].trim();
-                    String csvPassword = userData[1].trim();
+                if (userData.length == 3) {
+                    String csvStudentId = userData[0];
+                    String csvPassword = userData[1];
+                    userType = userData[2];
 
                     if (csvStudentId.equals(studentId) && csvPassword.equals(password)) {
                         return true; // Successful login
