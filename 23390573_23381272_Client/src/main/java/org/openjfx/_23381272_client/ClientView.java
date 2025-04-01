@@ -94,10 +94,34 @@ public class ClientView {
     }
 
     // Handles opening the schedule page
-    public void openViewSchedulePage() {
+    public void openGroupTimetablePage() {
         try {
             // Loads ViewScheduleView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewScheduleView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupView.fxml"));
+            Parent root = loader.load();
+
+            // Calls ViewScheduleController
+            ViewScheduleController viewScheduleController = loader.getController();
+            // Requests lecture data from server and populates the schdule
+            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
+            viewScheduleController.populateSchedule(scheduleData);
+            // Sets model
+            viewScheduleController.setModel(model);
+
+            // Creates and shows stage
+            Stage stage = new Stage();
+            stage.setTitle("View Schedule");
+            stage.setScene(new Scene(root, 900, 750));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open View Schedule page: " + e.getMessage());
+        }
+    }
+    
+    public void openPersonalTimetablePage() {
+        try {
+            // Loads ViewScheduleView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupView.fxml"));
             Parent root = loader.load();
 
             // Calls ViewScheduleController

@@ -6,7 +6,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.shape.Rectangle?>
 
-
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="org.openjfx._23381272_client.AddLectureController" 
             style="-fx-background-color: #FFFFFF;">

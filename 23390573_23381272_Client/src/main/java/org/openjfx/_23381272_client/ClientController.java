@@ -135,7 +135,7 @@ public class ClientController {
                     Platform.runLater(() -> view.openRemoveLecturePage()); // Opens the remove lecture page
                     break;
                 case "OPEN_VIEW_SCHEDULE_PAGE":
-                    Platform.runLater(() -> view.openViewSchedulePage()); // Opens the timetable
+                    Platform.runLater(() -> view.openGroupTimetablePage()); // Opens the timetable
                     break;
                 case "OPEN_OTHER_PAGE":
                     Platform.runLater(() -> view.openOtherPage()); // Opens the other page

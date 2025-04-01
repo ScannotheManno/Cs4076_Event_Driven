@@ -19,21 +19,23 @@ public class AdminView {
 
     public void openManageStudentPage() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ManageUsers.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/_23381272_client/ManageStudentView.fxml"));
             Parent root = loader.load();
 
             ManageStudentController controller = loader.getController();
             controller.setModel(model);
 
             Stage stage = new Stage();
-            stage.setTitle("Manage Users");
-            stage.setScene(new Scene(root, 600, 400));
+            stage.setTitle("Manage Students");
+            stage.setScene(new Scene(root, 375, 400));
             stage.show();
 
         } catch (IOException e) {
             showAlert("Error", "Failed to open Manage Users page: " + e.getMessage());
+            e.printStackTrace(); // Optional but recommended for detailed errors
         }
     }
+
     
     public void openLoginView() {
         try {

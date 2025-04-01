@@ -55,7 +55,7 @@ public class AdminController {
     // Button handlers for admin functionalities
     @FXML
     public void handleManageStudent() {
-        sendRequestToServer("MANAGE_USERS");
+        sendRequestToServer("MANAGE_STUDENTS");
     }
 
     @FXML
@@ -101,7 +101,7 @@ public class AdminController {
             System.out.println("Server Response: " + response + "\n");
 
             switch (response) {
-                case "OPEN_MANAGE_USERS_PAGE":
+                case "OPENING_MANAGE_STUDENTS_PAGE":
                     Platform.runLater(() -> adminView.openManageStudentPage());
                     break;
                 case "LOGGING_OUT":
