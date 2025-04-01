@@ -2,329 +2,263 @@ package org.openjfx._23381272_Server;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ServerTCP {
-    private static ServerSocket servSock;
     private static final int PORT = 5555;
-    private static int clientConnections = 0;
     private static final Map<String, String> lectureStorage = new HashMap<>();
     private static final ArrayList<String> timetableSpaces = new ArrayList<>();
     private static final ArrayList<String> studentAvailibility = new ArrayList<>();
     private static String userType;
+    private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
+
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
 
-        // Checks if port is not available or server is already running. If not then close server
         if (!isPortAvailable(PORT)) {
-            System.out.println("Port " + PORT + " is already in use. Please free the port or use a different one.");
+            System.out.println("Port " + PORT + " is already in use.");
             System.exit(1);
         }
 
-        try {
-            servSock = new ServerSocket(PORT);
-
-            // Make connection with client
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
-                try {
-                    Socket link = servSock.accept();
-                    clientConnections++;
-                    System.out.println("Client Connected (" + clientConnections + ")");
-                    new Thread(() -> handleClient(link)).start();
-                } catch (IOException e) {
-                    System.out.println("Unable to connect to client.");
-                }
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client Connected");
+                Thread clientThread = new Thread(new ClientHandler(clientSocket));
+                clientThread.start();
             }
         } catch (IOException e) {
-            System.out.println("Unable to attach to port: " + e.getMessage());
-            System.exit(1);
+            System.out.println("Server error: " + e.getMessage());
         }
     }
 
-    private static void handleClient(Socket link) {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(link.getInputStream()));
-            PrintWriter out = new PrintWriter(link.getOutputStream(), true);
-            // Reads message from client and if none is sent break the loop
-            while (true) {
-                String message = in.readLine();
-                if (message == null) break;
-
-                System.out.println("Received from client: " + message);
-                
-                // Finds client message and opens appropriate menu or completes an action
-                try {
-                    switch (message) {
-                        case "LOGIN":
-                            out.println("SEND_USER_DETAILS");
-                            String credentials = in.readLine();
-                            String[] loginData = credentials.split(":");
-                            if (loginData.length == 2 && authenticate(loginData[0], loginData[1]) == true) {
-                                if (userType.equals("Student")) {
-                                    out.println("LOGIN_SUCCESS_STUDENT");
-                                } else if (userType.equals("Admin")) {
-                                    out.println("LOGIN_SUCCESS_ADMIN");
-                                }
-                                System.out.println("User " + loginData[0] + " logged in successfully.\n");
-                            } else {
-                                out.println("Invalid username or password.");
-                                System.out.println("Failed login attempt for user: " + loginData[0]);
-                            }
-                            break;
-                            
-                        case "ADD_LECTURE": // If ADD_LECTURE is recieved then respond with OPEN_ADD_LECTURE_PAGE(opens the add lecture page)
-                            System.out.println("Opening Add Lecture page...\n");
-                            out.println("OPEN_ADD_LECTURE_PAGE");
-                            break;
-
-                        case "SUBMIT_LECTURE": // If SUBMIT_LECTURE os recieved then respond with SEND_DATA(requests new lecture data from add lecture)
-                            System.out.println("Waiting for data...\n");
-                            out.println("SEND_DATA");
-                            String scheduleData = in.readLine();
-                            if (scheduleData.equals("BACK")) {
-                                System.out.println("Recieved from client: BACK\nReturning to main menu...\n");
-                                out.println("RETURNING");
-                            } else {
-                                handleAddLecture(scheduleData, out);
-                            }
-                            break;
-                            
-                        case "REMOVE_LECTURE": // If REMOVE_LECTURE is recieved then resoind with OPEN_REMOVE_LECTURE_PAGE(opens the remove lecture page)
-                            System.out.println("Opening Remove Lecture page...\n");
-                            out.println("OPEN_REMOVE_LECTURE_PAGE");
-                            break;
-                            
-                        case "SEND_LECTURES": // If SEND_LECTURES is recieved then send all the lecture keys from lectureStorage Hashmap.
-                            System.out.println("Sending lecture data...\n");
-                            sendLectureKeys(out);
-                            break;
-                            
-                        case "REMOVE_THIS_LECTURE": // If REMOVE_THIS_LECTURE is recieved then respond with REQUEST_DATA(requests lecture data to remove from hashmap)
-                            System.out.println("Waiting for data...");
-                            out.println("REQUEST_DATA");
-                            String lectureData = in.readLine();
-                            handleRemoveLecture(lectureData, out);
-                            System.out.println("Removing " + lectureData + "...\n");
-                            break;
-
-                        case "VIEW_SCHEDULE": // If VIEW_SCHEDULE is recieved the respond with OPEN_VIEW_SCHEDULE_PAGE(opens the timetable page)
-                            System.out.println("Opening Schedule...\n");
-                            out.println("OPEN_VIEW_SCHEDULE_PAGE");
-                            break;
-                            
-                        case "SEND_LECTURE_DETAILS": // If SEND_LECTURE_DETAILS is recieved then send all lecture details to client
-                            System.out.println("Sending lecture data...\n");
-                            handleSendLectureDetails(out);
-                            break;
-
-                        case "OTHER": // If OTHER is recieved then respond with OPEN_OTHER_PAGE(opens the other page)
-                            System.out.println("Opening other page...\n");
-                            out.println("OPEN_OTHER_PAGE");
-                            break;
-                            
-                        case "BACK": // If BACK is recieved then respond with RETURNING(for timetable to return to close window)
-                            System.out.println("Closing timetable...\n");
-                            out.println("RETURNING");
-                            break;
-                            
-                        case "LOG_OUT":
-                            System.out.println("User is logging out...\n");
-                            out.println("LOGGING_OUT");
-
-                        case "QUIT": // If QUIT is recieved then respond with GOODBYE(closes connection with client)
-                            System.out.println("Client disconnected...\n");
-                            out.println("GOODBYE");
-                            return;
-                        default: // If request is not available in the server then throw IncorrectActionException
-                            throw new IncorrectActionException();
+    public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
+        switch (message) {
+            case "LOGIN":
+                out.println("SEND_USER_DETAILS");
+                String credentials = in.readLine();
+                String[] loginData = credentials.split(":");
+                if (loginData.length == 2 && authenticate(loginData[0], loginData[1])) {
+                    if (userType.equals("Student")) {
+                        out.println("LOGIN_SUCCESS_STUDENT");
+                    } else {
+                        out.println("LOGIN_SUCCESS_ADMIN");
                     }
-                } catch (IncorrectActionException e) { // catch this exception and send message to server
-                    System.out.println("Error: " + e.getMessage() + message + "\n");
-                    out.println("ERROR: " + e.getMessage() + message);
+                } else {
+                    out.println("Invalid username or password.");
                 }
-            }
-        } catch (IOException e) {
-            System.out.println("Connection error: " + e.getMessage());
-        } finally {
-            // Closes the connection
-            try {
-                link.close();
-                System.out.println("Client connection closed.\n");
-            } catch (IOException e) {
-                System.out.println("Unable to close connection.");
-            }
+                break;
+
+            case "ADD_LECTURE":
+                out.println("OPEN_ADD_LECTURE_PAGE");
+                break;
+
+            case "SUBMIT_LECTURE":
+                out.println("SEND_DATA");
+                String scheduleData = in.readLine();
+                if ("BACK".equals(scheduleData)) {
+                    out.println("RETURNING");
+                } else {
+                    handleAddLecture(scheduleData, out);
+                }
+                break;
+
+            case "REMOVE_LECTURE":
+                out.println("OPEN_REMOVE_LECTURE_PAGE");
+                break;
+
+            case "SEND_LECTURES":
+                sendLectureKeys(out);
+                break;
+
+            case "REMOVE_THIS_LECTURE":
+                out.println("REQUEST_DATA");
+                String lectureToRemove = in.readLine();
+                handleRemoveLecture(lectureToRemove, out);
+                break;
+
+            case "VIEW_SCHEDULE":
+                out.println("OPEN_VIEW_SCHEDULE_PAGE");
+                break;
+
+            case "SEND_LECTURE_DETAILS":
+                handleSendLectureDetails(out);
+                break;
+                
+            case "MANAGE_STUDENTS":
+                out.println("OPENING_MANAGE_STUDENTS_PAGE");
+                break;
+
+            case "ADD_STUDENT":
+                out.println("SEND_STUDENT_DATA");
+                String studentData = in.readLine();
+                addStudent(studentData, out);
+                break;
+
+            case "REMOVE_STUDENT":
+                out.println("REMOVING_STUDENT");
+                String studentId = in.readLine();
+                removeStudent(studentId, out);
+                break;
+
+            case "GET_STUDENTS":
+                sendStudentNames(out);
+                break;
+
+            case "OTHER":
+                out.println("OPEN_OTHER_PAGE");
+                break;
+
+            case "BACK":
+                out.println("RETURNING");
+                break;
+
+            case "LOG_OUT":
+                out.println("LOGGING_OUT");
+                break;
+
+            case "QUIT":
+                out.println("GOODBYE");
+                break;
+
+            default:
+                out.println("ERROR: Invalid Request: " + message);
         }
     }
 
-    // Handles adding and saving a lecture inputted from client
-    private static void handleAddLecture(String lectureData, PrintWriter out) {
-        
-        // if response is empty then return
-        String response = lectureData;
-        if (response == null || response.trim().isEmpty()) {
-            System.out.println("Empty message received. Ignoring.");
-            return;
-        }
-
-        // Breaks up data into an array
-        String[] module = response.split(",");
-        // If all data is accounted for then continue
-        if (module.length == 7) {
-            String moduleName = module[0];
-            String moduleID = module[1];
-            String room = module[2];
-            String type = module[3];
-            String day = module[4];
-            String startTime = module[5];
-            String duration = module[6];
-            
-            //checks availablity and if slot/room is free adds the lecture
-            String availibility = day + "_" + startTime;
-            String fillTimetable = room + "_" + day + "_" + startTime;
-            String lectureKey = moduleName + "_" + type + "_" + room + "_" + day + "_" + startTime;
-            String lectureDetails = moduleName + "," + moduleID + "," + type + "," + room + "," + day + "," + startTime + "," + duration;
-            
-            
-            
-            if (lectureStorage.containsKey(lectureKey)) { // Check if the Lecture is already in the HashMap
-                System.out.println("Error: Lecture already exists. \n");
-                out.println("Error: Lecture already exists.");
-            } else if (timetableSpaces.contains(fillTimetable)) { // Check if the room is available at a specified time
-                System.out.println("Error: This room is already in use at this time. \n");
-                out.println("Error: This room is already in use at the time specified.");
-            } else if (studentAvailibility.contains(availibility)) { // Check if student is available at a specified time (seperate from room)
-                System.out.println("Student unavailable at this time. \n");
-                out.println("Error: Student already has a class at this time.");
-            } else { // If the above is available add lecture
-                lectureStorage.put(lectureKey, lectureDetails);
-                timetableSpaces.add(fillTimetable);
-                studentAvailibility.add(availibility);
-                if (duration.equals("2")) { // Handles if the lecture is 2 hours long
-                    int time = Integer.parseInt(startTime.split(":")[0]);
-                    time += 1;
-                    String extraTime = String.format("%02d:00", time);
-                    String extraSpace = room + "_" + day + "_" + extraTime;
-                    String extraAvail = day + "_" + extraTime; 
-                    timetableSpaces.add(extraSpace); 
-                    studentAvailibility.add(extraAvail);
+    private static boolean authenticate(String studentId, String password) {
+        try {
+            List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
+            for (String[] userData : csvData) {
+                if (userData.length == 3) {
+                    if (userData[0].trim().equals(studentId) && userData[1].trim().equals(password)) {
+                        userType = userData[2].trim();
+                        return true;
+                    }
                 }
-                
-                System.out.println("New Lecture Added: " + lectureDetails + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading CSV");
+        }
+        return false;
+    }
+
+    private static void handleAddLecture(String lectureData, PrintWriter out) {
+        String[] module = lectureData.split(",");
+        if (module.length == 7) {
+            String key = module[0] + "_" + module[3] + "_" + module[2] + "_" + module[4] + "_" + module[5];
+            String detail = lectureData;
+            String slot = module[2] + "_" + module[4] + "_" + module[5];
+            String studentSlot = module[4] + "_" + module[5];
+
+            if (lectureStorage.containsKey(key)) {
+                out.println("Error: Lecture already exists.");
+            } else if (timetableSpaces.contains(slot)) {
+                out.println("Error: Room unavailable at this time.");
+            } else if (studentAvailibility.contains(studentSlot)) {
+                out.println("Error: Student unavailable at this time.");
+            } else {
+                lectureStorage.put(key, detail);
+                timetableSpaces.add(slot);
+                studentAvailibility.add(studentSlot);
+
+                if ("2".equals(module[6])) {
+                    int time = Integer.parseInt(module[5].split(":" )[0]) + 1;
+                    String extraTime = String.format("%02d:00", time);
+                    timetableSpaces.add(module[2] + "_" + module[4] + "_" + extraTime);
+                    studentAvailibility.add(module[4] + "_" + extraTime);
+                }
                 out.println("Lecture Added Successfully!");
             }
         } else {
-            // If all the data is not present or the data is formatted incorrectly then print appropriate message and send to server
-            System.out.println("ERROR: Invalid ADD_LECTURE format. Message: " + response);
-            out.println("ERROR: Invalid ADD_LECTURE format. Expected format: LectureName, CourseID, Room, Type, Day, StartTime, duration");
+            out.println("ERROR: Invalid format");
         }
     }
-        
-    
 
-    // Handles the removing of lectures from the Hashmap and freeing up of the timetable slots
-    private static void handleRemoveLecture(String lectureData, PrintWriter out) {
-        // Checks if the lecture is in the Hashmap
-        if (lectureStorage.containsKey(lectureData)) {
-            String[] lectureDetails = lectureStorage.get(lectureData).split(",");
-            String room = lectureDetails[3];
-            String day = lectureDetails[4];
-            String startTime = lectureDetails[5];
-            String duration = lectureDetails[6];
-            
-            String availData = day + "_" + startTime;
-            String spaceData = room + "_" + day + "_" + startTime;
-            
-            // Checks if the timetable slot and the student availability is in the appropriate ArrayList
-            if (timetableSpaces.contains(spaceData) && studentAvailibility.contains(availData)) {    
-                // Checks the duration of the class to handle accordingly
-                if (duration.equals("2")) { // Runs if duration is two hours
-                    int time = Integer.parseInt(startTime.split(":")[0]);
-                    time += 1;
-                    String extraTime = String.format("%02d:00", time);
-                    String extraSpace = room + "_" + day + "_" + extraTime;
-                    String extraAvail = day + "_" + extraTime;
-                    
-                    // Removes the lecture, timetable blocker and student availibility blocker
-                    timetableSpaces.remove(spaceData);
-                    timetableSpaces.remove(extraSpace);
-                    studentAvailibility.remove(availData);
-                    studentAvailibility.remove(extraAvail);
-                    lectureStorage.remove(lectureData);
-                    System.out.println("Removing two hour lecture...\n");
-                } else { // Runs if duration is one hour
-                    // Removes the lecture, timetable blocker and student availibility blocker
-                    timetableSpaces.remove(spaceData);
-                    studentAvailibility.remove(availData);
-                    lectureStorage.remove(lectureData);
-                    System.out.println("Removing one hour lecture...\n");
-                }
+    private static void handleRemoveLecture(String key, PrintWriter out) {
+        if (lectureStorage.containsKey(key)) {
+            String[] details = lectureStorage.get(key).split(",");
+            String slot = details[2] + "_" + details[4] + "_" + details[5];
+            String studentSlot = details[4] + "_" + details[5];
+
+            timetableSpaces.remove(slot);
+            studentAvailibility.remove(studentSlot);
+            if ("2".equals(details[6])) {
+                int time = Integer.parseInt(details[5].split(":" )[0]) + 1;
+                String extraTime = String.format("%02d:00", time);
+                timetableSpaces.remove(details[2] + "_" + details[4] + "_" + extraTime);
+                studentAvailibility.remove(details[4] + "_" + extraTime);
             }
+
+            lectureStorage.remove(key);
             out.println("Lecture Removed Successfully!");
-        } else { // If lecture is not found then alert client
+        } else {
             out.println("ERROR: Lecture not found.");
-        }   
+        }
     }
-    
-    // Sends lecture details to client to display on timetable
+
     private static void handleSendLectureDetails(PrintWriter out) {
-        // If no lectures are scheduled then alert client
         if (lectureStorage.isEmpty()) {
             out.println("NO_LECTURES_SCHEDULED");
-        } else { // Send data to client
-            StringBuilder scheduleData = new StringBuilder();
-            for (Map.Entry<String, String> entry : lectureStorage.entrySet()) {
-                scheduleData.append(entry.getValue()).append(";");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String val : lectureStorage.values()) {
+                sb.append(val).append(";");
             }
-            out.println(scheduleData.toString());
+            out.println(sb.toString());
         }
     }
-    
-    // Sends the lecture keys from hashmap to client for removing the lecture
+
     private static void sendLectureKeys(PrintWriter out) {
         if (lectureStorage.isEmpty()) {
             out.println("NO_LECTURES_AVAILABLE");
         } else {
-            StringBuilder keys = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (String key : lectureStorage.keySet()) {
-                keys.append(key).append(";");
+                sb.append(key).append(";");
             }
-            out.println(keys.toString());
+            out.println(sb.toString());
         }
     }
-    
-    private static boolean authenticate(String studentId, String password) {
-        InputStream input = ServerTCP.class.getResourceAsStream("/CSV_Files/User_Password.csv");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-            br.readLine(); // Skip header line if it exists
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] userData = line.split(",");
-
-                if (userData.length == 3) {
-                    String csvStudentId = userData[0];
-                    String csvPassword = userData[1];
-                    userType = userData[2];
-
-                    if (csvStudentId.equals(studentId) && csvPassword.equals(password)) {
-                        return true; // Successful login
-                    }
-                }
+    private static void sendStudentNames(PrintWriter out) {
+        try {
+            List<String[]> data = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
+            if (data.isEmpty()) {
+                out.println("NO_STUDENTS_AVAILABLE");
+                return;
             }
-
-        } catch (Exception e) {
-            System.err.println("Error reading CSV: " + e.getMessage());
+            StringBuilder sb = new StringBuilder();
+            for (String[] row : data) {
+                if (row.length == 3) sb.append(row[0].trim()).append(":" );
+            }
+            out.println(sb.toString());
+        } catch (IOException e) {
+            out.println("ERROR: Cannot read student list");
         }
-
-        return false; // Login failed
     }
 
+    private static void addStudent(String line, PrintWriter out) {
+        try {
+            String[] parts = line.split(";");
+            CSVController.appendLineToCSV(USER_PASSWORD_CSV_PATH, parts);
+            out.println("STUDENT_ADDED");
+        } catch (IOException e) {
+            out.println("ERROR: Could not add student");
+        }
+    }
 
-    // Checks if the port is available
+    private static void removeStudent(String id, PrintWriter out) {
+        try {
+            CSVController.removeLineFromCSV(USER_PASSWORD_CSV_PATH, id);
+            out.println(id + " Was removed from the database");
+        } catch (IOException e) {
+            out.println("ERROR: Could not remove student");
+        }
+    }
+
     private static boolean isPortAvailable(int port) {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try (ServerSocket s = new ServerSocket(port)) {
             return true;
         } catch (IOException e) {
             return false;
