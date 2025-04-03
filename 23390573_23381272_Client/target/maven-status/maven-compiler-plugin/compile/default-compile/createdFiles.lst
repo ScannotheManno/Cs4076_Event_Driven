@@ -1,5 +1,6 @@
 org\openjfx\_23381272_client\ClientModel.class
 org\openjfx\_23381272_client\ViewScheduleController.class
+org\openjfx\_23381272_client\TimeTablePopUpController.class
 org\openjfx\_23381272_client\RemoveLectureController.class
 org\openjfx\_23381272_client\AddLectureController.class
 module-info.class

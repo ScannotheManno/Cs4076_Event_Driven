@@ -57,6 +57,85 @@ public class AdminView {
             e.printStackTrace();
         }
     }
+    
+    // Handles opening the add lecture page
+    public void openAddLecturePage() {
+        try {
+            // Loads AddViewLecture.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddLectureView.fxml"));
+            Parent root = loader.load();
+
+            // Calls addLectureController and sets the model
+            AddLectureController addLectureController = loader.getController();
+            addLectureController.setModel(model);
+
+            // Creates and shows stage
+            Stage stage = new Stage();
+            stage.setTitle("Add Lecture");
+            stage.setScene(new Scene(root, 400, 520));
+            
+            // If x is hit to close seen ensures no errors with server expecting extra messages
+            stage.setOnCloseRequest(e -> {model.sendMessage("BACK");});
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open Add Lecture page: " + e.getMessage());
+        }
+    }
+    
+    // Handles opening the remove lecture page
+    public void openRemoveLecturePage() {
+        try {
+            // Request lecture data fron server
+            String scheduleData = model.sendMessage("SEND_LECTURES");
+            // If no lectures are scheduled then alert client an do not open page
+            if (scheduleData.equals("NO_LECTURES_AVAILABLE") || scheduleData.trim().isEmpty()) {
+                Platform.runLater(() -> showAlert("Info", "No lectures available to remove."));
+                return;
+            }
+
+            // Loads RemoveLectureView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveLectureView.fxml"));
+            Parent root = loader.load();
+
+            // Calls RemoveLectureController, populates the dropdown box and sets model
+            RemoveLectureController removeLectureController = loader.getController();
+            removeLectureController.populateLectureDropdown(scheduleData);
+            removeLectureController.setModel(model);
+
+            // Creates and shows stage
+            Stage stage = new Stage();
+            stage.setTitle("Remove Lecture");
+            stage.setScene(new Scene(root, 400, 500));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open Remove Lecture page: " + e.getMessage());
+        }
+    }
+    
+     public void openGroupTimetablePage() {
+        try {
+            // Loads ViewScheduleView.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupTimetableView.fxml"));
+            Parent root = loader.load();
+
+            // Calls ViewScheduleController
+            ViewScheduleController viewScheduleController = loader.getController();
+            // Requests lecture data from server and populates the schdule
+            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS_GROUP");
+            viewScheduleController.populateSchedule(scheduleData);
+            // Sets model
+            viewScheduleController.setModel(model);
+
+            // Creates and shows stage
+            Stage stage = new Stage();
+            stage.setTitle("Class Timetable");
+            stage.setScene(new Scene(root, 900, 750));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Failed to open View Schedule page: " + e.getMessage());
+        }
+    }
+
 
     
     private void showAlert(String title, String message) {

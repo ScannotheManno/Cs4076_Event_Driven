@@ -78,7 +78,7 @@ public class ClientController {
 
     @FXML
     public void handleViewSchedule() {
-        sendRequestToServer("VIEW_SCHEDULE"); //Sends VIEW_SCHEDULE
+        sendRequestToServer("TIMETABLE_POPUP"); //Sends VIEW_SCHEDULE
     }
 
     @FXML
@@ -134,8 +134,8 @@ public class ClientController {
                 case "OPEN_REMOVE_LECTURE_PAGE":
                     Platform.runLater(() -> view.openRemoveLecturePage()); // Opens the remove lecture page
                     break;
-                case "OPEN_VIEW_SCHEDULE_PAGE":
-                    Platform.runLater(() -> view.openGroupTimetablePage()); // Opens the timetable
+                case "OPEN_TIMETABLE_POPUP":
+                    Platform.runLater(() -> view.openTimeTablePopUpPage()); // Opens the timetable
                     break;
                 case "OPEN_OTHER_PAGE":
                     Platform.runLater(() -> view.openOtherPage()); // Opens the other page

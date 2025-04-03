@@ -36,6 +36,45 @@
                     </VBox>
                 </graphic>
             </Button>
+            
+            <Button fx:id="addLectureButton" onAction="#handleAddLecture" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 10;">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="5" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+                        <ImageView fx:id="addLectureImage" fitWidth="100" fitHeight="100">
+                            <image>
+                                <Image url="@Images/add_lecture_image.jpg" />
+                            </image>
+                        </ImageView>
+                        <Label text="Add a Lecture" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    </VBox>
+                </graphic>
+            </Button>
+
+            <Button fx:id="removeLectureButton" onAction="#handleRemoveLecture" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 10;">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="5" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+                        <ImageView fx:id="removeLectureImage" fitWidth="100" fitHeight="100">
+                            <image>
+                                <Image url="@Images/remove_lecture_image.jpg" />
+                            </image>
+                        </ImageView>
+                        <Label text="Remove a Lecture" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    </VBox>
+                </graphic>
+            </Button>
+
+            <Button fx:id="viewScheduleButton" onAction="#handleViewSchedule" style="-fx-background-color: transparent; -fx-border-color: #000000; -fx-border-width: 2; -fx-border-radius: 5; -fx-padding: 10;">
+                <graphic>
+                    <VBox alignment="CENTER" spacing="5" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+                        <ImageView fx:id="viewScheduleImage" fitWidth="100" fitHeight="100">
+                            <image>
+                                <Image url="@Images/schedule_button.jpg" />
+                            </image>
+                        </ImageView>
+                        <Label text="View Schedule" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    </VBox>
+                </graphic>
+            </Button>
         </HBox>
     </VBox>
 

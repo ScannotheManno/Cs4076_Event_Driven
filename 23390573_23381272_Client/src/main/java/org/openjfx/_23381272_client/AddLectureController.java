@@ -90,7 +90,7 @@ public class AddLectureController {
         }
 
         // Formats data for server
-        String message = String.format("%s,%s,%s,%s,%s,%s,%s",
+        String message = String.format("%s@%s@%s@%s@%s@%s@%s",
                 lectureName, courseID, room, type, day, startTime, duration);
 
 

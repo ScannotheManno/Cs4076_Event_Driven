@@ -83,7 +83,7 @@ public class ViewScheduleController {
             for (String lecture : lectures) {
                 try {
                     // Store individual lectures in an array
-                    String[] details = lecture.split(",");
+                    String[] details = lecture.split("@");
                     
                     // If the correct amount of data is sent then continue
                     if (details.length == 7) {

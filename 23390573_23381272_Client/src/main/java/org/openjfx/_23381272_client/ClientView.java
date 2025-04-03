@@ -92,25 +92,45 @@ public class ClientView {
             System.out.println("Failed to open Remove Lecture page: " + e.getMessage());
         }
     }
+    
+    public void openTimeTablePopUpPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/_23381272_client/TimetablePopUpView.fxml"));
+            Parent root = loader.load();
+
+            TimeTablePopUpController controller = loader.getController();
+            controller.setModel(model);
+            controller.setView(this);
+
+            Stage stage = new Stage();
+            stage.setTitle("Choose a Timetable");
+            stage.setScene(new Scene(root, 200, 250));
+            stage.show();
+
+        } catch (IOException e) {
+            showAlert("Error", "Failed to open Manage Users page: " + e.getMessage());
+            e.printStackTrace(); // Optional but recommended for detailed errors
+        }
+    }
 
     // Handles opening the schedule page
     public void openGroupTimetablePage() {
         try {
             // Loads ViewScheduleView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupTimetableView.fxml"));
             Parent root = loader.load();
 
             // Calls ViewScheduleController
             ViewScheduleController viewScheduleController = loader.getController();
             // Requests lecture data from server and populates the schdule
-            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
+            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS_GROUP");
             viewScheduleController.populateSchedule(scheduleData);
             // Sets model
             viewScheduleController.setModel(model);
 
             // Creates and shows stage
             Stage stage = new Stage();
-            stage.setTitle("View Schedule");
+            stage.setTitle("Class Timetable");
             stage.setScene(new Scene(root, 900, 750));
             stage.show();
         } catch (IOException e) {
@@ -121,20 +141,20 @@ public class ClientView {
     public void openPersonalTimetablePage() {
         try {
             // Loads ViewScheduleView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("PersonalTimeTableView.fxml"));
             Parent root = loader.load();
 
             // Calls ViewScheduleController
             ViewScheduleController viewScheduleController = loader.getController();
             // Requests lecture data from server and populates the schdule
-            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS");
+            String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS_PERSONAL");
             viewScheduleController.populateSchedule(scheduleData);
             // Sets model
             viewScheduleController.setModel(model);
 
             // Creates and shows stage
             Stage stage = new Stage();
-            stage.setTitle("View Schedule");
+            stage.setTitle("Personal Timetable");
             stage.setScene(new Scene(root, 900, 750));
             stage.show();
         } catch (IOException e) {
@@ -162,6 +182,9 @@ public class ClientView {
             System.out.println("Failed to open Other page: " + e.getMessage());
         }
     }
+    
+    
+
     
     // Method to show alerts to client
     private void showAlert(String title, String message) {

@@ -14,6 +14,9 @@ public class AdminController {
 
     @FXML private ImageView logo;
     @FXML private ImageView manageUsersImage;
+    @FXML private ImageView addLectureImage;
+    @FXML private ImageView removeLectureImage;
+    @FXML private ImageView viewScheduleImage;
     @FXML private Button logoutButton;
 
     private ClientModel model;
@@ -33,6 +36,15 @@ public class AdminController {
 
             Image manageUsersImg = new Image(getClass().getResource("/Images/people_logo.jpg").toExternalForm());
             manageUsersImage.setImage(manageUsersImg);
+
+            Image addLectureImg = new Image(getClass().getResource("/Images/add_lecture_image.jpg").toExternalForm());
+            addLectureImage.setImage(addLectureImg);
+
+            Image removeLectureImg = new Image(getClass().getResource("/Images/remove_lecture_image.jpg").toExternalForm());
+            removeLectureImage.setImage(removeLectureImg);
+
+            Image viewScheduleImg = new Image(getClass().getResource("/Images/schedule_button.jpg").toExternalForm());
+            viewScheduleImage.setImage(viewScheduleImg);
 
         } catch (NullPointerException e) {
             System.err.println("Error loading image: " + e.getMessage());
@@ -56,6 +68,21 @@ public class AdminController {
     @FXML
     public void handleManageStudent() {
         sendRequestToServer("MANAGE_STUDENTS");
+    }
+    
+    @FXML
+    public void handleAddLecture() {
+        sendRequestToServer("ADD_LECTURE"); // Sends ADD_LECTURE
+    }
+
+    @FXML
+    public void handleRemoveLecture() {
+        sendRequestToServer("REMOVE_LECTURE"); // Sends REMOVE_LECTURE
+    }
+
+    @FXML
+    public void handleViewSchedule() {
+        sendRequestToServer("GROUP_TIMETABLE"); //Sends VIEW_SCHEDULE
     }
 
     @FXML
@@ -103,6 +130,15 @@ public class AdminController {
             switch (response) {
                 case "OPENING_MANAGE_STUDENTS_PAGE":
                     Platform.runLater(() -> adminView.openManageStudentPage());
+                    break;
+                case "OPEN_ADD_LECTURE_PAGE":
+                    Platform.runLater(() -> adminView.openAddLecturePage()); // Opens the add lecture page
+                    break;
+                case "OPEN_REMOVE_LECTURE_PAGE":
+                    Platform.runLater(() -> adminView.openRemoveLecturePage()); // Opens the remove lecture page
+                    break;
+                case "OPEN_GROUP_TIMETABLE_PAGE":
+                    Platform.runLater(() -> adminView.openGroupTimetablePage());
                     break;
                 case "LOGGING_OUT":
                     Platform.runLater(() -> adminView.openLoginView());
