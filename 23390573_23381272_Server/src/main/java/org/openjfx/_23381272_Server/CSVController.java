@@ -38,6 +38,23 @@ public class CSVController {
             bw.newLine();
         }
     }
+    
+    public static void clearCSV(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            // Read the header line
+            String header = reader.readLine();
+
+            if (header != null) {
+                // Overwrite the file with only the header
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                    writer.write(header);
+                    writer.newLine(); // Optional: adds a new line after the header
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void removeLineFromCSV(String filePath, String keyWord) throws IOException {
         List<String[]> data = readCSV(filePath);
@@ -63,5 +80,18 @@ public class CSVController {
         } else {
             System.out.println("No matching row found for '" + keyWord + "'.");
         }
+    }
+    
+    public static HashMap<String, String> csvToMap(String filePath) throws IOException {
+        List<String[]> rows = readCSV(filePath);
+        HashMap<String, String> map = new HashMap<>();
+
+        for (String[] row : rows) {
+            if (row.length >= 2) {
+                map.put(row[0], row[1]);
+            }
+        }
+
+        return map;
     }
 }
