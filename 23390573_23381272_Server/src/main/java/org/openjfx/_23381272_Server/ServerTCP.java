@@ -249,7 +249,7 @@ public class ServerTCP {
     private static void handleRemoveLecture(String key, PrintWriter out) {
         if (userType.equals("Student")) {
             if (lectureStoragePersonal.containsKey(key)) {
-                String[] details = lectureStoragePersonal.get(key).split(",");
+                String[] details = lectureStoragePersonal.get(key).split("@");
                 String slot = details[2] + "_" + details[4] + "_" + details[5];
                 String studentSlot = details[4] + "_" + details[5];
 
@@ -267,28 +267,37 @@ public class ServerTCP {
             } else {
                 out.println("ERROR: Lecture not found.");
             }
-        } else {
-            if (lectureStorageGroup.containsKey(key)) {
-                String[] details = lectureStorageGroup.get(key).split(",");
-                String slot = details[2] + "_" + details[4] + "_" + details[5];
-                String studentSlot = details[4] + "_" + details[5];
+        } else if (userType.equals("Admin")){
+                if (lectureStorageGroup.containsKey(key)) {
+                    String[] details = lectureStorageGroup.get(key).split("@");
+                    String slot = details[2] + "_" + details[4] + "_" + details[5];
+                    String studentSlot = details[4] + "_" + details[5];
 
-                timetableSpacesGroup.remove(slot);
-                studentAvailibilityGroup.remove(studentSlot);
-                if ("2".equals(details[6])) {
-                    int time = Integer.parseInt(details[5].split(":" )[0]) + 1;
-                    String extraTime = String.format("%02d:00", time);
-                    timetableSpacesGroup.remove(details[2] + "_" + details[4] + "_" + extraTime);
-                    studentAvailibilityGroup.remove(details[4] + "_" + extraTime);
+                    timetableSpacesGroup.remove(slot);
+                    studentAvailibilityGroup.remove(studentSlot);
+                    if ("2".equals(details[6])) {
+                        int time = Integer.parseInt(details[5].split(":" )[0]) + 1;
+                        String extraTime = String.format("%02d:00", time);
+                        timetableSpacesGroup.remove(details[2] + "_" + details[4] + "_" + extraTime);
+                        studentAvailibilityGroup.remove(details[4] + "_" + extraTime);
+                    }
                 }
-
+                
+            try {
+                CSVController.removeLineFromCSV(GROUPTIMETABLE_CSV_PATH, key);
+                System.out.println("Could not remove lecture from csv.");
                 lectureStorageGroup.remove(key);
                 out.println("Lecture Removed Successfully!");
+            } catch (IOException e) {
+            System.out.println("Could not remove from csv");
+            }
+            
             } else {
                 out.println("ERROR: Lecture not found.");
             }
         }
-    }
+    
+
 
     private static void handleSendLectureDetailsGroup(PrintWriter out) {
         if (lectureStorageGroup.isEmpty()) {
@@ -373,6 +382,18 @@ public class ServerTCP {
             out.println(id + " Was removed from the database");
         } catch (IOException e) {
             out.println("ERROR: Could not remove student");
+        }
+    }
+    
+    private static void populateArrayLists(String path, ArrayList list, int pos) {
+        try {
+            List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
+            for (String[] data : csvData) {
+                list.add(data[pos]);
+            }
+    
+        } catch (IOException e) {
+            System.out.println("Error reading csv.");
         }
     }
 

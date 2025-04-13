@@ -57,30 +57,45 @@ public class CSVController {
     }
 
     public static void removeLineFromCSV(String filePath, String keyWord) throws IOException {
-        List<String[]> data = readCSV(filePath);
-
-        if (data.isEmpty()) {
-            System.out.println("CSV is empty.");
-            return;
-        }
-
-        String[] header = data.get(0);
+        List<String> lines = new ArrayList<>();
         boolean removed = false;
 
-        for (int i = 1; i < data.size(); i++) {
-            if (data.get(i).length > 0 && data.get(i)[0].equalsIgnoreCase(keyWord)) {
-                data.remove(i);
-                removed = true;
-                break;
+        // Read the CSV file line-by-line
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    lines.add(line); // Always keep the header
+                    isFirstLine = false;
+                    continue;
+                }
+
+                String[] parts = line.split(",", -1); // Use -1 to handle empty columns
+                if (!removed && parts.length > 0 && parts[0].equals(keyWord)) {
+                    removed = true; // Skip this line
+                } else {
+                    lines.add(line); // Keep this line
+                }
             }
         }
 
         if (removed) {
-            overwriteCSV(filePath, data);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                for (String l : lines) {
+                    writer.write(l);
+                    writer.newLine();
+                }
+            }
+            System.out.println("Line with key '" + keyWord + "' was removed.");
         } else {
             System.out.println("No matching row found for '" + keyWord + "'.");
         }
     }
+
+
+
     
     public static HashMap<String, String> csvToMap(String filePath) throws IOException {
         List<String[]> rows = readCSV(filePath);
