@@ -62,16 +62,16 @@ public class AdminView {
     public void openAddLecturePage() {
         try {
             // Loads AddViewLecture.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddLectureView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminAddLectureView.fxml"));
             Parent root = loader.load();
 
             // Calls addLectureController and sets the model
-            AddLectureController addLectureController = loader.getController();
-            addLectureController.setModel(model);
+            AddLectureControllerAdmin addLectureControllerAdmin = loader.getController();
+            addLectureControllerAdmin.setModel(model);
 
             // Creates and shows stage
             Stage stage = new Stage();
-            stage.setTitle("Add Lecture");
+            stage.setTitle("Add Lecture Admin");
             stage.setScene(new Scene(root, 400, 520));
             
             // If x is hit to close seen ensures no errors with server expecting extra messages
@@ -86,7 +86,7 @@ public class AdminView {
     public void openRemoveLecturePage() {
         try {
             // Request lecture data fron server
-            String scheduleData = model.sendMessage("SEND_LECTURES");
+            String scheduleData = model.sendMessage("SEND_LECTURES_ADMIN");
             // If no lectures are scheduled then alert client an do not open page
             if (scheduleData.equals("NO_LECTURES_AVAILABLE") || scheduleData.trim().isEmpty()) {
                 Platform.runLater(() -> showAlert("Info", "No lectures available to remove."));
@@ -94,11 +94,11 @@ public class AdminView {
             }
 
             // Loads RemoveLectureView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveLectureView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminRemoveLectureView.fxml"));
             Parent root = loader.load();
 
             // Calls RemoveLectureController, populates the dropdown box and sets model
-            RemoveLectureController removeLectureController = loader.getController();
+            RemoveLectureControllerAdmin removeLectureController = loader.getController();
             removeLectureController.populateLectureDropdown(scheduleData);
             removeLectureController.setModel(model);
 

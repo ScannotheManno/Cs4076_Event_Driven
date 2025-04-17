@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-public class RemoveLectureController {
+public class RemoveLectureControllerAdmin {
     @FXML private ComboBox<String> lectureComboBox;
     @FXML private Button removeLectureButton;
     @FXML private ImageView logo;
@@ -70,7 +70,7 @@ public class RemoveLectureController {
         }
 
         // Sends a request to the server to remove the lecture
-        String response = model.sendMessage("REMOVE_THIS_LECTURE_STUDENT");
+        String response = model.sendMessage("REMOVE_THIS_LECTURE_ADMIN");
         if (response.equals("REQUEST_DATA")) {
             String lectureToRemove = model.sendMessage(selectedLecture); // Sends lecture data to remove
             Platform.runLater(() -> showAlert("Server Response", lectureToRemove));

@@ -67,7 +67,7 @@ public class ClientView {
     public void openRemoveLecturePage() {
         try {
             // Request lecture data fron server
-            String scheduleData = model.sendMessage("SEND_LECTURES");
+            String scheduleData = model.sendMessage("SEND_LECTURES_STUDENT");
             // If no lectures are scheduled then alert client an do not open page
             if (scheduleData.equals("NO_LECTURES_AVAILABLE") || scheduleData.trim().isEmpty()) {
                 Platform.runLater(() -> showAlert("Info", "No lectures available to remove."));

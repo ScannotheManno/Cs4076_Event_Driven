@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-public class AddLectureController {
+public class AddLectureControllerAdmin {
     @FXML private ComboBox<String> dayComboBox;
     @FXML private ComboBox<String> timeStartComboBox;
     @FXML private Spinner<Integer> durationSpinner;
@@ -66,7 +66,7 @@ public class AddLectureController {
     // Handles the submit button action. Requests to send data and sends once approved
     @FXML
     private void handleSubmitButton(){
-        String response = model.sendMessage("SUBMIT_LECTURE_STUDENT");
+        String response = model.sendMessage("SUBMIT_LECTURE_ADMIN");
         if (response.equals("SEND_DATA")) {
             handleSubmitLecture();
         }
