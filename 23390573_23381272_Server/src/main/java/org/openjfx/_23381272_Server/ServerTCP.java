@@ -6,20 +6,12 @@ import java.util.*;
 
 public class ServerTCP {
     private static final int PORT = 5555;
-    private static Map<String, String> lectureStorageGroup = new HashMap<>();
-    private static final Map<String, String> lectureStoragePersonal = new HashMap<>();
-    private static final ArrayList<String> timetableSpacesGroup = new ArrayList<>();
-    private static final ArrayList<String> timetableSpacesPersonal = new ArrayList<>();
-    private static final ArrayList<String> studentAvailibilityGroup = new ArrayList<>();
-    private static final ArrayList<String> studentAvailibilityPersonal = new ArrayList<>();
-    private static String studentID;
     private static String userType;
     private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
-    private static final String GROUPTIMETABLE_CSV_PATH = "CSV_Files/GroupTimetable.csv";
-
 
     public static void main(String[] args) {
         System.out.println("Opening port...\n");
+        LectureController.loadCSVData();
 
         if (!isPortAvailable(PORT)) {
             System.out.println("Port " + PORT + " is already in use.");
@@ -39,6 +31,7 @@ public class ServerTCP {
     }
 
     public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
+        LectureController lecCon = new LectureController();
         switch (message) {
             case "LOGIN":
                 out.println("SEND_USER_DETAILS");
@@ -48,13 +41,9 @@ public class ServerTCP {
                     if (userType.equals("Student")) {
                         out.println("LOGIN_SUCCESS_STUDENT");
                         System.out.println(loginData[0] + " Has successfully logged in\n");
-                        lectureStorageGroup.clear();
-                        lectureStorageGroup = CSVController.csvToMap(GROUPTIMETABLE_CSV_PATH);
                     } else {
                         out.println("LOGIN_SUCCESS_ADMIN");
                         System.out.println(loginData[0] + " Has successfully logged in\n");
-                        lectureStorageGroup.clear();
-                        lectureStorageGroup = CSVController.csvToMap(GROUPTIMETABLE_CSV_PATH);
                     }
                 } else {
                     out.println("Invalid username or password.");
@@ -67,13 +56,23 @@ public class ServerTCP {
                 System.out.println("Opening the add lecture page...\n");
                 break;
 
-            case "SUBMIT_LECTURE":
+            case "SUBMIT_LECTURE_STUDENT":
                 out.println("SEND_DATA");
                 String scheduleData = in.readLine();
                 if ("BACK".equals(scheduleData)) {
                     out.println("RETURNING");
                 } else {
-                    handleAddLecture(scheduleData, out);
+                    lecCon.handleAddLectureStudent(scheduleData, out);
+                }
+                break;
+                
+            case "SUBMIT_LECTURE_ADMIN":
+                out.println("SEND_DATA");
+                String scheduleData2 = in.readLine();
+                if ("BACK".equals(scheduleData2)) {
+                    out.println("RETURNING");
+                } else {
+                    lecCon.handleAddLectureAdmin(scheduleData2, out);
                 }
                 break;
 
@@ -82,14 +81,24 @@ public class ServerTCP {
                 System.out.println("Opening the remove lecture page...\n");
                 break;
 
-            case "SEND_LECTURES":
-                sendLectureKeys(out);
+            case "SEND_LECTURES_STUDENT":
+                lecCon.sendLectureKeysStudent(out);
                 break;
 
-            case "REMOVE_THIS_LECTURE":
+            case "SEND_LECTURES_ADMIN":
+                lecCon.sendLectureKeysAdmin(out);
+                break;                
+
+            case "REMOVE_THIS_LECTURE_STUDENT":
                 out.println("REQUEST_DATA");
                 String lectureToRemove = in.readLine();
-                handleRemoveLecture(lectureToRemove, out);
+                lecCon.handleRemoveLectureStudent(lectureToRemove, out);
+                break;
+                
+            case "REMOVE_THIS_LECTURE_ADMIN":
+                out.println("REQUEST_DATA");
+                String lectureToRemove2 = in.readLine();
+                lecCon.handleRemoveLectureAdmin(lectureToRemove2, out);
                 break;
                 
             case "TIMETABLE_POPUP":
@@ -108,11 +117,11 @@ public class ServerTCP {
                 break;
 
             case "SEND_LECTURE_DETAILS_GROUP":
-                handleSendLectureDetailsGroup(out);
+                lecCon.handleSendLectureDetailsGroup(out);
                 break;
             
             case "SEND_LECTURE_DETAILS_PERSONAL":
-                handleSendLectureDetailsPersonal(out);
+                lecCon.handleSendLectureDetailsPersonal(out);
                 break;
 
             case "MANAGE_STUDENTS":
@@ -167,8 +176,7 @@ public class ServerTCP {
             List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
             for (String[] userData : csvData) {
                 if (userData.length == 3) {
-                    if (userData[0].trim().equals(studentId) && userData[1].trim().equals(password)) {
-                        studentID = userData[0].trim();
+                    if (userData[0].equals(studentId) && userData[1].equals(password)) {
                         userType = userData[2].trim();
                         return true;
                     }
@@ -178,175 +186,6 @@ public class ServerTCP {
             System.out.println("Error reading CSV");
         }
         return false;
-    }
-
-    private static void handleAddLecture(String lectureData, PrintWriter out) {
-        String[] module = lectureData.split("@");
-        if (module.length == 7) {
-            String key = module[0] + "_" + module[3] + "_" + module[2] + "_" + module[4] + "_" + module[5];
-            String detail = lectureData;
-            String slot = module[2] + "_" + module[4] + "_" + module[5];
-            String studentSlot = module[4] + "_" + module[5];
-            if (userType.equals("Student")) {
-                if (lectureStoragePersonal.containsKey(key)) {
-                    out.println("Error: Lecture already exists.");
-                } else if (timetableSpacesPersonal.contains(slot)) {
-                    out.println("Error: Room unavailable at this time.");
-                } else if (studentAvailibilityPersonal.contains(studentSlot)) {
-                    out.println("Error: Student unavailable at this time.");
-                } else {
-                    lectureStoragePersonal.put(key, detail);
-                    timetableSpacesPersonal.add(slot);
-                    studentAvailibilityPersonal.add(studentSlot);
-
-                    if ("2".equals(module[6])) {
-                        int time = Integer.parseInt(module[5].split(":" )[0]) + 1;
-                        String extraTime = String.format("%02d:00", time);
-                        timetableSpacesPersonal.add(module[2] + "_" + module[4] + "_" + extraTime);
-                        studentAvailibilityPersonal.add(module[4] + "_" + extraTime);
-                    }
-                    out.println("Lecture Added Successfully!");
-                }
-            } else {
-                if (lectureStorageGroup.containsKey(key)) {
-                    out.println("Error: Lecture already exists.");
-                } else if (timetableSpacesGroup.contains(slot)) {
-                    out.println("Error: Room unavailable at this time.");
-                } else if (studentAvailibilityGroup.contains(studentSlot)) {
-                    out.println("Error: Student unavailable at this time.");
-                } else {
-                    lectureStorageGroup.put(key, detail);
-                    timetableSpacesGroup.add(slot);
-                    studentAvailibilityGroup.add(studentSlot);
-
-                    if ("2".equals(module[6])) {
-                        int time = Integer.parseInt(module[5].split(":" )[0]) + 1;
-                        String extraTime = String.format("%02d:00", time);
-                        timetableSpacesGroup.add(module[2] + "_" + module[4] + "_" + extraTime);
-                        studentAvailibilityGroup.add(module[4] + "_" + extraTime);
-                    }
-                    out.println("Lecture Added Successfully!");
-                    CSVController.clearCSV(GROUPTIMETABLE_CSV_PATH);
-                    
-                    for (var entry : lectureStorageGroup.entrySet()) {
-                        try {
-                            String csvKey = entry.getKey();
-                            String csvValue = entry.getValue();
-                            String[] row = {csvKey, csvValue};
-                            CSVController.appendLineToCSV(GROUPTIMETABLE_CSV_PATH, row);
-                            System.out.println("bug test" + row);
-                        } catch (IOException e) {
-                            System.out.println("Could not save to csv");
-                        }    
-                    }
-                }
-            }
-        } else {
-            out.println("ERROR: Invalid format");
-        }
-    }
-
-    private static void handleRemoveLecture(String key, PrintWriter out) {
-        if (userType.equals("Student")) {
-            if (lectureStoragePersonal.containsKey(key)) {
-                String[] details = lectureStoragePersonal.get(key).split("@");
-                String slot = details[2] + "_" + details[4] + "_" + details[5];
-                String studentSlot = details[4] + "_" + details[5];
-
-                timetableSpacesPersonal.remove(slot);
-                studentAvailibilityPersonal.remove(studentSlot);
-                if ("2".equals(details[6])) {
-                    int time = Integer.parseInt(details[5].split(":" )[0]) + 1;
-                    String extraTime = String.format("%02d:00", time);
-                    timetableSpacesPersonal.remove(details[2] + "_" + details[4] + "_" + extraTime);
-                    studentAvailibilityPersonal.remove(details[4] + "_" + extraTime);
-                }
-
-                lectureStoragePersonal.remove(key);
-                out.println("Lecture Removed Successfully!");
-            } else {
-                out.println("ERROR: Lecture not found.");
-            }
-        } else if (userType.equals("Admin")){
-                if (lectureStorageGroup.containsKey(key)) {
-                    String[] details = lectureStorageGroup.get(key).split("@");
-                    String slot = details[2] + "_" + details[4] + "_" + details[5];
-                    String studentSlot = details[4] + "_" + details[5];
-
-                    timetableSpacesGroup.remove(slot);
-                    studentAvailibilityGroup.remove(studentSlot);
-                    if ("2".equals(details[6])) {
-                        int time = Integer.parseInt(details[5].split(":" )[0]) + 1;
-                        String extraTime = String.format("%02d:00", time);
-                        timetableSpacesGroup.remove(details[2] + "_" + details[4] + "_" + extraTime);
-                        studentAvailibilityGroup.remove(details[4] + "_" + extraTime);
-                    }
-                }
-                
-            try {
-                CSVController.removeLineFromCSV(GROUPTIMETABLE_CSV_PATH, key);
-                System.out.println("Could not remove lecture from csv.");
-                lectureStorageGroup.remove(key);
-                out.println("Lecture Removed Successfully!");
-            } catch (IOException e) {
-            System.out.println("Could not remove from csv");
-            }
-            
-            } else {
-                out.println("ERROR: Lecture not found.");
-            }
-        }
-    
-
-
-    private static void handleSendLectureDetailsGroup(PrintWriter out) {
-        if (lectureStorageGroup.isEmpty()) {
-            out.println("NO_LECTURES_SCHEDULED");
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (String val : lectureStorageGroup.values()) {
-                sb.append(val).append(";");
-            }
-            out.println(sb.toString());
-            System.out.println("GROUP TEST");
-        }
-    }
-    
-    private static void handleSendLectureDetailsPersonal(PrintWriter out) {
-        if (lectureStoragePersonal.isEmpty()) {
-            out.println("NO_LECTURES_SCHEDULED");
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (String val : lectureStoragePersonal.values()) {
-                sb.append(val).append(";");
-            }
-            out.println(sb.toString());
-            System.out.println("PERSONAL TEST");
-        }
-    }
-
-    private static void sendLectureKeys(PrintWriter out) {
-        if (userType.equals("Student")) {
-            if (lectureStoragePersonal.isEmpty()) {
-                out.println("NO_LECTURES_AVAILABLE");
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (String key : lectureStoragePersonal.keySet()) {
-                    sb.append(key).append(";");
-                }
-                out.println(sb.toString());
-            }
-        } else {
-            if (lectureStorageGroup.isEmpty()) {
-                out.println("NO_LECTURES_AVAILABLE");
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (String key : lectureStorageGroup.keySet()) {
-                    sb.append(key).append(";");
-                }
-                out.println(sb.toString());
-            }
-        }
     }
 
     private static void sendStudentNames(PrintWriter out) {
@@ -382,18 +221,6 @@ public class ServerTCP {
             out.println(id + " Was removed from the database");
         } catch (IOException e) {
             out.println("ERROR: Could not remove student");
-        }
-    }
-    
-    private static void populateArrayLists(String path, ArrayList list, int pos) {
-        try {
-            List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
-            for (String[] data : csvData) {
-                list.add(data[pos]);
-            }
-    
-        } catch (IOException e) {
-            System.out.println("Error reading csv.");
         }
     }
 

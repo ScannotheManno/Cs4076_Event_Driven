@@ -94,9 +94,6 @@ public class CSVController {
         }
     }
 
-
-
-    
     public static HashMap<String, String> csvToMap(String filePath) throws IOException {
         List<String[]> rows = readCSV(filePath);
         HashMap<String, String> map = new HashMap<>();
