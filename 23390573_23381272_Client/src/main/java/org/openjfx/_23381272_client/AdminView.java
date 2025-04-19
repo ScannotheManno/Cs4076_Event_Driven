@@ -115,16 +115,18 @@ public class AdminView {
      public void openGroupTimetablePage() {
         try {
             // Loads ViewScheduleView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupTimetableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupAdminTimetableView.fxml"));
             Parent root = loader.load();
 
             // Calls ViewScheduleController
-            ViewScheduleController viewScheduleController = loader.getController();
+            AdminViewScheduleController viewScheduleController = loader.getController();
             // Requests lecture data from server and populates the schdule
             String scheduleData = model.sendMessage("SEND_LECTURE_DETAILS_GROUP");
             viewScheduleController.populateSchedule(scheduleData);
             // Sets model
             viewScheduleController.setModel(model);
+            viewScheduleController.setView(this);
+            
 
             // Creates and shows stage
             Stage stage = new Stage();

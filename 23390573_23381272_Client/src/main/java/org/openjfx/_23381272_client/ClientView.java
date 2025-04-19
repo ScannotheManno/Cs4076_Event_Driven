@@ -104,7 +104,7 @@ public class ClientView {
 
             Stage stage = new Stage();
             stage.setTitle("Choose a Timetable");
-            stage.setScene(new Scene(root, 200, 250));
+            stage.setScene(new Scene(root, 500, 175));
             stage.show();
 
         } catch (IOException e) {
@@ -117,7 +117,7 @@ public class ClientView {
     public void openGroupTimetablePage() {
         try {
             // Loads ViewScheduleView.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupTimetableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GroupStudentTimetableView.fxml"));
             Parent root = loader.load();
 
             // Calls ViewScheduleController
@@ -151,6 +151,7 @@ public class ClientView {
             viewScheduleController.populateSchedule(scheduleData);
             // Sets model
             viewScheduleController.setModel(model);
+            viewScheduleController.setView(this);
 
             // Creates and shows stage
             Stage stage = new Stage();

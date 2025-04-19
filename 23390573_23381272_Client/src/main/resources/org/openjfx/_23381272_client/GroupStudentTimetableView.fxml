@@ -2,8 +2,11 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Rectangle?>
 
 
@@ -22,18 +25,12 @@
                   alignment="CENTER"
                   style="-fx-background-color: white; -fx-padding: 10;">
         </GridPane>
-        <HBox alignment="CENTER" spacing="5" maxWidth="1000">
-            <VBox alignment="CENTER" spacing="5" maxWidth="200" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
-                <Button fx:id="backButton" text="Back" 
-                        style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"
-                        onAction="#handleBackButton"/>
-            </VBox>
-            <VBox alignment="CENTER" spacing="5" maxWidth="200" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
-                <Button fx:id="earlyLecButton" text="Make Lectures Earlier" 
-                        style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"
-                        onAction="#handleEarlyLecButton"/>
-            </VBox>
-        </HBox>
+
+        <VBox alignment="CENTER" spacing="5" maxWidth="200" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="backButton" text="Back" 
+                    style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-padding: 10; -fx-font-size: 14px;"
+                    onAction="#handleBackButton"/>
+        </VBox>
     </VBox>
 
     <VBox layoutX="375" layoutY="25" spacing="0">

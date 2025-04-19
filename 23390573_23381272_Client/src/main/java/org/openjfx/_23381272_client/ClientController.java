@@ -137,6 +137,9 @@ public class ClientController {
                 case "OPEN_TIMETABLE_POPUP":
                     Platform.runLater(() -> view.openTimeTablePopUpPage()); // Opens the timetable
                     break;
+                case "OPEN_PERSONAL_TIMETABLE":
+                    Platform.runLater(()-> view.openPersonalTimetablePage());
+                    break;
                 case "OPEN_OTHER_PAGE":
                     Platform.runLater(() -> view.openOtherPage()); // Opens the other page
                     break;

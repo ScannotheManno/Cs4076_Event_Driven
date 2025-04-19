@@ -1,9 +1,12 @@
 org\openjfx\_23381272_client\ClientModel.class
 org\openjfx\_23381272_client\ViewScheduleController.class
+org\openjfx\_23381272_client\AdminViewScheduleController.class
 org\openjfx\_23381272_client\TimeTablePopUpController.class
 org\openjfx\_23381272_client\RemoveLectureController.class
 org\openjfx\_23381272_client\AddLectureController.class
 module-info.class
+org\openjfx\_23381272_client\AddLectureControllerAdmin.class
+org\openjfx\_23381272_client\RemoveLectureControllerAdmin.class
 org\openjfx\_23381272_client\ClientGUI.class
 org\openjfx\_23381272_client\AdminController.class
 org\openjfx\_23381272_client\ClientController.class

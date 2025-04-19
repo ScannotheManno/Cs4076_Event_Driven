@@ -17,20 +17,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class ViewScheduleController {
+public class AdminViewScheduleController {
     @FXML private GridPane scheduleGrid;
     @FXML private ImageView logo;
     @FXML private Button backButton;
     
     private ClientModel model;
-    private ClientView view;
+    private AdminView view;
     
     // Setter Method for ClientModel
     public void setModel(ClientModel model) {
         this.model = model;
     }
     
-    public void setView(ClientView view) {
+    public void setView(AdminView view) {
         this.view = view;
     }
 
@@ -66,12 +66,12 @@ public class ViewScheduleController {
     
     @FXML
     private void handleEarlyLecButton() {
-        String response = model.sendMessage("EARLY_LECTURE_STUDENT");
-        if (response.equals("MAKING_LECTURES_EARLIER_STUDENT")) {
-            response = model.sendMessage("PERSONAL_TIMETABLE");
-            if (response.equals("OPEN_PERSONAL_TIMETABLE_PAGE")) {
+        String response = model.sendMessage("EARLY_LECTURE_ADMIN");
+        if (response.equals("MAKING_LECTURES_EARLIER_ADMIN")) {
+            response = model.sendMessage("GROUP_TIMETABLE");
+            if (response.equals("OPEN_GROUP_TIMETABLE_PAGE")) {
                 closeWindow();
-                Platform.runLater(() -> view.openPersonalTimetablePage());
+                Platform.runLater(() -> view.openGroupTimetablePage());
                 System.out.println("Made lectures earlier");
             }
         } else {

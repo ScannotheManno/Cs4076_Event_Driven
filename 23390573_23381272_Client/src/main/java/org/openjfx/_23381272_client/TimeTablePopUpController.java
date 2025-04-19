@@ -3,6 +3,8 @@ package org.openjfx._23381272_client;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 
 public class TimeTablePopUpController {
@@ -26,6 +28,18 @@ public class TimeTablePopUpController {
     
     public void setView(ClientView view) {
         this.view = view;
+    }
+    
+    @FXML
+    private void handleMouseEnter(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(0.7);
+    }
+
+    @FXML
+    private void handleMouseExit(MouseEvent event) {
+        VBox vbox = (VBox) event.getSource();
+        vbox.setOpacity(1.0);
     }
     
     @FXML
