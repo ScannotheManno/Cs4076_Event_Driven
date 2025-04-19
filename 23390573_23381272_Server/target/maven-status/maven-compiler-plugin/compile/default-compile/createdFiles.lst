@@ -1,5 +1,7 @@
+org\openjfx\_23381272_Server\EarlyLectureController.class
 org\openjfx\_23381272_Server\IncorrectActionException.class
 org\openjfx\_23381272_Server\ClientHandler.class
 org\openjfx\_23381272_Server\ServerTCP.class
 org\openjfx\_23381272_Server\CSVController.class
+org\openjfx\_23381272_Server\EarlyLectureController$TimeTableAdjustment.class
 org\openjfx\_23381272_Server\LectureController.class

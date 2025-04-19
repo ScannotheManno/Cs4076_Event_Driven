@@ -8,30 +8,25 @@ public class ServerTCP {
     private static final int PORT = 5555;
     private static String userType;
     private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
+    private static LectureController lectureCon;
+    private static EarlyLectureController earlyCon;
 
-    public static void main(String[] args) {
-        System.out.println("Opening port...\n");
-        LectureController.loadCSVData();
-
-        if (!isPortAvailable(PORT)) {
-            System.out.println("Port " + PORT + " is already in use.");
-            System.exit(1);
-        }
+    // in ServerTCP.java, main()
+    public static void main(String[] args) throws IOException {
+        lectureCon = new LectureController();
+        lectureCon.loadCSVData();
+        earlyCon  = new EarlyLectureController();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client Connected");
-                Thread clientThread = new Thread(new ClientHandler(clientSocket));
-                clientThread.start();
+                new Thread(new ClientHandler(clientSocket)).start();
             }
-        } catch (IOException e) {
-            System.out.println("Server error: " + e.getMessage());
         }
     }
 
+
     public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
-        LectureController lecCon = new LectureController();
         switch (message) {
             case "LOGIN":
                 out.println("SEND_USER_DETAILS");
@@ -62,7 +57,7 @@ public class ServerTCP {
                 if ("BACK".equals(scheduleData)) {
                     out.println("RETURNING");
                 } else {
-                    lecCon.handleAddLectureStudent(scheduleData, out);
+                    lectureCon.handleAddLectureStudent(scheduleData, out);
                 }
                 break;
                 
@@ -72,7 +67,7 @@ public class ServerTCP {
                 if ("BACK".equals(scheduleData2)) {
                     out.println("RETURNING");
                 } else {
-                    lecCon.handleAddLectureAdmin(scheduleData2, out);
+                    lectureCon.handleAddLectureAdmin(scheduleData2, out);
                 }
                 break;
 
@@ -82,23 +77,23 @@ public class ServerTCP {
                 break;
 
             case "SEND_LECTURES_STUDENT":
-                lecCon.sendLectureKeysStudent(out);
+                lectureCon.sendLectureKeysStudent(out);
                 break;
 
             case "SEND_LECTURES_ADMIN":
-                lecCon.sendLectureKeysAdmin(out);
+                lectureCon.sendLectureKeysAdmin(out);
                 break;                
 
             case "REMOVE_THIS_LECTURE_STUDENT":
                 out.println("REQUEST_DATA");
                 String lectureToRemove = in.readLine();
-                lecCon.handleRemoveLectureStudent(lectureToRemove, out);
+                lectureCon.handleRemoveLectureStudent(lectureToRemove, out);
                 break;
                 
             case "REMOVE_THIS_LECTURE_ADMIN":
                 out.println("REQUEST_DATA");
                 String lectureToRemove2 = in.readLine();
-                lecCon.handleRemoveLectureAdmin(lectureToRemove2, out);
+                lectureCon.handleRemoveLectureAdmin(lectureToRemove2, out);
                 break;
                 
             case "TIMETABLE_POPUP":
@@ -117,11 +112,25 @@ public class ServerTCP {
                 break;
 
             case "SEND_LECTURE_DETAILS_GROUP":
-                lecCon.handleSendLectureDetailsGroup(out);
+                lectureCon.handleSendLectureDetailsGroup(out);
                 break;
             
             case "SEND_LECTURE_DETAILS_PERSONAL":
-                lecCon.handleSendLectureDetailsPersonal(out);
+                lectureCon.handleSendLectureDetailsPersonal(out);
+                break;
+                
+            case "EARLY_LECTURE_STUDENT":
+                Map <String, String> oldMapStudent = lectureCon.getLectureStoragePersonal();
+                 Map<String, String> newMapStudent = earlyCon.adjustTimetableParallel(oldMapStudent);
+                lectureCon.setLectureStoragePersonal(newMapStudent);
+                out.println("MAKING_LECTURES_EARLIER_STUDENT");
+                break;
+                
+            case "EARLY_LECTURE_ADMIN":
+                Map <String, String> oldMapGroup = lectureCon.getLectureStorageGroup();
+                Map<String, String> newMapGroup = earlyCon.adjustTimetableParallel(oldMapGroup);
+                lectureCon.setLectureStorageGroup(newMapGroup);
+                out.println("MAKING_LECTURES_EARLIER_ADMIN");
                 break;
 
             case "MANAGE_STUDENTS":

@@ -1,23 +1,23 @@
 package org.openjfx._23381272_Server;
 
-import java.io.PrintWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class LectureController {
-    private static Map<String, String> lectureStorageGroup = new HashMap<>();
-    private static final Map<String, String> lectureStoragePersonal = new HashMap<>();
-    private static ArrayList<String> timetableSpacesGroup = new ArrayList<>();
-    private static final ArrayList<String> timetableSpacesPersonal = new ArrayList<>();
-    private static ArrayList<String> studentAvailibilityGroup = new ArrayList<>();
-    private static final ArrayList<String> studentAvailibilityPersonal = new ArrayList<>();
-    private static final String GROUPTIMETABLE_CSV_PATH = "CSV_Files/GroupTimetable.csv";
-    private static final String LECTURECHECKS_CSV_PATH = "CSV_Files/LectureChecks.csv";
+    private Map<String, String> lectureStorageGroup = new HashMap<>();
+    private Map<String, String> lectureStoragePersonal = new HashMap<>();
+    private ArrayList<String> timetableSpacesGroup = new ArrayList<>();
+    private ArrayList<String> timetableSpacesPersonal = new ArrayList<>();
+    private ArrayList<String> studentAvailibilityGroup = new ArrayList<>();
+    private ArrayList<String> studentAvailibilityPersonal = new ArrayList<>();
+    private String GROUPTIMETABLE_CSV_PATH = "CSV_Files/GroupTimetable.csv";
+    private String LECTURECHECKS_CSV_PATH = "CSV_Files/LectureChecks.csv";
+    
 
 
-    public static void loadCSVData() {
+    public void loadCSVData() {
         try {
-            List<String[]> csvData = new ArrayList<>();
+            List<String[]> csvData;
             lectureStorageGroup = CSVController.csvToMap(GROUPTIMETABLE_CSV_PATH);
             csvData = CSVController.readCSV(LECTURECHECKS_CSV_PATH);
             for (String[] row : csvData) {
@@ -28,8 +28,27 @@ public class LectureController {
             System.out.println("Error reading CSV files");
         }
     }
+    
+    public Map<String, String> getLectureStorageGroup() {
+        return lectureStorageGroup;
+    }
+    
+    public Map<String, String> getLectureStoragePersonal() {
+        return lectureStoragePersonal;
+    }
+    
+    public void setLectureStorageGroup(Map<String, String> map) {
+        this.lectureStorageGroup = map;
+        rebuildGroupSlots();
+        rewriteToCSV(GROUPTIMETABLE_CSV_PATH, LECTURECHECKS_CSV_PATH, lectureStorageGroup, timetableSpacesGroup, studentAvailibilityGroup);
+    }
+    
+    public void setLectureStoragePersonal(Map<String, String> map) {
+        this.lectureStoragePersonal = map;
+        rebuildPersonalSlots();
+    }
 
-    public static void handleAddLectureStudent(String lectureData, PrintWriter out) {
+    public void handleAddLectureStudent(String lectureData, PrintWriter out) {
         String[] module = lectureData.split("@");
         if (module.length == 7) {
             String key = module[0] + "_" + module[3] + "_" + module[2] + "_" + module[4] + "_" + module[5];
@@ -61,7 +80,7 @@ public class LectureController {
         }
     }
     
-    public static void handleAddLectureAdmin(String lectureData, PrintWriter out) {
+    public void handleAddLectureAdmin(String lectureData, PrintWriter out) {
         String[] module = lectureData.split("@");
         if (module.length == 7) {
             String key = module[0] + "_" + module[3] + "_" + module[2] + "_" + module[4] + "_" + module[5];
@@ -110,7 +129,6 @@ public class LectureController {
                         String csvValue = entry.getValue();
                         String[] row = {csvKey, csvValue};
                         CSVController.appendLineToCSV(GROUPTIMETABLE_CSV_PATH, row);
-                        System.out.println("bug test" + row);
                     } catch (IOException e) {
                         System.out.println("Could not save to csv");
                     }    
@@ -121,7 +139,7 @@ public class LectureController {
         } 
     }
 
-    public static void handleRemoveLectureStudent(String key, PrintWriter out) {
+    public void handleRemoveLectureStudent(String key, PrintWriter out) {
         if (lectureStoragePersonal.containsKey(key)) {
             String[] details = lectureStoragePersonal.get(key).split("@");
             String slot = details[2] + "_" + details[4] + "_" + details[5];
@@ -143,7 +161,7 @@ public class LectureController {
         } 
     }
     
-    public static void handleRemoveLectureAdmin(String key, PrintWriter out) {
+    public void handleRemoveLectureAdmin(String key, PrintWriter out) {
         if (lectureStorageGroup.containsKey(key)) {
             String[] details = lectureStorageGroup.get(key).split("@");
             String slot = details[2] + "_" + details[4] + "_" + details[5];
@@ -233,5 +251,62 @@ public class LectureController {
             sb.append(val).append(";");
         }
         out.println(sb.toString());
+    }
+    
+    private void rebuildGroupSlots() {
+        timetableSpacesGroup.clear();
+        studentAvailibilityGroup.clear();
+        for (String detail : lectureStorageGroup.values()) {
+            String[] m = detail.split("@");
+            String slot = m[2] + "_" + m[4] + "_" + m[5];
+            timetableSpacesGroup.add(slot);
+            studentAvailibilityGroup.add(m[4] + "_" + m[5]);
+
+            if ("2".equals(m[6])) {
+                int h = Integer.parseInt(m[5].split(":")[0]) + 1;
+                String extra = String.format("%02d:00", h);
+                timetableSpacesGroup.add(m[2] + "_" + m[4] + "_" + extra);
+                studentAvailibilityGroup.add(m[4] + "_" + extra);
+            }
+        }
+    }
+    
+    private void rebuildPersonalSlots() {
+        timetableSpacesPersonal.clear();
+        studentAvailibilityPersonal.clear();
+        for (String detail : lectureStoragePersonal.values()) {
+            String[] m = detail.split("@");
+            String slot = m[2] + "_" + m[4] + "_" + m[5];
+            timetableSpacesPersonal.add(slot);
+            studentAvailibilityPersonal.add(m[4] + "_" + m[5]);
+
+            if ("2".equals(m[6])) {
+                int h = Integer.parseInt(m[5].split(":")[0]) + 1;
+                String extra = String.format("%02d:00", h);
+                timetableSpacesPersonal.add(m[2] + "_" + m[4] + "_" + extra);
+                studentAvailibilityPersonal.add(m[4] + "_" + extra);
+            }
+        }
+    }
+    
+    private void rewriteToCSV(String filepath1, String filepath2, Map<String, String> map, ArrayList<String> a1, ArrayList<String> a2) {
+        try {
+            // 1) clear & rewrite the group‑timetable CSV
+            CSVController.clearCSV(filepath1);
+            for (var entry : map.entrySet()) {
+                String key   = entry.getKey();
+                String value = entry.getValue();
+                CSVController.appendLineToCSV(filepath1, new String[]{ key, value });
+            }
+
+            // 2) clear & rewrite the lecture‑checks CSV
+            CSVController.clearCSV(filepath2);
+            for (int i = 0; i < a1.size(); i++) {
+                CSVController.appendLineToCSV(filepath2, new String[]{a1.get(i), a2.get(i)});
+            }
+        } catch (IOException e) {
+            // log or rethrow as unchecked if you prefer
+            System.err.println("Error persisting personal timetable to CSV: " + e);
+        }
     }
 }
