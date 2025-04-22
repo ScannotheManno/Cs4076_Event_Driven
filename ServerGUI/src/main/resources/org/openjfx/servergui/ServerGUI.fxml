@@ -9,7 +9,7 @@
     style="-fx-background-color: #FFFFFF;">
     
     <!-- Green header bar -->
-    <Rectangle fill="GREEN" width="10000" height="20"
+    <Rectangle fill="GREEN" width="10000" height="100"
            AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
 
     <!-- Main content area -->
@@ -38,12 +38,10 @@
         
         <!-- Control buttons -->
         <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="startServerBtn" text="Start Server" 
+            <Button fx:id="startServerBtn" text="Start Server" onAction="#handleStartServer" 
                     style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
-            <Button fx:id="stopServerBtn" text="Stop Server" 
+            <Button fx:id="stopServerBtn" text="Stop Server" onAction="#handleStopServer"
                     style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
-            <Button fx:id="earlyLecturesBtn" text="Optimize Schedule" 
-                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
         </HBox>
     </VBox>
 </AnchorPane>

@@ -11,47 +11,63 @@ public class ServerGUIController {
     @FXML private ListView<String> clientListView;
     @FXML private Button startServerBtn;
     @FXML private Button stopServerBtn;
-    @FXML private Button earlyLecturesBtn;
     
     private ServerTCP server;
 
     @FXML
     private void initialize() {
         stopServerBtn.setDisable(true);
-        earlyLecturesBtn.setDisable(true);
     }
 
-    @FXML
-    private void handleStartServer() {
-        startServerBtn.setDisable(true);
-        stopServerBtn.setDisable(false);
-        earlyLecturesBtn.setDisable(false);
-        log("Starting server...");
-        new Thread(() -> {
-            server = new ServerTCP();
-            try {
-            server.startServer();
-            } catch (IOException e) {
-                
-            }
-        }).start();
-    }
+@FXML
+private void handleStartServer() {
+    startServerBtn.setDisable(true);
+    stopServerBtn.setDisable(false);
+    log("Starting server...");
+    new Thread(() -> {
+        ServerTCP.setLogger(this::log);
+        try {
+            ServerTCP.startServer();
+        } catch (IOException e) {
+            log("Server error: " + e.getMessage());
+        }
+    }).start();
+}
 
     @FXML
     private void handleStopServer() {
         startServerBtn.setDisable(false);
         stopServerBtn.setDisable(true);
-        earlyLecturesBtn.setDisable(true);
         log("Stopping server...");
         if (server != null) {
             server.stopServer();
         }
         
     }
-
+   
+        public void setServer(ServerTCP server) {
+        this.server = server;
+        this.server.setLogger(this::log);
+    }
+        
     public void log(String message) {
-        javafx.application.Platform.runLater(() -> 
-            logArea.appendText(message + "\n")
-        );
+        if (message.startsWith("CLIENT_LIST_UPDATE:")) {
+            // Handle client list updates separately
+            updateClientList(message.substring("CLIENT_LIST_UPDATE:".length()));
+        } else {
+            // Normal logging
+            javafx.application.Platform.runLater(() -> 
+                logArea.appendText(message + "\n")
+            );
+        }
+    }
+    
+    private void updateClientList(String clientNames) {
+        javafx.application.Platform.runLater(() -> {
+            clientListView.getItems().clear();
+            if (!clientNames.isEmpty()) {
+                clientListView.getItems().addAll(clientNames.split(","));
+            }
+        });
     }
 }

@@ -10,9 +10,9 @@ public class ServerGUI extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        try {
+            try {
             Parent root = FXMLLoader.load(getClass().getResource("/org/openjfx/ServerGUI/ServerGUI.fxml"));
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root,800,800);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Timetable Server");
             primaryStage.show();

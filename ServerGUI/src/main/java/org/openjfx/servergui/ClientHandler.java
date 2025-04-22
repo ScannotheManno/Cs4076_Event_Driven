@@ -2,40 +2,59 @@ package org.openjfx.servergui;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private Consumer<String> logger;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, Consumer<String> logger) {
         this.socket = socket;
+        this.logger = logger;
+    }
+
+    private void log(String message) {
+        if (logger != null) {
+            logger.accept(message);
+        }
+        System.out.println(message);
     }
 
     @Override
     public void run() {
+        String clientAddress = socket.getInetAddress().getHostAddress();
+        log("Client connected from: " + clientAddress);
+
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
             while (true) {
                 String message = in.readLine();
-                if (message == null) break;
+                if (message == null) {
+                    log("Client " + clientAddress + " disconnected unexpectedly");
+                    break;
+                }
 
-                System.out.println("Received from client: " + message);
+                log("Received from " + clientAddress + ": " + message);
                 ServerTCP.processClientMessage(message, in, out);
 
-                if (message.equals("QUIT")) break;
+                if (message.equals("QUIT")) {
+                    log("Client " + clientAddress + " requested disconnect");
+                    break;
+                }
             }
 
         } catch (IOException e) {
-            System.out.println("Connection error: " + e.getMessage());
+            log("Connection error with " + clientAddress + ": " + e.getMessage());
         } finally {
             try {
                 socket.close();
-                System.out.println("Client connection closed.\n");
+                log("Connection closed with " + clientAddress);
             } catch (IOException e) {
-                System.out.println("Unable to close connection.");
+                log("Error closing connection with " + clientAddress + ": " + e.getMessage());
             }
         }
     }

@@ -3,6 +3,8 @@ package org.openjfx.servergui;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class ServerTCP {
     private static final int PORT = 5555;
@@ -11,42 +13,66 @@ public class ServerTCP {
     private static LectureController lectureCon;
     private static EarlyLectureController earlyCon;
     private static ServerSocket serverSocket;
+    private static Consumer<String> logger;
+    private static Map<String, String> loggedInUsers = new ConcurrentHashMap<>();
 
-    // in ServerTCP.java, main()
+    public static void setLogger(Consumer<String> logger) {
+        ServerTCP.logger = logger;
+    }
+    
+    private static void log(String message) {
+        if (logger != null) {
+            logger.accept(message);
+        }
+        System.out.println(message);
+    }
+
     public static void startServer() throws IOException {
         lectureCon = new LectureController();
         lectureCon.loadCSVData();
-        earlyCon  = new EarlyLectureController();
-        serverSocket = new ServerSocket(5555);
+        earlyCon = new EarlyLectureController();
+        serverSocket = new ServerSocket(PORT);
+        log("Server started on port " + PORT);
 
         try {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                new Thread(new ClientHandler(clientSocket)).start();
+                new Thread(new ClientHandler(clientSocket, logger)).start();  // Pass logger
             }
-            }catch (IOException e) {
-                    
-            }
+        } catch (IOException e) {
+            log("Server stopped: " + e.getMessage());
         }
-    
-    public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
+    }
+
+        public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
         switch (message) {
             case "LOGIN":
                 out.println("SEND_USER_DETAILS");
                 String credentials = in.readLine();
                 String[] loginData = credentials.split(":");
                 if (loginData.length == 2 && authenticate(loginData[0], loginData[1])) {
+                    loggedInUsers.put(loginData[0], userType);
                     if (userType.equals("Student")) {
                         out.println("LOGIN_SUCCESS_STUDENT");
-                        System.out.println(loginData[0] + " Has successfully logged in\n");
+                        log(loginData[0] + " Has successfully logged in");
                     } else {
                         out.println("LOGIN_SUCCESS_ADMIN");
-                        System.out.println(loginData[0] + " Has successfully logged in\n");
+                        log(loginData[0] + " Has successfully logged in");
                     }
+                    updateClientList(); // Call this to update the GUI
                 } else {
                     out.println("Invalid username or password.");
-                        System.out.println("Invalid credentials inputted\n");
+                    log("Invalid credentials inputted");
                 }
+                break;
+                
+            case "LOG_OUT":
+                // Remove user from loggedInUsers map when they log out
+                String username = in.readLine();
+                loggedInUsers.remove(username);
+                out.println("LOGGING_OUT");
+                System.out.println("Client logging out...\n");
+                updateClientList(); // Call this to update the GUI
                 break;
 
             case "ADD_LECTURE":
@@ -168,11 +194,6 @@ public class ServerTCP {
                 System.out.println("Returning...\n");
                 break;
 
-            case "LOG_OUT":
-                out.println("LOGGING_OUT");
-                System.out.println("Client logging out...\n");
-                break;
-
             case "QUIT":
                 out.println("GOODBYE");
                 System.out.println("Closing connection...\n");
@@ -244,11 +265,25 @@ public class ServerTCP {
         }
     }
     
+       
     public void stopServer() {
         try {
         serverSocket.close();
         } catch (IOException e) {
             System.err.println("Unable to close server");
+        }
+    }
+    
+    private static void updateClientList() {
+        if (logger != null) {
+            StringBuilder sb = new StringBuilder("CLIENT_LIST_UPDATE:");
+            for (Map.Entry<String, String> entry : loggedInUsers.entrySet()) {
+                sb.append(entry.getKey()).append(" (").append(entry.getValue()).append("),");
+            }
+            if (!loggedInUsers.isEmpty()) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            logger.accept(sb.toString());
         }
     }
 }
