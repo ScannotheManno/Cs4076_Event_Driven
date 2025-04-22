@@ -10,25 +10,24 @@ public class EarlyLectureController {
     private static final List<String> DAY_ORDER = Arrays.asList(
         "Monday","Tuesday","Wednesday","Thursday","Friday");
     
-    private static final int THRESHOLD_DAYS = 1;  // 1 day per task
+    private static final int THRESHOLD_DAYS = 1;
 
     private class TimeTableAdjustment extends RecursiveTask<Map<String,String>> {
-        private final List<String> days;  // e.g. ["Monday","Tuesday",...]
+        private final List<String> days;
         private final int left, right;
         private final Map<String,String> original;
 
         TimeTableAdjustment(List<String> days, int left, int right, Map<String,String> original) {
-            this.days          = days;
-            this.left          = left;
-            this.right         = right;
-            this.original      = original;
+            this.days = days;
+            this.left = left;
+            this.right = right;
+            this.original = original;
         }
 
         @Override
         protected Map<String,String> compute() {
             if (right - left + 1 <= THRESHOLD_DAYS) {
                 String day = days.get(left);
-                // 1) Collect that day’s entries
                 List<Map.Entry<String,String>> list = new ArrayList<>();
                 Pattern splitPat = Pattern.compile("@");
                 for (var e : original.entrySet()) {

@@ -10,12 +10,16 @@ public class ServerTCP {
     private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
     private static LectureController lectureCon;
     private static EarlyLectureController earlyCon;
+    private static LoginController loginCon;
+    private static ManageStudentController studentCon;
 
     // in ServerTCP.java, main()
     public static void main(String[] args) throws IOException {
         lectureCon = new LectureController();
         lectureCon.loadCSVData();
         earlyCon  = new EarlyLectureController();
+        loginCon = new LoginController();
+        studentCon = new ManageStudentController();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
@@ -32,7 +36,9 @@ public class ServerTCP {
                 out.println("SEND_USER_DETAILS");
                 String credentials = in.readLine();
                 String[] loginData = credentials.split(":");
-                if (loginData.length == 2 && authenticate(loginData[0], loginData[1])) {
+                userType = loginCon.getUserType();
+                if (loginData.length == 2 && loginCon.authenticate(loginData[0], loginData[1])) {
+                    userType = loginCon.getUserType();
                     if (userType.equals("Student")) {
                         out.println("LOGIN_SUCCESS_STUDENT");
                         System.out.println(loginData[0] + " Has successfully logged in\n");
@@ -141,17 +147,17 @@ public class ServerTCP {
             case "ADD_STUDENT":
                 out.println("SEND_STUDENT_DATA");
                 String studentData = in.readLine();
-                addStudent(studentData, out);
+                studentCon.addStudent(studentData, out);
                 break;
 
             case "REMOVE_STUDENT":
                 out.println("REMOVING_STUDENT");
                 String studentId = in.readLine();
-                removeStudent(studentId, out);
+                studentCon.removeStudent(studentId, out);
                 break;
 
             case "GET_STUDENTS":
-                sendStudentNames(out);
+                studentCon.sendStudentNames(out);
                 System.out.println("Sending student data...\n");
                 break;
 
@@ -177,67 +183,6 @@ public class ServerTCP {
 
             default:
                 out.println("ERROR: Invalid Request: " + message);
-        }
-    }
-
-    private static boolean authenticate(String studentId, String password) {
-        try {
-            List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
-            for (String[] userData : csvData) {
-                if (userData.length == 3) {
-                    if (userData[0].equals(studentId) && userData[1].equals(password)) {
-                        userType = userData[2].trim();
-                        return true;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading CSV");
-        }
-        return false;
-    }
-
-    private static void sendStudentNames(PrintWriter out) {
-        try {
-            List<String[]> data = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
-            if (data.isEmpty()) {
-                out.println("NO_STUDENTS_AVAILABLE");
-                return;
-            }
-            StringBuilder sb = new StringBuilder();
-            for (String[] row : data) {
-                if (row.length == 3) sb.append(row[0].trim()).append(":" );
-            }
-            out.println(sb.toString());
-        } catch (IOException e) {
-            out.println("ERROR: Cannot read student list");
-        }
-    }
-
-    private static void addStudent(String line, PrintWriter out) {
-        try {
-            String[] parts = line.split(";");
-            CSVController.appendLineToCSV(USER_PASSWORD_CSV_PATH, parts);
-            out.println(parts[0] + " was added.");
-        } catch (IOException e) {
-            out.println("ERROR: Could not add student");
-        }
-    }
-
-    private static void removeStudent(String id, PrintWriter out) {
-        try {
-            CSVController.removeLineFromCSV(USER_PASSWORD_CSV_PATH, id);
-            out.println(id + " Was removed from the database");
-        } catch (IOException e) {
-            out.println("ERROR: Could not remove student");
-        }
-    }
-
-    private static boolean isPortAvailable(int port) {
-        try (ServerSocket s = new ServerSocket(port)) {
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 }
