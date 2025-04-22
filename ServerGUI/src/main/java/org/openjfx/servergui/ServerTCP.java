@@ -1,4 +1,4 @@
-package org.openjfx._23381272_Server;
+package org.openjfx.servergui;
 
 import java.io.*;
 import java.net.*;
@@ -10,22 +10,25 @@ public class ServerTCP {
     private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
     private static LectureController lectureCon;
     private static EarlyLectureController earlyCon;
+    private static ServerSocket serverSocket;
 
     // in ServerTCP.java, main()
-    public static void main(String[] args) throws IOException {
+    public static void startServer() throws IOException {
         lectureCon = new LectureController();
         lectureCon.loadCSVData();
         earlyCon  = new EarlyLectureController();
+        serverSocket = new ServerSocket(5555);
 
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(new ClientHandler(clientSocket)).start();
             }
+            }catch (IOException e) {
+                    
+            }
         }
-    }
-
-
+    
     public static void processClientMessage(String message, BufferedReader in, PrintWriter out) throws IOException {
         switch (message) {
             case "LOGIN":
@@ -238,6 +241,14 @@ public class ServerTCP {
             return true;
         } catch (IOException e) {
             return false;
+        }
+    }
+    
+    public void stopServer() {
+        try {
+        serverSocket.close();
+        } catch (IOException e) {
+            System.err.println("Unable to close server");
         }
     }
 }

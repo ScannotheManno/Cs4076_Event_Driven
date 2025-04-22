@@ -1,5 +1,6 @@
-package org.openjfx.ServerGUI;
+package org.openjfx.servergui;
 
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -26,10 +27,13 @@ public class ServerGUIController {
         stopServerBtn.setDisable(false);
         earlyLecturesBtn.setDisable(false);
         log("Starting server...");
-        
         new Thread(() -> {
-            server = new ServerTCP(this);
+            server = new ServerTCP();
+            try {
             server.startServer();
+            } catch (IOException e) {
+                
+            }
         }).start();
     }
 
@@ -39,35 +43,15 @@ public class ServerGUIController {
         stopServerBtn.setDisable(true);
         earlyLecturesBtn.setDisable(true);
         log("Stopping server...");
-        
         if (server != null) {
             server.stopServer();
         }
-    }
-
-    @FXML
-    private void handleEarlyLectures() {
-        log("Optimizing timetable for early lectures...");
-        if (server != null) {
-            server.optimizeForEarlyLectures();
-        }
+        
     }
 
     public void log(String message) {
         javafx.application.Platform.runLater(() -> 
             logArea.appendText(message + "\n")
-        );
-    }
-
-    public void addClient(String clientInfo) {
-        javafx.application.Platform.runLater(() -> 
-            clientListView.getItems().add(clientInfo)
-        );
-    }
-
-    public void removeClient(String clientInfo) {
-        javafx.application.Platform.runLater(() -> 
-            clientListView.getItems().remove(clientInfo)
         );
     }
 }

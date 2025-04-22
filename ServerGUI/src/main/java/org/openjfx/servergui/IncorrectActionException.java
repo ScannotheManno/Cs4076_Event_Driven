@@ -1,4 +1,4 @@
-package org.openjfx._23381272_Server;
+package org.openjfx.servergui;
 
 public class IncorrectActionException extends Exception {
     // No-arg constructor

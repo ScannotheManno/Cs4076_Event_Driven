@@ -1,4 +1,4 @@
-package org.openjfx.ServerGUI;
+package org.openjfx.servergui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +22,6 @@ public class ServerGUI extends Application {
     }
 
     public static void main(String[] args) {
-        System.setProperty("javafx.preloader", "none");
         launch(args);
     }
 }

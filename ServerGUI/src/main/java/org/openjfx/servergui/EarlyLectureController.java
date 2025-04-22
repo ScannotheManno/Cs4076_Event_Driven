@@ -1,5 +1,5 @@
 
-package org.openjfx._23381272_Server;
+package org.openjfx.servergui;
 
 import java.util.*;
 import java.util.concurrent.*;

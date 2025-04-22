@@ -1,4 +1,4 @@
-package org.openjfx._23381272_Server;
+package org.openjfx.servergui;
 
 import java.io.*;
 import java.util.*;
