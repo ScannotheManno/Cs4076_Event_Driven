@@ -17,6 +17,7 @@ public class ServerGUIController {
     @FXML
     private void initialize() {
         stopServerBtn.setDisable(true);
+        server = new ServerTCP();
     }
 
 @FXML
@@ -25,9 +26,9 @@ private void handleStartServer() {
     stopServerBtn.setDisable(false);
     log("Starting server...");
     new Thread(() -> {
-        ServerTCP.setLogger(this::log);
+        server.setLogger(this::log);
         try {
-            ServerTCP.startServer();
+            server.startServer();
         } catch (IOException e) {
             log("Server error: " + e.getMessage());
         }
