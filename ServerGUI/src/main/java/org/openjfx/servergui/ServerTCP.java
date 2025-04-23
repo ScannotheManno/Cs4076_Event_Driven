@@ -57,6 +57,7 @@ public class ServerTCP {
                 String credentials = in.readLine();
                 String[] loginData = credentials.split(":");
                 if (loginData.length == 2 && loginCon.authenticate(loginData[0], loginData[1])) {
+                    userType = loginCon.getUserType();
                     loggedInUsers.put(loginData[0], userType);
                     if (userType.equals("Student")) {
                         out.println("LOGIN_SUCCESS_STUDENT");
@@ -167,7 +168,9 @@ public class ServerTCP {
                 
             case "EARLY_LECTURE_STUDENT":
                 Map <String, String> oldMapStudent = lectureCon.getLectureStoragePersonal();
+                oldMapStudent = lectureCon.getUserMap(oldMapStudent);
                 Map<String, String> newMapStudent = earlyCon.adjustTimetableParallel(oldMapStudent);
+                newMapStudent = lectureCon.rebuildMap(newMapStudent, currentUser);
                 lectureCon.setLectureStoragePersonal(newMapStudent);
                 out.println("MAKING_LECTURES_EARLIER_STUDENT");
                 log(currentUser + " Made their Lectures Earlier");
