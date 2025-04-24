@@ -22,7 +22,6 @@ public class ClientHandler implements Runnable {
                 String message = in.readLine();
                 if (message == null) break;
 
-                System.out.println("Received from client: " + message);
                 ServerTCP.processClientMessage(message, in, out);
 
                 if (message.equals("QUIT")) break;
