@@ -17,7 +17,7 @@ public class ManageStudentController {
     @FXML private TextField addPasswordField;
     @FXML private VBox removeUserBox;
     @FXML private ComboBox<String> removeUserComboBox;
-    @FXML private TextArea studentsListArea;
+    @FXML private ListView studentsListView;
     @FXML private Button closeButton;
 
     private ClientModel model;
@@ -32,29 +32,38 @@ public class ManageStudentController {
         studentManagementComboBox.getItems().addAll("Add Student", "Remove Student", "List Of Students");
     }
 
-    @FXML
-    private void handleActionSelection() {
-        String action = studentManagementComboBox.getValue();
-        hideAll();
-
-        if ("Add Student".equals(action)) {
-            addUserBox.setVisible(true);
-            closeButton.setVisible(false);
-        } else if ("Remove Student".equals(action)) {
-            removeUserBox.setVisible(true);
-            closeButton.setVisible(false);
-            populateUserDropdown();
-        } else if ("List Of Students".equals(action)) {
-            studentsListArea.setVisible(true);
-            closeButton.setVisible(false);
-            fetchAndDisplayStudents();
-        }
-    }
-
     private void hideAll() {
         addUserBox.setVisible(false);
+        addUserBox.setManaged(false);
+
         removeUserBox.setVisible(false);
-        studentsListArea.setVisible(false);
+        removeUserBox.setManaged(false);
+
+        studentsListView.setVisible(false);
+        studentsListView.setManaged(false);
+    }
+
+    @FXML
+    private void handleActionSelection() {
+        hideAll();
+
+        String action = studentManagementComboBox.getValue();
+        
+        if (action.equals("Add Student")) {
+            addUserBox.setVisible(true);
+            addUserBox.toFront();
+            closeButton.setVisible(false);
+        } else if (action.equals("Remove Student")) {
+            removeUserBox.setVisible(true);
+            removeUserBox.toFront();
+            closeButton.setVisible(false);
+            populateUserDropdown();
+        } else if (action.equals("List Of Students")) {
+            studentsListView.setVisible(true);
+            studentsListView.toFront();
+            closeButton.setVisible(true);
+            fetchAndDisplayStudents();
+        }
     }
 
     private void populateUserDropdown() {
@@ -75,11 +84,19 @@ public class ManageStudentController {
         new Thread(() -> {
             String response = model.sendMessage("GET_STUDENTS");
             Platform.runLater(() -> {
+                 studentsListView.getItems().clear();
                 if (response == null || response.equals("NO_STUDENTS_AVAILABLE")) {
-                    studentsListArea.setText("No students found.");
+                    // optional: show placeholder item
+                    studentsListView.getItems().add("No students found.");
                 } else {
-                    studentsListArea.setText(response.replace(":", "\n"));
+                    String[] students = response.split(":");
+                    studentsListView.getItems().addAll(students);
                 }
+                
+                 int count = studentsListView.getItems().size();
+                double cellHeight = studentsListView.getFixedCellSize();
+                studentsListView.setPrefHeight(count * cellHeight + 2);
+                studentsListView.setVisible(true);
             });
         }).start();
     }
