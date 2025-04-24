@@ -70,7 +70,7 @@ public class ServerGUIController {
 
             Stage stage = new Stage();
             stage.setTitle("Timetable");
-            stage.setScene(new Scene(root, 900, 750));
+            stage.setScene(new Scene(root, 900, 825));
             stage.show();
 
         } catch (IOException e) {

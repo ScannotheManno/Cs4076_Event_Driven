@@ -40,7 +40,7 @@ public class TimetableController {
         Platform.runLater(() -> {
             userDropdown.getItems().setAll(allUsers);
             userDropdown.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
-                if (newV != null && newV.equalsIgnoreCase("admin")) {
+                if (newV != null && newV.equalsIgnoreCase("Admin")) {
                     showGroup = true;
                     selectedUser = null;
                 } else {
