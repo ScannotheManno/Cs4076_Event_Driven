@@ -42,6 +42,8 @@
                     style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
             <Button fx:id="stopServerBtn" text="Stop Server" onAction="#handleStopServer"
                     style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
+            <Button fx:id="timetableBtn" text="Timetable" onAction="#handleShowTimetable"
+                    style="-fx-background-color: #0000FF; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15;"/>
         </HBox>
     </VBox>
 </AnchorPane>

@@ -9,11 +9,11 @@ import java.util.function.Consumer;
 public class ServerTCP {
     private static final int PORT = 5555;
     private static String userType;
-    private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
     private static LectureController lectureCon;
     private static EarlyLectureController earlyCon;
     private static LoginController loginCon;
     private static ManageStudentController studentCon;
+    private static CSVController csvCon;
     private static ServerSocket serverSocket;
     private static Consumer<String> logger;
     private static Map<String, String> loggedInUsers = new ConcurrentHashMap<>();
@@ -36,6 +36,10 @@ public class ServerTCP {
         serverSocket = new ServerSocket(PORT);
         loginCon = new LoginController();
         studentCon = new ManageStudentController();
+        csvCon = new CSVController();
+        
+        studentCon.csvConSetter();
+        
         log("Server started on port " + PORT);
 
         try {
@@ -76,8 +80,7 @@ public class ServerTCP {
                 
             case "LOG_OUT":
                 // Remove user from loggedInUsers map when they log out
-                String username = in.readLine();
-                loggedInUsers.remove(username);
+                loggedInUsers.remove(currentUser);
                 out.println("LOGGING_OUT");
                 log(currentUser + " Has Logged out");
                 System.out.println("Client logging out...\n");
@@ -253,5 +256,17 @@ public class ServerTCP {
             }
             logger.accept(sb.toString());
         }
+    }
+    
+    public LectureController getLectureController() {
+        return lectureCon;
+    }
+    
+    public EarlyLectureController getEarlyLectureController() {
+        return earlyCon;
+    }
+    
+    public ManageStudentController getManageStudentController() {
+        return studentCon;
     }
 }

@@ -10,6 +10,7 @@ public class LoginController {
     private static final String USER_PASSWORD_CSV_PATH = "CSV_Files/User_Password.csv";
     private String userType;
     private String userID;
+    private CSVController csvCon;
     
     public String getUserType() {
         return userType;
@@ -20,8 +21,9 @@ public class LoginController {
     }
     
     public boolean authenticate(String studentId, String password) {
+        csvCon = new CSVController();
         try {
-            List<String[]> csvData = CSVController.readCSV(USER_PASSWORD_CSV_PATH);
+            List<String[]> csvData = csvCon.readCSV(USER_PASSWORD_CSV_PATH);
             for (String[] userData : csvData) {
                 if (userData.length == 3) {
                     if (userData[0].equals(studentId) && userData[1].equals(password)) {

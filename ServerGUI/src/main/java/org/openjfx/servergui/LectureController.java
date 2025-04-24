@@ -14,52 +14,55 @@ public class LectureController {
     private String PERSONALTIMETABLES_CSV_PATH = "CSV_Files/PersonalTimetables.csv";
     private String LECTURECHECKS_CSV_PATH = "CSV_Files/LectureChecks.csv";
     private String LECTURECHECKSPERSONAL_CSV_PATH = "CSV_Files/LectureChecksPersonal.csv";
+    private CSVController csvCon;
     
 
 
     public void loadCSVData() {
+        csvCon = new CSVController();
         try {
             List<String[]> csvData;
-            lectureStorageGroup = CSVController.csvToMap(GROUPTIMETABLE_CSV_PATH);
-            csvData = CSVController.readCSV(LECTURECHECKS_CSV_PATH);
+            lectureStorageGroup = csvCon.csvToMap(GROUPTIMETABLE_CSV_PATH);
+            csvData = csvCon.readCSV(LECTURECHECKS_CSV_PATH);
             for (String[] row : csvData) {
                 timetableSpacesGroup.add(row[0]);
                 studentAvailibilityGroup.add(row[1]);
             }
             
             List<String[]> csvData2;
-            lectureStoragePersonal = CSVController.csvToMap(PERSONALTIMETABLES_CSV_PATH);
-            csvData2 = CSVController.readCSV(LECTURECHECKSPERSONAL_CSV_PATH);
+            lectureStoragePersonal = csvCon.csvToMap(PERSONALTIMETABLES_CSV_PATH);
+            csvData2 = csvCon.readCSV(LECTURECHECKSPERSONAL_CSV_PATH);
             for (String[] row : csvData2) {
                 timetableSpacesPersonal.add(row[0]);
                 studentAvailibilityPersonal.add(row[1]);
             }
+            
         } catch (IOException e) {
             System.out.println("Error reading CSV files");
         }
     }
     
-    public Map<String, String> getLectureStorageGroup() {
+    public synchronized Map<String, String> getLectureStorageGroup() {
         return lectureStorageGroup;
     }
     
-    public Map<String, String> getLectureStoragePersonal() {
+    public synchronized Map<String, String> getLectureStoragePersonal() {
         return lectureStoragePersonal;
     }
     
-    public void setLectureStorageGroup(Map<String, String> map) {
+    public synchronized void setLectureStorageGroup(Map<String, String> map) {
         this.lectureStorageGroup = map;
         rebuildGroupSlots();
         rewriteToCSV(GROUPTIMETABLE_CSV_PATH, LECTURECHECKS_CSV_PATH, lectureStorageGroup, timetableSpacesGroup, studentAvailibilityGroup);
     }
     
-    public void setLectureStoragePersonal(Map<String, String> map) {
+    public synchronized void setLectureStoragePersonal(Map<String, String> map) {
         this.lectureStoragePersonal = map;
         rebuildPersonalSlots();
         rewriteToCSV(PERSONALTIMETABLES_CSV_PATH, LECTURECHECKSPERSONAL_CSV_PATH, lectureStoragePersonal, timetableSpacesPersonal, studentAvailibilityPersonal);
     }
 
-    public void handleAddLectureStudent(String lectureData, PrintWriter out) {
+    public synchronized void handleAddLectureStudent(String lectureData, PrintWriter out) {
         String currentUser = Thread.currentThread().getName();
         String[] module = lectureData.split("@");
         if (module.length == 7) {
@@ -80,7 +83,7 @@ public class LectureController {
                 studentAvailibilityPersonal.add(studentSlot);
                 String[] csvLectureChecks = {slot, studentSlot};
                 try {
-                CSVController.appendLineToCSV(LECTURECHECKSPERSONAL_CSV_PATH, csvLectureChecks);
+                csvCon.appendLineToCSV(LECTURECHECKSPERSONAL_CSV_PATH, csvLectureChecks);
                 } catch (IOException e) {
 
                 }
@@ -95,21 +98,21 @@ public class LectureController {
                     studentAvailibilityPersonal.add(studentSlot2);
                     String[] csvLectureChecks2 = {slot2, studentSlot2};
                     try {
-                    CSVController.appendLineToCSV(LECTURECHECKSPERSONAL_CSV_PATH, csvLectureChecks2);
+                    csvCon.appendLineToCSV(LECTURECHECKSPERSONAL_CSV_PATH, csvLectureChecks2);
                     } catch (IOException e) {
 
                     }
                 }
                 out.println("Lecture Added Successfully!");
                 
-                CSVController.clearCSV(PERSONALTIMETABLES_CSV_PATH);
+                csvCon.clearCSV(PERSONALTIMETABLES_CSV_PATH);
 
                 for (var entry : lectureStoragePersonal.entrySet()) {
                     try {
                         String csvKey = entry.getKey();
                         String csvValue = entry.getValue();
                         String[] row = {csvKey, csvValue};
-                        CSVController.appendLineToCSV(PERSONALTIMETABLES_CSV_PATH, row);
+                        csvCon.appendLineToCSV(PERSONALTIMETABLES_CSV_PATH, row);
                     } catch (IOException e) {
                         System.out.println("Could not save to csv");
                     }    
@@ -120,7 +123,7 @@ public class LectureController {
         }
     }
     
-    public void handleAddLectureAdmin(String lectureData, PrintWriter out) {
+    public synchronized void handleAddLectureAdmin(String lectureData, PrintWriter out) {
         String[] module = lectureData.split("@");
         if (module.length == 7) {
             String key = module[0] + "_" + module[3] + "_" + module[2] + "_" + module[4] + "_" + module[5];
@@ -140,7 +143,7 @@ public class LectureController {
 
                 String[] csvLectureChecks = {slot, studentSlot};
                 try {
-                CSVController.appendLineToCSV(LECTURECHECKS_CSV_PATH, csvLectureChecks);
+                csvCon.appendLineToCSV(LECTURECHECKS_CSV_PATH, csvLectureChecks);
                 } catch (IOException e) {
 
                 }
@@ -154,13 +157,13 @@ public class LectureController {
                     studentAvailibilityGroup.add(studentSlot2);
                     String[] csvLectureChecks2 = {slot2, studentSlot2};
                     try {
-                    CSVController.appendLineToCSV(LECTURECHECKS_CSV_PATH, csvLectureChecks2);
+                    csvCon.appendLineToCSV(LECTURECHECKS_CSV_PATH, csvLectureChecks2);
                     } catch (IOException e) {
 
                     }
                 }
                 out.println("Lecture Added Successfully!");
-                CSVController.clearCSV(GROUPTIMETABLE_CSV_PATH);
+                csvCon.clearCSV(GROUPTIMETABLE_CSV_PATH);
 
 
                 for (var entry : lectureStorageGroup.entrySet()) {
@@ -168,7 +171,7 @@ public class LectureController {
                         String csvKey = entry.getKey();
                         String csvValue = entry.getValue();
                         String[] row = {csvKey, csvValue};
-                        CSVController.appendLineToCSV(GROUPTIMETABLE_CSV_PATH, row);
+                        csvCon.appendLineToCSV(GROUPTIMETABLE_CSV_PATH, row);
                     } catch (IOException e) {
                         System.out.println("Could not save to csv");
                     }    
@@ -179,7 +182,7 @@ public class LectureController {
         } 
     }
 
-    public void handleRemoveLectureStudent(String key, PrintWriter out) {
+    public synchronized void handleRemoveLectureStudent(String key, PrintWriter out) {
         String currentUser = Thread.currentThread().getName();
         key = currentUser + "_" + key;
         if (lectureStoragePersonal.containsKey(key)) {
@@ -188,7 +191,7 @@ public class LectureController {
             String studentSlot = currentUser + "_" + details[5] + "_" + details[6];
 
             try {
-                CSVController.removeLineFromCSV(LECTURECHECKSPERSONAL_CSV_PATH, slot);
+                csvCon.removeLineFromCSV(LECTURECHECKSPERSONAL_CSV_PATH, slot);
                 timetableSpacesPersonal.remove(slot);
                 studentAvailibilityPersonal.remove(studentSlot);
             } catch (IOException e) {
@@ -200,7 +203,7 @@ public class LectureController {
                 String slot2 = currentUser + "_" + details[3] + "_" + details[5] + "_" + extraTime;
                 String studentSlot2 = currentUser + "_" + details[5] + "_" + extraTime;
                 try {
-                    CSVController.removeLineFromCSV(LECTURECHECKSPERSONAL_CSV_PATH, slot2);
+                    csvCon.removeLineFromCSV(LECTURECHECKSPERSONAL_CSV_PATH, slot2);
                     timetableSpacesPersonal.remove(slot2);
                     studentAvailibilityPersonal.remove(studentSlot2);
                 } catch (IOException e) {
@@ -209,7 +212,7 @@ public class LectureController {
             }
 
             try {
-                CSVController.removeLineFromCSV(PERSONALTIMETABLES_CSV_PATH, key);
+                csvCon.removeLineFromCSV(PERSONALTIMETABLES_CSV_PATH, key);
                 lectureStoragePersonal.remove(key);
                 out.println("Lecture Removed Successfully!");
             } catch (IOException e) {
@@ -220,14 +223,14 @@ public class LectureController {
         } 
     }
     
-    public void handleRemoveLectureAdmin(String key, PrintWriter out) {
+    public synchronized void handleRemoveLectureAdmin(String key, PrintWriter out) {
         if (lectureStorageGroup.containsKey(key)) {
             String[] details = lectureStorageGroup.get(key).split("@");
             String slot = details[2] + "_" + details[4] + "_" + details[5];
             String studentSlot = details[4] + "_" + details[5];
 
             try {
-                CSVController.removeLineFromCSV(LECTURECHECKS_CSV_PATH, slot);
+                csvCon.removeLineFromCSV(LECTURECHECKS_CSV_PATH, slot);
                 timetableSpacesGroup.remove(slot);
                 studentAvailibilityGroup.remove(studentSlot);
             } catch (IOException e) {
@@ -239,7 +242,7 @@ public class LectureController {
                 String slot2 = details[2] + "_" + details[4] + "_" + extraTime;
                 String studentSlot2 = details[4] + "_" + extraTime;
                 try {
-                    CSVController.removeLineFromCSV(LECTURECHECKS_CSV_PATH, slot2);
+                    csvCon.removeLineFromCSV(LECTURECHECKS_CSV_PATH, slot2);
                     timetableSpacesGroup.remove(slot2);
                     studentAvailibilityGroup.remove(studentSlot2);
                 } catch (IOException e) {
@@ -248,7 +251,7 @@ public class LectureController {
             }
             
             try {
-                CSVController.removeLineFromCSV(GROUPTIMETABLE_CSV_PATH, key);
+                csvCon.removeLineFromCSV(GROUPTIMETABLE_CSV_PATH, key);
                 lectureStorageGroup.remove(key);
                 out.println("Lecture Removed Successfully!");
             } catch (IOException e) {
@@ -260,7 +263,7 @@ public class LectureController {
         
     }
 
-    public void sendLectureKeysStudent(PrintWriter out) {
+    public synchronized void sendLectureKeysStudent(PrintWriter out) {
         String currentUser = Thread.currentThread().getName();
         if (lectureStoragePersonal.isEmpty()) {
             out.println("NO_LECTURES_AVAILABLE");
@@ -277,7 +280,7 @@ public class LectureController {
         out.println(sb.toString());
     }
     
-    public void sendLectureKeysAdmin(PrintWriter out) {
+    public synchronized void sendLectureKeysAdmin(PrintWriter out) {
         String currentUser = Thread.currentThread().getName();
         if (lectureStorageGroup.isEmpty()) {
             out.println("NO_LECTURES_AVAILABLE");
@@ -294,7 +297,7 @@ public class LectureController {
         out.println(sb.toString());
     }
 
-    public void handleSendLectureDetailsGroup(PrintWriter out) {
+    public synchronized void handleSendLectureDetailsGroup(PrintWriter out) {
         if (lectureStorageGroup.isEmpty()) {
             out.println("NO_LECTURES_SCHEDULED");
             return;
@@ -307,7 +310,7 @@ public class LectureController {
         out.println(sb.toString());
     }
 
-    public void handleSendLectureDetailsPersonal(PrintWriter out) {
+    public synchronized void handleSendLectureDetailsPersonal(PrintWriter out) {
         String currentUser = Thread.currentThread().getName();
         if (lectureStoragePersonal.isEmpty()) {
             out.println("NO_LECTURES_SCHEDULED");
@@ -324,7 +327,7 @@ public class LectureController {
         out.println(sb.toString());
     }
     
-    private void rebuildGroupSlots() {
+    private synchronized void rebuildGroupSlots() {
         timetableSpacesGroup.clear();
         studentAvailibilityGroup.clear();
         for (String detail : lectureStorageGroup.values()) {
@@ -342,7 +345,7 @@ public class LectureController {
         }
     }
     
-    private void rebuildPersonalSlots() {
+    private synchronized void rebuildPersonalSlots() {
         timetableSpacesPersonal.clear();
         studentAvailibilityPersonal.clear();
         for (String detail : lectureStoragePersonal.values()) {
@@ -363,20 +366,20 @@ public class LectureController {
         }
     }
     
-    private void rewriteToCSV(String filepath1, String filepath2, Map<String, String> map, ArrayList<String> a1, ArrayList<String> a2) {
+    private synchronized void rewriteToCSV(String filepath1, String filepath2, Map<String, String> map, ArrayList<String> a1, ArrayList<String> a2) {
         try {
             // 1) clear & rewrite the group‑timetable CSV
-            CSVController.clearCSV(filepath1);
+            csvCon.clearCSV(filepath1);
             for (var entry : map.entrySet()) {
                 String key   = entry.getKey();
                 String value = entry.getValue();
-                CSVController.appendLineToCSV(filepath1, new String[]{ key, value });
+                csvCon.appendLineToCSV(filepath1, new String[]{ key, value });
             }
 
             // 2) clear & rewrite the lecture‑checks CSV
-            CSVController.clearCSV(filepath2);
+            csvCon.clearCSV(filepath2);
             for (int i = 0; i < a1.size(); i++) {
-                CSVController.appendLineToCSV(filepath2, new String[]{a1.get(i), a2.get(i)});
+                csvCon.appendLineToCSV(filepath2, new String[]{a1.get(i), a2.get(i)});
             }
         } catch (IOException e) {
             // log or rethrow as unchecked if you prefer
@@ -384,7 +387,7 @@ public class LectureController {
         }
     }
     
-    public Map<String, String> getUserMap(Map<String, String> map) {
+    public synchronized Map<String, String> getUserMap(Map<String, String> map) {
         Map<String, String> newMap = new HashMap<>();
         String currentUser = Thread.currentThread().getName();
         
@@ -401,7 +404,7 @@ public class LectureController {
         return newMap;
     }
     
-    public Map<String, String> rebuildMap(Map<String, String> map, String prefix) {
+    public synchronized Map<String, String> rebuildMap(Map<String, String> map, String prefix) {
         Map<String, String> newMap = new HashMap<>();
         String currentUser = Thread.currentThread().getName();
         

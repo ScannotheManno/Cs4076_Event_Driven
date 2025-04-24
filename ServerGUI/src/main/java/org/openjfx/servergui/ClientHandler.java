@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
             while (true) {
                 String message = in.readLine();
                 if (message == null) {
-                    //log("Client " + clientAddress + " disconnected unexpectedly");
+                    log("Client " + clientAddress + " disconnected unexpectedly");
                     break;
                 }
                 String currentUser = Thread.currentThread().getName();
