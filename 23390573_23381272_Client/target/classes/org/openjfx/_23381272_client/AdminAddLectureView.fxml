@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="org.openjfx._23381272_client.AddLectureControllerAdmin" 
+            style="-fx-background-color: #FFFFFF;">
+    <Rectangle fill="GREEN" width="10000" height="20"
+           AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+    
+    <VBox alignment="CENTER" spacing="20" AnchorPane.topAnchor="20" AnchorPane.bottomAnchor="0" 
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" 
+          style="-fx-background-color: #FFFFFF; -fx-padding: 20;">
+        
+        <ImageView fx:id="logo" fitWidth="200" fitHeight="100" style="-fx-background-color: #FFFFFF;"/>
+
+        <HBox alignment="CENTER" spacing="40" style="-fx-background-color: #FFFFFF;">
+            
+            <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #FFFFFF;">
+                <Label text="Module Name:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <TextField fx:id="moduleNameField" promptText="Enter Module Name" maxWidth="200" 
+                           style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+                
+                <Label text="Module ID:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <TextField fx:id="moduleIDField" promptText="Enter Module ID" maxWidth="200" 
+                           style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+                
+                <Label text="Day:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="dayComboBox" maxWidth="200" 
+                          style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+                
+                <Label text="Start Time:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="timeStartComboBox" maxWidth="200" 
+                          style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #FFFFFF;">
+                <Label text="Duration:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <Spinner fx:id="durationSpinner" maxWidth="100" 
+                         style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+                
+                <Label text="Room:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="roomsComboBox" maxWidth="200" 
+                          style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+                
+                <Label text="Class Type:" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="typeComboBox" maxWidth="200" 
+                          style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 5;"/>
+            </VBox>
+
+        </HBox>
+        <VBox alignment="CENTER" spacing="5" maxWidth="100" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="submitLectureButton" text="Submit" maxWidth="100" onAction="#handleSubmitButton" 
+                    style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;"/>
+        </VBox>
+    </VBox>
+
+</AnchorPane>

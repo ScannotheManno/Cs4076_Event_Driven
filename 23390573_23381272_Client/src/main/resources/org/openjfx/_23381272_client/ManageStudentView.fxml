@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.openjfx._23381272_client.ManageStudentController"
+            style="-fx-background-color: #FFFFFF;">
+    
+    <Rectangle fill="GREEN" width="10000" height="20"
+               AnchorPane.topAnchor="0"/>
+    
+    <children>
+        <VBox alignment="TOP_CENTER" spacing="10"
+              AnchorPane.topAnchor="20.0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0">
+
+            <ImageView fx:id="logo" fitWidth="200" preserveRatio="true" />
+
+            <ComboBox fx:id="studentManagementComboBox"
+                      promptText="Select Action"
+                      onAction="#handleActionSelection"
+                      prefWidth="200" />
+            
+            <Button fx:id="closeButton"
+                    text="Close"
+                    onAction="#handleClose"
+                    prefWidth="100"
+                    visible="true" />
+
+            <StackPane alignment="CENTER" prefHeight="100"
+                       AnchorPane.leftAnchor="0"
+                       AnchorPane.rightAnchor="0">
+               
+                <VBox spacing="10" alignment="CENTER">
+                    <ListView fx:id="studentsListView"
+                              visible="false"
+                              fixedCellSize="20"
+                              VBox.vgrow="NEVER" />
+                </VBox>
+
+                <VBox fx:id="addUserBox"
+                      spacing="10"
+                      visible="false"
+                      alignment="CENTER">
+                    <TextField fx:id="addUserField"
+                               promptText="Enter student username"
+                               maxWidth="200" />
+                    <TextField fx:id="addPasswordField"
+                               promptText="Enter student password"
+                               maxWidth="200" />
+                    <Button text="Add Student" onAction="#handleAddUser" />
+                    <Button text="Close" onAction="#handleClose" prefWidth="100" />
+                </VBox>
+
+                <VBox fx:id="removeUserBox"
+                      spacing="10"
+                      visible="false"
+                      alignment="CENTER">
+                    <ComboBox fx:id="removeUserComboBox"
+                              promptText="Select student to remove"
+                              prefWidth="200" />
+                    <Button text="Remove Student" onAction="#handleRemoveUser" />
+                    <Button text="Close" onAction="#handleClose" prefWidth="100" />
+                </VBox>
+            </StackPane>
+
+        </VBox>
+    </children>
+    <padding>
+        <Insets top="10" bottom="10" left="10" right="10" />
+    </padding>
+</AnchorPane>

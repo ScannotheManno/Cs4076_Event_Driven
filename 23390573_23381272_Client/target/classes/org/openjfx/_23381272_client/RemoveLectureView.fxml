@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.image.ImageView?>
+
+
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.openjfx._23381272_client.RemoveLectureController">
+    <Rectangle fill="GREEN" width="10000" height="20"
+           AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" />
+    
+    <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #FFFFFF; -fx-padding: 20;"
+          AnchorPane.topAnchor="20" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="60">
+        
+        <ImageView fx:id="logo" fitWidth="200" fitHeight="100" style="-fx-background-color: #FFFFFF;"/>
+
+        <Label text="Remove a Lecture" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;"/>
+
+        <ComboBox fx:id="lectureComboBox" prefWidth="250" style="-fx-background-color: white; -fx-text-fill: black; -fx-border-color: black;"/>
+        
+        <VBox alignment="CENTER" spacing="5" maxWidth="150" onMouseEntered="#handleMouseEnter" onMouseExited="#handleMouseExit">
+            <Button fx:id="removeLectureButton" text="Remove Lecture" onAction="#handleRemoveLecture" prefWidth="150" 
+                    style="-fx-background-color: green; -fx-text-fill: white; -fx-border-color: black; -fx-border-radius: 5; -fx-padding: 10; -fx-font-size: 14px;"/>
+        </VBox>
+    </VBox>
+</AnchorPane>
