@@ -1,6 +1,17 @@
 TimetableKey,TimetableData
-Penis_Lab_CS1-045_Thursday_09:00,Penis@Penis@CS1-045@Lab@Thursday@09:00@1
-Operating Systems_Lec_CSG-001_Tuesday_09:00,Operating Systems@cs4115@CSG-001@Lec@Tuesday@09:00@1
-f_Tut_CS2-045_Wednesday_09:00,f@f@CS2-045@Tut@Wednesday@09:00@2
-Product Design Modelling_Lec_CSG-001_Monday_09:00,Product Design Modelling@pd4044@CSG-001@Lec@Monday@09:00@2
-Event-Driven_Lab_CS1-044_Friday_09:00,Event-Driven@cs4076@CS1-044@Lab@Friday@09:00@1
+Statistics_Tut_CS2-044_Monday_12:00,Statistics@MA4413@CS2-044@Tut@Monday@12:00@1
+Computer Graphics_Tut_CSG-001_Tuesday_09:00,Computer Graphics@CS4815@CSG-001@Tut@Tuesday@09:00@1
+Event-Driven Programming_Lab_CS2-044_Friday_11:00,Event-Driven Programming@CS4076@CS2-044@Lab@Friday@11:00@2
+Data Structures_Tut_CSG-001_Monday_09:00,Data Structures@CS4115@CSG-001@Tut@Monday@09:00@1
+Intelligent Systems_Lec_CSG-001_Tuesday_10:00,Intelligent Systems@CS4006@CSG-001@Lec@Tuesday@10:00@1
+Statistics_Lec_CSG-001_Tuesday_12:00,Statistics@MA4413@CSG-001@Lec@Tuesday@12:00@1
+Intelligent Systems_Lec_CSG-001_Thursday_10:00,Intelligent Systems@CS4006@CSG-001@Lec@Thursday@10:00@1
+Data Structures_Lab_CS3-004b_Friday_10:00,Data Structures@CS4115@CS3-004b@Lab@Friday@10:00@1
+Event-Driven Programming_Lec_CSG-001_Wednesday_09:00,Event-Driven Programming@CS4076@CSG-001@Lec@Wednesday@09:00@1
+Data Structures_Lec_CSG-001_Tuesday_11:00,Data Structures@CS4115@CSG-001@Lec@Tuesday@11:00@1
+Computer Graphics_Lab_CS3-005b_Wednesday_10:00,Computer Graphics@CS4815@CS3-005b@Lab@Wednesday@10:00@1
+Statistics_Lec_CSG-001_Thursday_09:00,Statistics@MA4413@CSG-001@Lec@Thursday@09:00@1
+Computer Graphics_Lec_CSG-001_Monday_10:00,Computer Graphics@CS4815@CSG-001@Lec@Monday@10:00@1
+Intelligent Systems_Lab_CS3-005b_Monday_11:00,Intelligent Systems@CS4006@CS3-005b@Lab@Monday@11:00@1
+Intelligent Systems_Tut_CS2-045_Friday_09:00,Intelligent Systems@CS4006@CS2-045@Tut@Friday@09:00@1
+Event-Driven Programming_Lec_CSG-001_Tuesday_13:00,Event-Driven Programming@CS4076@CSG-001@Lec@Tuesday@13:00@1

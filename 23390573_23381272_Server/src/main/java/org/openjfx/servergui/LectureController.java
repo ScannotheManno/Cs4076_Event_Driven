@@ -24,6 +24,9 @@ public class LectureController {
             List<String[]> csvData;
             lectureStorageGroup = csvCon.csvToMap(GROUPTIMETABLE_CSV_PATH);
             csvData = csvCon.readCSV(LECTURECHECKS_CSV_PATH);
+            if (csvData.isEmpty() || lectureStorageGroup.isEmpty()) {
+                return;
+            }
             for (String[] row : csvData) {
                 timetableSpacesGroup.add(row[0]);
                 studentAvailibilityGroup.add(row[1]);
@@ -32,6 +35,9 @@ public class LectureController {
             List<String[]> csvData2;
             lectureStoragePersonal = csvCon.csvToMap(PERSONALTIMETABLES_CSV_PATH);
             csvData2 = csvCon.readCSV(LECTURECHECKSPERSONAL_CSV_PATH);
+            if (csvData2.isEmpty() || lectureStoragePersonal.isEmpty()) {
+                return;
+            }
             for (String[] row : csvData2) {
                 timetableSpacesPersonal.add(row[0]);
                 studentAvailibilityPersonal.add(row[1]);
@@ -281,18 +287,16 @@ public class LectureController {
     }
     
     public synchronized void sendLectureKeysAdmin(PrintWriter out) {
-        String currentUser = Thread.currentThread().getName();
+        System.out.println("DEBUG: lectureStorageGroup size = " + lectureStorageGroup.size());
+
         if (lectureStorageGroup.isEmpty()) {
-            out.println("NO_LECTURES_AVAILABLE");
+            out.println("NO_LECTURES_AVAILABLE_ADMIN");
             return;
         }
 
         StringBuilder sb = new StringBuilder();
         for (String key : lectureStorageGroup.keySet()) {
-            if (key.startsWith(currentUser)) {
-                String newKey = key.substring(currentUser.length());
-                sb.append(newKey).append(";");
-            }
+            sb.append(key).append(";");
         }
         out.println(sb.toString());
     }
