@@ -1,0 +1,13 @@
+org\openjfx\servergui\ServerTCP.class
+org\openjfx\servergui\ClientHandler.class
+org\openjfx\servergui\LectureController.class
+org\openjfx\servergui\EarlyLectureController$TimeTableAdjustment.class
+org\openjfx\servergui\ServerGUI.class
+org\openjfx\servergui\CSVController.class
+org\openjfx\servergui\IncorrectActionException.class
+org\openjfx\servergui\ManageStudentController.class
+module-info.class
+org\openjfx\servergui\EarlyLectureController.class
+org\openjfx\servergui\LoginController.class
+org\openjfx\servergui\ServerGUIController.class
+org\openjfx\servergui\TimetableController.class
